@@ -2,8 +2,8 @@ package com.allaroundjava.booking.common.events;
 
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Collection;
 
 @AllArgsConstructor
