@@ -8,5 +8,5 @@ public interface DomainEvent {
 
     Long getSubjectId();
 
-    Instant getWhen();
+    Instant getCreated();
 }

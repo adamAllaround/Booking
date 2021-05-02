@@ -7,7 +7,7 @@ import javax.transaction.Transactional;
 import java.util.Collection;
 
 @AllArgsConstructor
-public class StoreEventPublisherDecorator implements EventPublisher{
+class StoreEventPublisherDecorator implements EventPublisher{
     private final EventPublisher eventPublisher;
     private final EventStore eventStore;
 

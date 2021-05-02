@@ -1,6 +1,7 @@
 package com.allaroundjava.booking.owners;
 
 import com.allaroundjava.booking.common.events.EventPublisher;
+import com.allaroundjava.booking.common.events.OwnerCreatedEvent;
 import lombok.AllArgsConstructor;
 
 import java.util.Collection;
@@ -21,8 +22,7 @@ class OwnersService {
 
     Owner save(Owner owner) {
         Owner newOwner = repository.save(owner);
-        eventPublisher.publish(new OwnerCreatedEvent(newOwner));
-
+        eventPublisher.publish(OwnerCreatedEvent.createNew(newOwner.getId()));
         return newOwner;
     }
 }
