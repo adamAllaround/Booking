@@ -16,17 +16,17 @@ import java.util.stream.Collectors;
 @RequestMapping("/owners")
 @AllArgsConstructor
 class OwnersController {
-    private final OwnersRepository ownersRepository;
+    private final OwnersService ownersService;
 
     @GetMapping
     ResponseEntity<OwnersResponse> listOwners() {
-        Collection<Owner> owners = ownersRepository.getAll();
+        Collection<Owner> owners = ownersService.getAll();
         return ResponseEntity.ok(OwnersResponse.from(owners));
     }
 
     @GetMapping(path = "/{id}")
     ResponseEntity<OwnerResponse> singleOwner(@PathVariable Long id) {
-        return ownersRepository.getSingle(id)
+        return ownersService.getSingle(id)
                 .map(OwnerResponse::from)
                 .map(owner -> ResponseEntity.ok().body(owner))
                 .orElse(ResponseEntity.badRequest().build());
@@ -34,7 +34,7 @@ class OwnersController {
 
     @PostMapping
     ResponseEntity<OwnerResponse> addOwner(@RequestBody OwnerRequest ownerRequest) {
-        Owner owner = ownersRepository.save(ownerRequest.toModel());
+        Owner owner = ownersService.save(ownerRequest.toModel());
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
                 .buildAndExpand(owner.getId()).toUri();
