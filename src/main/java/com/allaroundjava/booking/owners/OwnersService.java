@@ -1,5 +1,6 @@
 package com.allaroundjava.booking.owners;
 
+import com.allaroundjava.booking.common.events.EventPublisher;
 import lombok.AllArgsConstructor;
 
 import java.util.Collection;
@@ -8,7 +9,7 @@ import java.util.Optional;
 @AllArgsConstructor
 class OwnersService {
     private final OwnersRepository repository;
-    private final MessageSender messageSender;
+    private final EventPublisher eventPublisher;
 
     Collection<Owner> getAll() {
         return repository.getAll();
@@ -20,7 +21,7 @@ class OwnersService {
 
     Owner save(Owner owner) {
         Owner newOwner = repository.save(owner);
-        messageSender.send(new OwnerCreatedMessage(newOwner.getId()));
+        eventPublisher.publish(new OwnerCreatedEvent(newOwner));
 
         return newOwner;
     }
