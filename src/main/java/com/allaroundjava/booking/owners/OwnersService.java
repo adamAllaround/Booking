@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.UUID;
 
 @AllArgsConstructor
 class OwnersService {
@@ -16,7 +17,7 @@ class OwnersService {
         return repository.getAll();
     }
 
-    Optional<Owner> getSingle(Long id) {
+    Optional<Owner> getSingle(UUID id) {
         return repository.getSingle(id);
     }
 

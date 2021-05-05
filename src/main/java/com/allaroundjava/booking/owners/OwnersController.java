@@ -10,6 +10,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -25,7 +26,7 @@ class OwnersController {
     }
 
     @GetMapping(path = "/{id}")
-    ResponseEntity<OwnerResponse> singleOwner(@PathVariable Long id) {
+    ResponseEntity<OwnerResponse> singleOwner(@PathVariable UUID id) {
         return ownersService.getSingle(id)
                 .map(OwnerResponse::from)
                 .map(owner -> ResponseEntity.ok().body(owner))
@@ -39,7 +40,8 @@ class OwnersController {
                 .fromCurrentRequest().path("/{id}")
                 .buildAndExpand(owner.getId()).toUri();
 
-        return ResponseEntity.created(uri).build();
+        return ResponseEntity.created(uri)
+                .body(OwnerResponse.from(owner));
     }
 
     @Value
@@ -56,7 +58,7 @@ class OwnersController {
 
     @Value
     static class OwnerResponse {
-        Long id;
+        UUID id;
         String name;
         String contact;
 

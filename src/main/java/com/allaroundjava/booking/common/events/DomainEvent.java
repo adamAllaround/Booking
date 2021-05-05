@@ -6,7 +6,7 @@ import java.util.UUID;
 public interface DomainEvent {
     UUID getEventId();
 
-    Long getSubjectId();
+    UUID getSubjectId();
 
     Instant getCreated();
 }

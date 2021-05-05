@@ -11,11 +11,13 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
 @Configuration
+@EnableScheduling
 public class EventsConfig {
 
     @Bean
@@ -36,6 +38,7 @@ public class EventsConfig {
         return new EmbeddedDatabaseBuilder()
                 .generateUniqueName(true)
                 .setType(EmbeddedDatabaseType.H2)
+                .addScript("events-db-creation.sql")
                 .build();
     }
 
@@ -55,7 +58,7 @@ public class EventsConfig {
     }
 
     @Bean
-    EventStore eventStore(JdbcTemplate jdbcTemplate) {
+    EventStore eventStore(NamedParameterJdbcTemplate jdbcTemplate) {
         return new DatabaseEventStore(jdbcTemplate);
     }
 

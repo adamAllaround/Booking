@@ -11,9 +11,9 @@ import java.util.UUID;
 public class OwnerCreatedEvent implements DomainEvent {
     UUID eventId;
     Instant created;
-    Long subjectId;
+    UUID subjectId;
 
-    public static OwnerCreatedEvent createNew(Long subjectId) {
+    public static OwnerCreatedEvent createNew(UUID subjectId) {
         return new OwnerCreatedEvent(UUID.randomUUID(), Instant.now(), subjectId);
     }
 }

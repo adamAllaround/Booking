@@ -7,20 +7,22 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 
 @AllArgsConstructor
-class StoreEventPublisherDecorator implements EventPublisher{
+class StoreEventPublisherDecorator implements EventPublisher {
     private final EventPublisher eventPublisher;
     private final EventStore eventStore;
 
     @Override
     public void publish(DomainEvent domainEvent) {
-        eventStore.save(domainEvent);
+        eventStore.insert(domainEvent);
     }
 
-    @Scheduled(fixedRate = 5000L)
+    @Scheduled(fixedRate = 3000L)
     @Transactional
     void publishAllPeriodically() {
         Collection<DomainEvent> toPublish = eventStore.getUnpublishedEvents();
         toPublish.forEach(eventPublisher::publish);
-        eventStore.markPublished(toPublish);
+        if (!toPublish.isEmpty()) {
+            eventStore.markPublished(toPublish);
+        }
     }
 }

@@ -3,7 +3,7 @@ package com.allaroundjava.booking.common.events;
 import java.util.Collection;
 
 interface EventStore {
-    void save(DomainEvent domainEvent);
+    void insert(DomainEvent domainEvent);
 
     Collection<DomainEvent> getUnpublishedEvents();
 
