@@ -45,7 +45,7 @@ public class DatabaseEventStore implements EventStore {
         return jdbcTemplate.query("select e.* from Events e where e.published=false", new BeanPropertyRowMapper<>(EventDatabaseEntity.class))
                 .stream()
                 .map(EventDatabaseEntity::toDomainEvent)
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
