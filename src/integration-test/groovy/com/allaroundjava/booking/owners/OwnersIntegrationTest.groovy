@@ -10,7 +10,6 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
@@ -28,7 +27,7 @@ class OwnersIntegrationTest extends Specification {
     @Autowired
     private com.allaroundjava.booking.items.OwnersRepository itemsModuleOwnersRepo
 
-    PollingConditions pollingConditions = new PollingConditions(timeout: 6)
+    private PollingConditions pollingConditions = new PollingConditions(initialDelay: 2, timeout: 6)
 
     def "Should populate user in items and ownersDbs"() {
         given: "A new Owner Request"
@@ -39,6 +38,7 @@ class OwnersIntegrationTest extends Specification {
         then:
         entity.statusCode == HttpStatus.CREATED
         ownersModulePersistedOwner(entity.getBody().id)
+        and:
         ownerSavedInItemsModule(entity)
     }
 
@@ -46,7 +46,7 @@ class OwnersIntegrationTest extends Specification {
         return ownersRepository.getSingle(id).isPresent()
     }
 
-    private ownerSavedInItemsModule(entity) {
+    private void ownerSavedInItemsModule(entity) {
         pollingConditions.eventually {
             assert itemsModuleOwnersRepo.getSingle(entity.getBody().id).isPresent()
         }

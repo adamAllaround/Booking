@@ -11,16 +11,18 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 import static org.hamcrest.CoreMatchers.containsString
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class ItemsControllerTest extends Specification {
-    private ItemsRepository itemsRepository = Mock()
+    private ItemsService itemsService = Mock()
     private ItemsController itemsController
     private MockMvc mockMvc
 
     void setup() {
-        itemsController = new ItemsController(itemsRepository)
+        itemsController = new ItemsController(itemsService)
         mockMvc = MockMvcBuilders.standaloneSetup(itemsController).build()
     }
 
@@ -28,10 +30,26 @@ class ItemsControllerTest extends Specification {
         given:
         Owner owner = new Owner(UUID.randomUUID(), LocalDateTime.of(2021, 5,11,10,0).toInstant(ZoneOffset.UTC))
         when:
-        itemsRepository.getAllByOwnerId(owner.getId()) >> [new Item(UUID.randomUUID(), owner.getId(), "Some Item", 10, "Warsaw")]
+        itemsService.getAllByOwnerId(owner.getId()) >>
+                [new Item(id: UUID.randomUUID(), ownerId: owner.getId(), name: "Some Item",capacity: 10, location: "Warsaw")]
         then:
-        mockMvc.perform(MockMvcRequestBuilders.get("/owners/${owner.id}/items").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/owners/${owner.id}/items").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(HttpStatus.OK.value()))
                 .andExpect(content().string(containsString("Some Item")))
+    }
+
+    def "Add new item"() {
+        given:
+        UUID ownerId = UUID.randomUUID()
+        Item item = new Item(ownerId: ownerId,  name: "Some Item", location: "Test location", capacity: 3)
+
+        when:
+        itemsService.save(_ as Item) >> item
+
+        then:
+        mockMvc.perform(post("/owners/${ownerId}/items").contentType(MediaType.APPLICATION_JSON)
+                .content('{"name" : "Some Item", "location" : "Test location", "capacity": 3 }'))
+        .andExpect(status().is(HttpStatus.CREATED.value()))
+        .andExpect(content().string(containsString("Some Item")))
     }
 }

@@ -19,12 +19,17 @@ public class ItemsConfig {
     }
 
     @Bean
+    ItemsService itemsService(ItemsRepository itemsRepository, OwnersRepository ownersRepository) {
+        return new ItemsService(itemsRepository, ownersRepository);
+    }
+
+    @Bean
     OwnerCreatedEventHandler ownerCreatedEventHandler(OwnersRepository ownersRepository) {
         return new OwnerCreatedEventHandler(ownersRepository);
     }
 
     @Bean
-    ItemsController itemsController(ItemsRepository itemsRepository) {
-        return new ItemsController(itemsRepository);
+    ItemsController itemsController(ItemsService itemsService) {
+        return new ItemsController(itemsService);
     }
 }

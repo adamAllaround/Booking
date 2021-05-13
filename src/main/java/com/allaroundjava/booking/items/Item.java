@@ -1,12 +1,12 @@
 package com.allaroundjava.booking.items;
 
-import lombok.Value;
+import lombok.Data;
 
 import java.util.UUID;
 
-@Value
-public class Item {
-    UUID uuid;
+@Data
+class Item {
+    UUID id = UUID.randomUUID();
     UUID ownerId;
     String name;
     int capacity;

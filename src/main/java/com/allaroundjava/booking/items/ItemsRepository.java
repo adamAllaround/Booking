@@ -23,12 +23,12 @@ class ItemsRepository {
     }
 
     Item save(Item item) {
-        ImmutableMap<String, Object> params = ImmutableMap.of("id", item.getUuid(),
+        ImmutableMap<String, Object> params = ImmutableMap.of("id", item.getId(),
                 "ownerId", item.getOwnerId(),
                 "name", item.getName(),
                 "capacity", item.getCapacity(),
                 "location", item.getLocation());
-        jdbcTemplate.update("INSERT INTO Items (id, ownerId, name, capacity, location) values (:id, :ownerID, :name, :capacity, :location)",
+        jdbcTemplate.update("INSERT INTO Items (id, ownerId, name, capacity, location) values (:id, :ownerId, :name, :capacity, :location)",
                 params);
         return item;
     }
@@ -42,11 +42,13 @@ class ItemsRepository {
         String location;
 
         static Item toDomainModel(ItemDatabaseEntity itemDatabaseEntity) {
-            return new Item(itemDatabaseEntity.getId(),
-                    itemDatabaseEntity.getOwnerId(),
-                    itemDatabaseEntity.getName(),
-                    itemDatabaseEntity.getCapacity(),
-                    itemDatabaseEntity.getLocation());
+            Item item = new Item();
+            item.setId(itemDatabaseEntity.getId());
+            item.setOwnerId(itemDatabaseEntity.getOwnerId());
+            item.setName(itemDatabaseEntity.getName());
+            item.setLocation(itemDatabaseEntity.getLocation());
+            item.setCapacity(itemDatabaseEntity.getCapacity());
+            return item;
         }
     }
 }
