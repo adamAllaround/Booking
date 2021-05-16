@@ -13,4 +13,11 @@ class OccupationFixture {
 
         return occupation
     }
+
+    static Occupation withBookingBetween(LocalDateTime start, LocalDateTime end) {
+        def occupation = withAvailabilityBetween(start, end)
+        occupation.addBooking(new Interval(start, end))
+
+        return occupation
+    }
 }

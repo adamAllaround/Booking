@@ -1,22 +1,51 @@
 package com.allaroundjava.booking.bookings.domain.model
 
+
 import spock.lang.Specification
+
+import static com.allaroundjava.booking.bookings.domain.model.CommandResult.failure
+import static com.allaroundjava.booking.bookings.domain.model.CommandResult.success
+import static com.allaroundjava.booking.bookings.domain.model.Dates2020.march
+import static com.allaroundjava.booking.bookings.domain.model.OccupationFixture.withAvailabilityBetween
+import static com.allaroundjava.booking.bookings.domain.model.OccupationFixture.withBookingBetween
 
 class OccupationBookingTest extends Specification {
     def "Can add booking to cover existing availability"() {
+        given:
+        Occupation occupation = withAvailabilityBetween(march(10).hour(15), march(11).hour(15))
+
+        when:
+        def result = occupation.addBooking(new Interval(march(10).hour(15), march(11).hour(15)))
+
+        then:
+        success(result)
+    }
+
+    def "Can add booking to cover several availabilities"() {
 
     }
 
-    def "Cannot add booking when no availability" () {
+    def "Cannot add booking when availability not covered fully" () {
+        given:
+        Occupation occupation = withAvailabilityBetween(march(10).hour(15), march(11).hour(15))
 
-    }
+        when:
+        def result = occupation.addBooking(new Interval(march(11).hour(12), march(11).hour(15)))
 
-    def "Cannot add booking when part of it exceeds availability" () {
-
+        then:
+        failure(result)
     }
 
     def "Can add booking side by side"() {
+        given:
+        Occupation occupation = withBookingBetween(march(10).hour(15), march(11).hour(15))
+        occupation.addAvailability(new Interval(march(11).hour(16), march(12).hour(15)))
 
+        when:
+        def result = occupation.addBooking(new Interval(march(11).hour(16), march(12).hour(15)))
+
+        then:
+        success(result)
     }
 
     def "Cannot add booking in the past" () {
@@ -24,14 +53,39 @@ class OccupationBookingTest extends Specification {
     }
 
     def "Cannot add booking twice"() {
+        given:
+        Occupation occupation = withBookingBetween(march(10).hour(15), march(11).hour(15))
 
+        when:
+        def result = occupation.addBooking(new Interval(march(10).hour(15), march(11).hour(15)))
+
+        then:
+        failure(result)
     }
 
-    def "Can Remove existing booking"() {
+    def "Can remove existing booking"() {
+        given:
+        Occupation occupation = withAvailabilityBetween(march(10).hour(15), march(11).hour(15))
+        def bookingResult = occupation.addBooking(new Interval(march(10).hour(15), march(11).hour(15)))
 
+        when:
+        def result = occupation.removeBooking(bookingResult.get().booking)
+
+        then:
+        success(result)
     }
 
     def "Can remove booking and add new one in same slot"() {
+        given:
+        Occupation occupation = withAvailabilityBetween(march(10).hour(15), march(11).hour(15))
+        def bookingResult = occupation.addBooking(new Interval(march(10).hour(15), march(11).hour(15)))
+        and:
+        occupation.removeBooking(bookingResult.get().booking)
 
+        when:
+        def result = occupation.addBooking(new Interval(march(10).hour(15), march(11).hour(15)))
+
+        then:
+        success(result)
     }
 }

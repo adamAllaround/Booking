@@ -48,6 +48,44 @@ public interface OccupationEvent extends DomainEvent {
         @NonNull String reason;
     }
 
+    @Value
+    class BookingFailure implements OccupationEvent {
+        UUID eventId = UUID.randomUUID();
+        Instant created = Instant.now();
+        @NonNull UUID itemId;
+        @NonNull Interval interval;
+        @NonNull String reason;
+    }
+
+    @Value
+    class BookingSuccess implements OccupationEvent {
+        UUID eventId = UUID.randomUUID();
+        Instant created = Instant.now();
+        @NonNull UUID itemId;
+        @NonNull Booking booking;
+    }
+
+    @Value
+    class RemoveBookingFailure implements OccupationEvent {
+        UUID eventId = UUID.randomUUID();
+        Instant created = Instant.now();
+        @NonNull UUID itemId;
+        @NonNull Booking booking;
+    }
+
+    @Value
+    class RemoveBookingSuccess implements OccupationEvent {
+        UUID eventId = UUID.randomUUID();
+        Instant created = Instant.now();
+        @NonNull UUID itemId;
+        @NonNull Booking booking;
+        @NonNull Availability availability;
+    }
+
+
+
+
+
 
 
 }

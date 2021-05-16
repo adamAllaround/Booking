@@ -1,15 +1,10 @@
 package com.allaroundjava.booking.bookings.domain.model;
 
-import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.AddAvailabilityFailure;
-import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.AddAvailabilitySuccess;
-import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.RemoveAvailabilityFailure;
-import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.RemoveAvailabilitySuccess;
+import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.*;
 import io.vavr.control.Either;
 import lombok.AllArgsConstructor;
 
-import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,11 +41,28 @@ class Occupation {
         return announceFailure(new RemoveAvailabilityFailure(item.getId(), availability.getId(), "Availability does not exist"));
     }
 
-    void addBooking(Duration duration) {
+    Either<BookingFailure, OccupationEvent.BookingSuccess> addBooking(Interval interval) {
+        Optional<Availability> availability = availabilities.stream()
+                .filter(avail -> avail.covers(interval))
+                .findFirst();
 
+        if (availability.isEmpty()) {
+            return announceFailure(new BookingFailure(item.getId(), interval, "Could not find suitable availability"));
+        }
+
+        Booking booking = Booking.from(availability.get());
+        bookings.add(booking);
+        availabilities.remove(availability.get());
+        return announceSuccess(new BookingSuccess(item.getId(), booking));
     }
 
-    void removeBooking(Duration duration) {
-
+    Either<RemoveBookingFailure, RemoveBookingSuccess> removeBooking(Booking booking) {
+        if (!bookings.remove(booking)) {
+            return announceFailure(new RemoveBookingFailure(item.getId(), booking));
+        }
+        //TODO booking cannot carry the same ID as availability - single booking spans few availabilities
+        Availability availability = Availability.from(booking);
+        availabilities.add(availability);
+        return announceSuccess(new RemoveBookingSuccess(item.getId(), booking, availability));
     }
 }

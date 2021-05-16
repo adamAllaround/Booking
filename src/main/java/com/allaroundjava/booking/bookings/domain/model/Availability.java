@@ -22,7 +22,15 @@ class Availability {
         return new Availability(UUID.randomUUID(), interval.getStart(), interval.getEnd());
     }
 
+    static Availability from(Booking booking) {
+        return new Availability(booking.getId(), booking.getStart(), booking.getEnd());
+    }
+
     boolean overlaps(Availability candidate) {
         return !(end.isBefore(candidate.start) || start.isAfter(candidate.end));
+    }
+
+    boolean covers(Interval interval) {
+        return start.equals(interval.getStart()) && end.equals(interval.getEnd());
     }
 }
