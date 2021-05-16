@@ -12,13 +12,13 @@ import static com.allaroundjava.booking.common.CommandResult.announceFailure;
 import static com.allaroundjava.booking.common.CommandResult.announceSuccess;
 
 @AllArgsConstructor
-class Occupation {
+public class Occupation {
     private final Item item;
 
-    private final List<Booking> bookings = new ArrayList<>();
-    private final Availabilities availabilities = Availabilities.empty();
+    private final List<Booking> bookings;
+    private final Availabilities availabilities;
 
-    Either<AddAvailabilityFailure, AddAvailabilitySuccess> addAvailability(Interval interval) {
+    public Either<AddAvailabilityFailure, AddAvailabilitySuccess> addAvailability(Interval interval) {
         if(availabilities.overlapsExisting(interval)) {
             return announceFailure(new AddAvailabilityFailure(item.getId(), "Cannot Overlap Existing Availability"));
         }
@@ -36,7 +36,7 @@ class Occupation {
         return announceFailure(new RemoveAvailabilityFailure(item.getId(), availability.getId(), "Availability does not exist"));
     }
 
-    Either<BookingFailure, OccupationEvent.BookingSuccess> addBooking(Interval interval) {
+    public Either<BookingFailure, OccupationEvent.BookingSuccess> addBooking(Interval interval) {
         Optional<Availability> availability = availabilities.findCovering(interval);
 
         if (availability.isEmpty()) {

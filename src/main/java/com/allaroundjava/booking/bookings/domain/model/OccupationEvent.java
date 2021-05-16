@@ -36,7 +36,7 @@ public interface OccupationEvent extends DomainEvent {
         UUID eventId = UUID.randomUUID();
         Instant created = Instant.now();
         @NonNull UUID itemId;
-        @NonNull UUID availabilityId;
+        @NonNull Availability availability;
     }
 
     @Value
