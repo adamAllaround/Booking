@@ -15,20 +15,15 @@ import static com.allaroundjava.booking.common.CommandResult.announceSuccess;
 class Occupation {
     private final Item item;
 
-    private final List<Availability> availabilities = new ArrayList<>();
     private final List<Booking> bookings = new ArrayList<>();
+    private final Availabilities availabilities = Availabilities.empty();
 
     Either<AddAvailabilityFailure, AddAvailabilitySuccess> addAvailability(Interval interval) {
-        Availability candidate = Availability.from(interval);
-
-        Optional<Availability> rejection = availabilities.stream()
-                .filter(avail -> avail.overlaps(candidate))
-                .findFirst();
-
-        if(rejection.isPresent()) {
+        if(availabilities.overlapsExisting(interval)) {
             return announceFailure(new AddAvailabilityFailure(item.getId(), "Cannot Overlap Existing Availability"));
         }
 
+        Availability candidate = Availability.from(interval);
         availabilities.add(candidate);
         return announceSuccess(new AddAvailabilitySuccess(item.getId(), candidate));
     }
@@ -42,9 +37,7 @@ class Occupation {
     }
 
     Either<BookingFailure, OccupationEvent.BookingSuccess> addBooking(Interval interval) {
-        Optional<Availability> availability = availabilities.stream()
-                .filter(avail -> avail.covers(interval))
-                .findFirst();
+        Optional<Availability> availability = availabilities.findCovering(interval);
 
         if (availability.isEmpty()) {
             return announceFailure(new BookingFailure(item.getId(), interval, "Could not find suitable availability"));

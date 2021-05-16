@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Availabilities {
@@ -16,5 +17,20 @@ public class Availabilities {
 
     void add(Availability availability) {
         availabilities.add(availability);
+    }
+
+    boolean overlapsExisting(Interval candidate) {
+        return availabilities.stream()
+                .anyMatch(avail -> avail.overlaps(candidate));
+    }
+
+    boolean remove(Availability availability) {
+        return availabilities.remove(availability);
+    }
+
+    Optional<Availability> findCovering(Interval interval) {
+        return availabilities.stream()
+                .filter(avail -> avail.covers(interval))
+                .findFirst();
     }
 }

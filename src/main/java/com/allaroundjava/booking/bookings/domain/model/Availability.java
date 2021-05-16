@@ -33,4 +33,8 @@ class Availability {
     boolean covers(Interval interval) {
         return start.equals(interval.getStart()) && end.equals(interval.getEnd());
     }
+
+    boolean overlaps(Interval candidate) {
+        return !(end.isBefore(candidate.getStart()) || start.isAfter(candidate.getEnd()));
+    }
 }
