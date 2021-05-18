@@ -1,21 +1,21 @@
 package com.allaroundjava.booking.bookings.adapters.db;
 
 import com.allaroundjava.booking.bookings.domain.model.Booking;
-import org.springframework.data.annotation.Id;
+import com.allaroundjava.booking.bookings.domain.model.Interval;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class BookingDatabaseEntity {
-    @Id
-    Long id;
+    UUID id;
     UUID itemId;
-    UUID bookingId;
     OffsetDateTime start;
     OffsetDateTime end;
 
     Booking toModel() {
-        return new Booking(bookingId, start.toInstant(), end.toInstant());
+        return new Booking(id, itemId, new Interval(start.toInstant(), end.toInstant()));
     }
 }

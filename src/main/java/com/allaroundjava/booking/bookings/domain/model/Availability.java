@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Value
@@ -13,30 +12,33 @@ public class Availability {
     @EqualsAndHashCode.Include
     UUID id;
     UUID itemId;
-    Instant start;
-    Instant end;
+    Interval interval;
 
-    public static Availability between(LocalDateTime start, LocalDateTime end) {
-        return new Availability(UUID.randomUUID(), start, end);
-    }
-
-    static Availability from(Interval interval) {
-        return new Availability(UUID.randomUUID(), interval.getStart(), interval.getEnd());
+    static Availability from(UUID itemId, Interval interval) {
+        return new Availability(UUID.randomUUID(),itemId,  interval);
     }
 
     static Availability from(Booking booking) {
-        return new Availability(booking.getId(), booking.getStart(), booking.getEnd());
+        return new Availability(booking.getId(), booking.getItemId(), booking.getInterval());
     }
 
     boolean overlaps(Availability candidate) {
-        return !(end.isBefore(candidate.start) || start.isAfter(candidate.end));
+        return interval.overlaps(candidate.getInterval());
     }
 
     boolean covers(Interval interval) {
-        return start.equals(interval.getStart()) && end.equals(interval.getEnd());
+        return this.interval.covers(interval);
     }
 
     boolean overlaps(Interval candidate) {
-        return !(end.isBefore(candidate.getStart()) || start.isAfter(candidate.getEnd()));
+        return interval.overlaps(candidate);
+    }
+
+    public Instant getStart() {
+        return interval.getStart();
+    }
+
+    public Instant getEnd() {
+        return interval.getEnd();
     }
 }

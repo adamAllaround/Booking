@@ -10,13 +10,14 @@ import static com.allaroundjava.booking.bookings.domain.model.OccupationFixture.
 import static com.allaroundjava.booking.bookings.domain.model.OccupationFixture.withAvailabilityBetween
 
 class OccupationAvailabilityTest extends Specification {
+    private static UUID ITEM_ID = UUID.randomUUID()
 
     def "Can add availability to empty occupation"() {
         given:
         Occupation occupation = emptyOccupation()
 
         when:
-        def result = occupation.addAvailability(new Interval(march(13).hour(15), march(14).hour(10)))
+        def result = occupation.addAvailability(ITEM_ID, new Interval(march(13).hour(15), march(14).hour(10)))
 
         then:
         success(result)
@@ -27,7 +28,7 @@ class OccupationAvailabilityTest extends Specification {
         Occupation occupation = withAvailabilityBetween(march(13).hour(16), march(14).hour(16))
 
         when:
-        def result = occupation.addAvailability(new Interval(march(10).hour(12), march(14).hour(12)))
+        def result = occupation.addAvailability(ITEM_ID, new Interval(march(10).hour(12), march(14).hour(12)))
 
         then:
         failure(result)
@@ -38,7 +39,7 @@ class OccupationAvailabilityTest extends Specification {
         Occupation occupation = emptyOccupation()
 
         and:
-        def addResult = occupation.addAvailability(new Interval(march(10).hour(12), march(10).hour(13)))
+        def addResult = occupation.addAvailability(ITEM_ID, new Interval(march(10).hour(12), march(10).hour(13)))
 
         when:
         def result = occupation.removeAvailability(addResult.map({ success -> success.availability }).get())
@@ -52,7 +53,7 @@ class OccupationAvailabilityTest extends Specification {
         Occupation occupation = withAvailabilityBetween(march(10).hour(12), march(14).hour(12))
 
         when:
-        def result = occupation.removeAvailability(Availability.between(march(13).hour(7), march(17).hour(7)))
+        def result = occupation.removeAvailability(Availability.from(ITEM_ID, new Interval(march(13).hour(7), march(17).hour(7))))
 
         then:
         failure(result)
@@ -63,8 +64,8 @@ class OccupationAvailabilityTest extends Specification {
         Occupation occupation = emptyOccupation()
 
         and:
-        occupation.addAvailability(new Interval(march(10).hour(12), march(13).hour(13))).get().availability
-        def toRemove = occupation.addAvailability(new Interval(march(13).hour(14), march(14).hour(15))).get().availability
+        occupation.addAvailability(ITEM_ID, new Interval(march(10).hour(12), march(13).hour(13))).get().availability
+        def toRemove = occupation.addAvailability(ITEM_ID, new Interval(march(13).hour(14), march(14).hour(15))).get().availability
 
         when:
         def result = occupation.removeAvailability(toRemove)
@@ -73,6 +74,6 @@ class OccupationAvailabilityTest extends Specification {
         success(result)
 
         and:
-        success(occupation.addAvailability(new Interval(march(13).hour(15), march(15).hour(15))))
+        success(occupation.addAvailability(ITEM_ID, new Interval(march(13).hour(15), march(15).hour(15))))
     }
 }

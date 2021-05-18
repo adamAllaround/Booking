@@ -3,10 +3,7 @@ package com.allaroundjava.booking.bookings.domain.model;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
+import java.time.*;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Dates2020 {
@@ -14,8 +11,8 @@ public class Dates2020 {
     LocalTime time;
 
 
-    LocalDateTime hour(int hour) {
-        return LocalDateTime.of(this.date, LocalTime.of(hour, 0));
+    Instant hour(int hour) {
+        return LocalDateTime.of(this.date, LocalTime.of(hour, 0)).toInstant(ZoneOffset.UTC);
     }
 
     static Dates2020 january(int day) {

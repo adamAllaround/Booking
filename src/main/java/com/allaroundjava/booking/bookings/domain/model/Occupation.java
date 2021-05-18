@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.allaroundjava.booking.common.CommandResult.announceFailure;
 import static com.allaroundjava.booking.common.CommandResult.announceSuccess;
@@ -18,19 +19,25 @@ public class Occupation {
     private final List<Booking> bookings;
     private final Availabilities availabilities;
 
-    public Either<AddAvailabilityFailure, AddAvailabilitySuccess> addAvailability(Interval interval) {
+    Occupation(Item item) {
+        this.item = item;
+        bookings = new ArrayList<>();
+        availabilities = Availabilities.empty();
+    }
+
+    public Either<AddAvailabilityFailure, AddAvailabilitySuccess> addAvailability(UUID itemId, Interval interval) {
         if(availabilities.overlapsExisting(interval)) {
             return announceFailure(new AddAvailabilityFailure(item.getId(), "Cannot Overlap Existing Availability"));
         }
 
-        Availability candidate = Availability.from(interval);
+        Availability candidate = Availability.from(itemId, interval);
         availabilities.add(candidate);
         return announceSuccess(new AddAvailabilitySuccess(item.getId(), candidate));
     }
 
     Either<RemoveAvailabilityFailure, RemoveAvailabilitySuccess> removeAvailability(Availability availability) {
         if(availabilities.remove(availability)) {
-            return announceSuccess(new RemoveAvailabilitySuccess(item.getId(), availability.getId()));
+            return announceSuccess(new RemoveAvailabilitySuccess(item.getId(), availability));
         }
 
         return announceFailure(new RemoveAvailabilityFailure(item.getId(), availability.getId(), "Availability does not exist"));

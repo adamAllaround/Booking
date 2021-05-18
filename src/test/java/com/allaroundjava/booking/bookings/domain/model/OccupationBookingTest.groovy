@@ -10,6 +10,8 @@ import static com.allaroundjava.booking.bookings.domain.model.OccupationFixture.
 import static com.allaroundjava.booking.bookings.domain.model.OccupationFixture.withBookingBetween
 
 class OccupationBookingTest extends Specification {
+    private static final UUID ITEM_ID = UUID.randomUUID()
+
     def "Can add booking to cover existing availability"() {
         given:
         Occupation occupation = withAvailabilityBetween(march(10).hour(15), march(11).hour(15))
@@ -39,7 +41,7 @@ class OccupationBookingTest extends Specification {
     def "Can add booking side by side"() {
         given:
         Occupation occupation = withBookingBetween(march(10).hour(15), march(11).hour(15))
-        occupation.addAvailability(new Interval(march(11).hour(16), march(12).hour(15)))
+        occupation.addAvailability(ITEM_ID, new Interval(march(11).hour(16), march(12).hour(15)))
 
         when:
         def result = occupation.addBooking(new Interval(march(11).hour(16), march(12).hour(15)))
