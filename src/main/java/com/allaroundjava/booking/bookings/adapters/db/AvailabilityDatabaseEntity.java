@@ -2,13 +2,12 @@ package com.allaroundjava.booking.bookings.adapters.db;
 
 import com.allaroundjava.booking.bookings.domain.model.Availability;
 import com.allaroundjava.booking.bookings.domain.model.Interval;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
+@Data
 class AvailabilityDatabaseEntity {
     UUID id;
     UUID itemId;

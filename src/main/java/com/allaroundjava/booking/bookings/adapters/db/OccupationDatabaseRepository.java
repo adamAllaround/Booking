@@ -1,6 +1,10 @@
 package com.allaroundjava.booking.bookings.adapters.db;
 
 import com.allaroundjava.booking.bookings.domain.model.*;
+import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.AddAvailabilitySuccess;
+import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.BookingSuccess;
+import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.RemoveAvailabilitySuccess;
+import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.RemoveBookingSuccess;
 import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository;
 import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
@@ -27,7 +31,7 @@ public class OccupationDatabaseRepository implements OccupationRepository {
                 .map(AvailabilityDatabaseEntity::toModel)
                 .collect(Collectors.toList());
 
-        List<Booking> bookings = jdbcTemplate.query("select b.* from Bookings b where itemId=:id", params,
+        List<Booking> bookings = jdbcTemplate.query("select b.* from Bookings b where b.itemId=:id", params,
                 new BeanPropertyRowMapper<>(BookingDatabaseEntity.class))
                 .stream()
                 .map(BookingDatabaseEntity::toModel)
@@ -38,18 +42,22 @@ public class OccupationDatabaseRepository implements OccupationRepository {
 
     @Override
     public void handle(OccupationEvent event) {
-        if (event instanceof OccupationEvent.AddAvailabilitySuccess) {
-            saveNewAvailability((OccupationEvent.AddAvailabilitySuccess) event);
+        if (event instanceof AddAvailabilitySuccess) {
+            saveNewAvailability((AddAvailabilitySuccess) event);
         }
-        if (event instanceof OccupationEvent.RemoveAvailabilitySuccess) {
-            removeAvailability((OccupationEvent.RemoveAvailabilitySuccess) event);
+        if (event instanceof RemoveAvailabilitySuccess) {
+            removeAvailability((RemoveAvailabilitySuccess) event);
         }
-        if (event instanceof OccupationEvent.BookingSuccess) {
+        if (event instanceof BookingSuccess) {
+            saveNewBooking((BookingSuccess)event);
+        }
 
+        if (event instanceof RemoveBookingSuccess) {
+            removeBooking((RemoveBookingSuccess) event);
         }
     }
 
-    private void saveNewAvailability(OccupationEvent.AddAvailabilitySuccess event) {
+    private void saveNewAvailability(AddAvailabilitySuccess event) {
         Availability availability = event.getAvailability();
         ImmutableMap<String, Object> params = ImmutableMap.of("id", availability.getId(),
                 "itemId", availability.getItemId(),
@@ -58,9 +66,22 @@ public class OccupationDatabaseRepository implements OccupationRepository {
         jdbcTemplate.update("insert into Availabilities (id, itemId, start, end) values (:id,:itemId, :start, :end);", params);
     }
 
-    private void removeAvailability(OccupationEvent.RemoveAvailabilitySuccess event) {
-        Availability availability = event.getAvailability();
-        ImmutableMap<String, Object> params = ImmutableMap.of("id", availability.getId());
-        jdbcTemplate.update("delete from Availabilities where id=:id", params);
+    private void removeAvailability(RemoveAvailabilitySuccess event) {
+        ImmutableMap<String, Object> params = ImmutableMap.of("id", event.getAvailability().getId());
+        jdbcTemplate.update("delete from Availabilities a where a.id=:id", params);
+    }
+
+    private void saveNewBooking(BookingSuccess event) {
+        Booking booking = event.getBooking();
+        ImmutableMap<String, Object> params = ImmutableMap.of("id", booking.getId(),
+                "itemId", booking.getItemId(),
+                "start", OffsetDateTime.ofInstant(booking.getStart(), ZoneOffset.UTC),
+                "end", OffsetDateTime.ofInstant(booking.getEnd(), ZoneOffset.UTC));
+        jdbcTemplate.update("insert into Bookings (id, itemId, start, end) values (:id,:itemId, :start, :end);", params);
+    }
+
+    private void removeBooking(RemoveBookingSuccess event) {
+        ImmutableMap<String, Object> params = ImmutableMap.of("id", event.getAvailability().getId());
+        jdbcTemplate.update("delete from Bookings b where b.id=:id", params);
     }
 }
