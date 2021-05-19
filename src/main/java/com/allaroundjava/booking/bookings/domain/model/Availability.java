@@ -14,7 +14,7 @@ public class Availability {
     UUID itemId;
     Interval interval;
 
-    static Availability from(UUID itemId, Interval interval) {
+    public static Availability from(UUID itemId, Interval interval) {
         return new Availability(UUID.randomUUID(),itemId,  interval);
     }
 
