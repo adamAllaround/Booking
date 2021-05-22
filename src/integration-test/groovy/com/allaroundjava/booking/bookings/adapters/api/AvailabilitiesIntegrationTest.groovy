@@ -1,10 +1,11 @@
 package com.allaroundjava.booking.bookings.adapters.api
 
+import com.allaroundjava.booking.DbCleaner
+import com.allaroundjava.booking.IntegrationTestConfig
 import com.allaroundjava.booking.bookings.config.BookingsConfig
 import com.allaroundjava.booking.bookings.domain.model.Availability
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent
 import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository
-import com.allaroundjava.booking.common.DatabaseConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
@@ -19,7 +20,7 @@ import java.time.ZoneOffset
 import static com.allaroundjava.booking.bookings.domain.model.AvailabilityFixture.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = [DatabaseConfig, BookingsConfig])
+        classes = [BookingsConfig, IntegrationTestConfig])
 @EnableAutoConfiguration
 class AvailabilitiesIntegrationTest extends Specification {
 
@@ -28,6 +29,13 @@ class AvailabilitiesIntegrationTest extends Specification {
 
     @Autowired
     private TestRestTemplate testRestTemplate
+
+    @Autowired
+    private DbCleaner dbCleaner
+
+    void cleanup() {
+        dbCleaner.cleanAvailabilities()
+    }
 
     def "Should return all item availabilities"() {
         given:
@@ -45,9 +53,9 @@ class AvailabilitiesIntegrationTest extends Specification {
 
     def "Should add availability"() {
         given:
-        existsAvailability(MAY11)
+        existsAvailability(MAY10)
 
-        def request = may12AvailabilityRequest()
+        def request = may11AvailabilityRequest()
 
         when:
         def entity = testRestTemplate.postForEntity(URI.create("/items/${ITEM_ID}/availabilities"), request, AvailabilityResponse)
@@ -60,8 +68,8 @@ class AvailabilitiesIntegrationTest extends Specification {
         occupationRepository.handle(new OccupationEvent.AddAvailabilitySuccess(ITEM_ID, availability))
     }
 
-    HttpEntity<AvailabilityRequest> may12AvailabilityRequest() {
-        def request = new AvailabilityRequest(start: OffsetDateTime.ofInstant(MAY12.start, ZoneOffset.UTC), end: OffsetDateTime.ofInstant(MAY12.end, ZoneOffset.UTC))
+    HttpEntity<AvailabilityRequest> may11AvailabilityRequest() {
+        def request = new AvailabilityRequest(start: OffsetDateTime.ofInstant(MAY11.start, ZoneOffset.UTC), end: OffsetDateTime.ofInstant(MAY11.end, ZoneOffset.UTC))
         return new HttpEntity<AvailabilityRequest>(request)
     }
 }

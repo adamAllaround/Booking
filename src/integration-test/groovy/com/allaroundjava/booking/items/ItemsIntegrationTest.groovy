@@ -1,6 +1,6 @@
 package com.allaroundjava.booking.items
 
-import com.allaroundjava.booking.common.DatabaseConfig
+import com.allaroundjava.booking.IntegrationTestConfig
 import com.allaroundjava.booking.common.events.EventsConfig
 import com.allaroundjava.booking.owners.OwnersConfig
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,7 +17,7 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = [DatabaseConfig, EventsConfig, OwnersConfig, ItemsConfig])
+        classes = [IntegrationTestConfig, EventsConfig, OwnersConfig, ItemsConfig])
 @EnableAutoConfiguration
 class ItemsIntegrationTest extends Specification {
     @Autowired
