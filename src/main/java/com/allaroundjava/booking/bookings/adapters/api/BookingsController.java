@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/items")
 @AllArgsConstructor
 class BookingsController {
-    @GetMapping("/{itemId}/bookings")
-    ResponseEntity<BookingsResponse> getBookings() {
-
-    }
-
-    @PostMapping("/{itemId}/bookings")
-    ResponseEntity<BookingRequest> addBooking() {
-
-    }
+//    @GetMapping("/{itemId}/bookings")
+//    ResponseEntity<BookingsResponse> getBookings() {
+//
+//    }
+//
+//    @PostMapping("/{itemId}/bookings")
+//    ResponseEntity<BookingRequest> addBooking() {
+//
+//    }
 }

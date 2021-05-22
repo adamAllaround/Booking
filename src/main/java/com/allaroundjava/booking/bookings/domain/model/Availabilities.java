@@ -1,11 +1,12 @@
 package com.allaroundjava.booking.bookings.domain.model;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 @AllArgsConstructor
 public class Availabilities {
@@ -32,5 +33,9 @@ public class Availabilities {
         return availabilities.stream()
                 .filter(avail -> avail.covers(interval))
                 .findFirst();
+    }
+
+    public <T> Stream<T> map(Function<? super Availability, T> mapper) {
+        return availabilities.stream().map(mapper);
     }
 }

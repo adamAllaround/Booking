@@ -4,7 +4,6 @@ import com.allaroundjava.booking.bookings.domain.model.Availabilities;
 import com.allaroundjava.booking.bookings.domain.ports.AvailabilitiesService;
 import lombok.AllArgsConstructor;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @AllArgsConstructor

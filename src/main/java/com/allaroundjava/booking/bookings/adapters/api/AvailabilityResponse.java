@@ -12,7 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 class AvailabilityResponse {
     UUID id;
-    UUID ownerId;
+    UUID itemId;
     OffsetDateTime start;
     OffsetDateTime end;
 
