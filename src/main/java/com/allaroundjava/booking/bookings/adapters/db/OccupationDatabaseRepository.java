@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Component
 @AllArgsConstructor
 public class OccupationDatabaseRepository implements OccupationRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;

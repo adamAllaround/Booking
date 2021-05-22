@@ -6,11 +6,13 @@ import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Component
 @AllArgsConstructor
 class AvailabilitiesDatabaseRepository implements AvailabilitiesRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -18,7 +20,7 @@ class AvailabilitiesDatabaseRepository implements AvailabilitiesRepository {
     public List<Availability> getAllByItemId(UUID itemId) {
         ImmutableMap<String, UUID> params = ImmutableMap.of("itemId", itemId);
 
-        return jdbcTemplate.query("select a.* from Availabilities a where a.itemId=:id",
+        return jdbcTemplate.query("select a.* from Availabilities a where a.itemId=:itemId",
                 params,
                 new BeanPropertyRowMapper<>(AvailabilityDatabaseEntity.class))
                 .stream()

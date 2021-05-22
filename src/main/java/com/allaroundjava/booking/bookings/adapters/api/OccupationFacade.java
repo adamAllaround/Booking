@@ -2,10 +2,12 @@ package com.allaroundjava.booking.bookings.adapters.api;
 
 import com.allaroundjava.booking.bookings.domain.ports.OccupationService;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.UUID;
 
+@Component
 @AllArgsConstructor
 public class OccupationFacade {
     private final OccupationService occupationService;

@@ -53,11 +53,6 @@ public class EventsConfig {
     }
 
     @Bean
-    NamedParameterJdbcOperations operations(DataSource dataSource) {
-        return new NamedParameterJdbcTemplate(dataSource);
-    }
-
-    @Bean
     EventStore eventStore(NamedParameterJdbcTemplate jdbcTemplate) {
         return new DatabaseEventStore(jdbcTemplate);
     }
