@@ -81,11 +81,4 @@ public interface OccupationEvent extends DomainEvent {
         @NonNull Booking booking;
         @NonNull Availability availability;
     }
-
-
-
-
-
-
-
 }

@@ -9,12 +9,12 @@ import java.util.UUID;
 
 @Value
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class OwnerCreatedEvent implements DomainEvent {
+public class ItemAddedEvent implements DomainEvent{
     UUID eventId;
     Instant created;
     UUID subjectId;
 
-    public static OwnerCreatedEvent now(UUID subjectId) {
-        return new OwnerCreatedEvent(UUID.randomUUID(), Instant.now(), subjectId);
+    public static ItemAddedEvent now(UUID subjectId) {
+        return new ItemAddedEvent(UUID.randomUUID() , Instant.now(), subjectId);
     }
 }
