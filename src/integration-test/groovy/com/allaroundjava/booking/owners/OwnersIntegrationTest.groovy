@@ -1,5 +1,6 @@
 package com.allaroundjava.booking.owners
 
+import com.allaroundjava.booking.common.DatabaseConfig
 import com.allaroundjava.booking.common.events.EventsConfig
 import com.allaroundjava.booking.items.ItemsConfig
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,7 +15,7 @@ import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = [EventsConfig, OwnersConfig, ItemsConfig])
+        classes = [DatabaseConfig, EventsConfig, OwnersConfig, ItemsConfig])
 @EnableAutoConfiguration
 class OwnersIntegrationTest extends Specification {
 

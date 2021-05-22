@@ -21,38 +21,6 @@ import javax.sql.DataSource;
 public class EventsConfig {
 
     @Bean
-    @Profile("dev")
-    DataSource createDataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.h2.Driver");
-        dataSource.setUrl("jdbc:h2:tcp://localhost/~/test");
-        dataSource.setUsername("sa");
-        dataSource.setPassword("");
-
-        return dataSource;
-    }
-
-    @Bean
-    @Profile("test")
-    DataSource createTestDataSource() {
-        return new EmbeddedDatabaseBuilder()
-                .generateUniqueName(true)
-                .setType(EmbeddedDatabaseType.H2)
-                .addScript("events-db-creation.sql")
-                .build();
-    }
-
-    @Bean
-    JdbcTemplate jdbcTemplate(DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
-    }
-
-    @Bean
-    PlatformTransactionManager transactionManager(DataSource dataSource) {
-        return new DataSourceTransactionManager(dataSource);
-    }
-
-    @Bean
     EventStore eventStore(NamedParameterJdbcTemplate jdbcTemplate) {
         return new DatabaseEventStore(jdbcTemplate);
     }
