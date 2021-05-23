@@ -29,6 +29,13 @@ CREATE TABLE IF NOT EXISTS Items
     location VARCHAR(100) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS OccupationItems
+(
+    id      VARCHAR(100) PRIMARY KEY,
+    created DATETIME NOT NULL
+);
+
+
 CREATE TABLE IF NOT EXISTS Availabilities
 (
     id      VARCHAR(100) PRIMARY KEY,

@@ -1,5 +1,6 @@
 package com.allaroundjava.booking.items;
 
+import com.allaroundjava.booking.common.events.EventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,8 +20,8 @@ public class ItemsConfig {
     }
 
     @Bean
-    ItemsService itemsService(ItemsRepository itemsRepository, OwnersRepository ownersRepository) {
-        return new ItemsService(itemsRepository, ownersRepository);
+    ItemsService itemsService(ItemsRepository itemsRepository, OwnersRepository ownersRepository, EventPublisher eventPublisher) {
+        return new ItemsService(itemsRepository, ownersRepository, eventPublisher);
     }
 
     @Bean

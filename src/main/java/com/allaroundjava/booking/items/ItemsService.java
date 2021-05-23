@@ -1,8 +1,9 @@
 package com.allaroundjava.booking.items;
 
 import com.allaroundjava.booking.common.events.EventPublisher;
-import com.allaroundjava.booking.common.events.ItemAddedEvent;
+import com.allaroundjava.booking.common.events.ItemCreatedEvent;
 import lombok.AllArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -13,12 +14,13 @@ class ItemsService {
     private final OwnersRepository ownersRepository;
     private final EventPublisher eventPublisher;
 
+    @Transactional
     Item save(Item item) {
         if (ownerNotExists(item.getOwnerId())) {
             throw new IllegalArgumentException(String.format("Owner with ID %s does not exist", item.getOwnerId()));
         }
         Item newItem = itemsRepository.save(item);
-        eventPublisher.publish(ItemAddedEvent.now(newItem.id));
+        eventPublisher.publish(ItemCreatedEvent.now(newItem.id));
         return newItem;
     }
 

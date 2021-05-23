@@ -16,6 +16,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.allaroundjava.booking.common.events.DatabaseEventStore.EventDatabaseEntity.EventType.OwnerCreated;
+import static com.allaroundjava.booking.common.events.DatabaseEventStore.EventDatabaseEntity.EventType.ItemCreated;
 
 @AllArgsConstructor
 public class DatabaseEventStore implements EventStore {
@@ -25,13 +26,16 @@ public class DatabaseEventStore implements EventStore {
     @Override
     public void insert(DomainEvent domainEvent) {
         if (domainEvent instanceof OwnerCreatedEvent) {
-            insert(domainEvent.getEventId(), domainEvent.getCreated(), domainEvent.getSubjectId());
+            insert(domainEvent.getEventId(), domainEvent.getCreated(), domainEvent.getSubjectId(), OwnerCreated.name());
+        }
+        if (domainEvent instanceof ItemCreatedEvent) {
+            insert(domainEvent.getEventId(), domainEvent.getCreated(), domainEvent.getSubjectId(), ItemCreated.name());
         }
     }
 
-    private void insert(UUID eventId, Instant created, UUID subjectId) {
+    private void insert(UUID eventId, Instant created, UUID subjectId, String eventType) {
         ImmutableMap<String, Object> params = ImmutableMap.of("id", eventId,
-                "type", OwnerCreated.name(),
+                "type", eventType,
                 "created", created,
                 "published", false,
                 "subjectId", subjectId);
@@ -64,7 +68,8 @@ public class DatabaseEventStore implements EventStore {
     static class EventDatabaseEntity {
 
         enum EventType {
-            OwnerCreated
+            OwnerCreated,
+            ItemCreated
         }
 
         private UUID id;
@@ -77,6 +82,8 @@ public class DatabaseEventStore implements EventStore {
             switch (type) {
                 case OwnerCreated:
                     return new OwnerCreatedEvent(id, created, subjectId);
+                case ItemCreated:
+                    return new ItemCreatedEvent(id, created, subjectId);
                 default:
                     throw new IllegalArgumentException("Unknown event type");
             }

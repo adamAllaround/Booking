@@ -1,7 +1,6 @@
 package com.allaroundjava.booking.owners
 
 import com.allaroundjava.booking.IntegrationTestConfig
-import com.allaroundjava.booking.common.DatabaseConfig
 import com.allaroundjava.booking.common.events.EventsConfig
 import com.allaroundjava.booking.items.ItemsConfig
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +17,7 @@ import spock.util.concurrent.PollingConditions
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = [IntegrationTestConfig, EventsConfig, OwnersConfig, ItemsConfig])
 @EnableAutoConfiguration
-class OwnersIntegrationTest extends Specification {
+class OwnersCrossModuleIntegrationTest extends Specification {
 
     @Autowired
     private TestRestTemplate testRestTemplate

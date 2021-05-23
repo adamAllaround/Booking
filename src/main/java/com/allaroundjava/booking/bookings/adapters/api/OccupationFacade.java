@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Component
 @AllArgsConstructor
-public class OccupationFacade {
+class OccupationFacade {
     private final OccupationService occupationService;
     public Optional<AvailabilityResponse> save(UUID itemId, AvailabilityRequest request) {
         return occupationService.addAvailability(itemId, request.toDomainWithItemId(itemId))

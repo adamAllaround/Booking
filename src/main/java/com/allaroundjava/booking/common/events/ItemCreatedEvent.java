@@ -8,12 +8,12 @@ import java.util.UUID;
 
 @Value
 @AllArgsConstructor
-public class OwnerCreatedEvent implements DomainEvent {
+public class ItemCreatedEvent implements DomainEvent{
     UUID eventId;
     Instant created;
     UUID subjectId;
 
-    public static OwnerCreatedEvent now(UUID subjectId) {
-        return new OwnerCreatedEvent(UUID.randomUUID(), Instant.now(), subjectId);
+    public static ItemCreatedEvent now(UUID subjectId) {
+        return new ItemCreatedEvent(UUID.randomUUID() , Instant.now(), subjectId);
     }
 }
