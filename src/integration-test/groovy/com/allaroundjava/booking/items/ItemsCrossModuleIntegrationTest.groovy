@@ -59,7 +59,7 @@ class ItemsCrossModuleIntegrationTest extends Specification {
     }
 
     ResponseEntity<ItemsController.ItemResponse> createItemWithHttpPost(Item item) {
-        def requestObject = new ItemsController.ItemRequest(ownerId: item.getOwnerId(), name: item.getName(), capacity: item.getCapacity(), location: item.getLocation())
+        def requestObject = new ItemsController.ItemRequest(ownerId: item.getOwnerId(), name: item.getName(), details:  new ItemsController.HotelRoomDetails(capacity: item.getCapacity(), location: item.getLocation()))
         def request = new HttpEntity<ItemsController.ItemRequest>(requestObject)
         return testRestTemplate.postForEntity(URI.create("/owners/${item.getOwnerId()}/items"), request, ItemsController.ItemResponse)
     }

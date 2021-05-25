@@ -33,8 +33,8 @@ class ItemsIntegrationTest extends Specification {
         def owner = new Owner(UUID.randomUUID(), LocalDateTime.of(2021, 5, 10, 10, 0).toInstant(ZoneOffset.UTC))
         given:
         ownersRepository.save(owner)
-        itemsRepository.save(new Item(ownerId: owner.id, name: "Some item", capacity: 10, location: "Warsaw"))
-        itemsRepository.save(new Item(ownerId: owner.id, name: "NY Apt", capacity: 3, location: "New York"))
+        itemsRepository.save(new Item(ownerId: owner.id, name: "Some item", capacity: 10, location: "Warsaw", type: "test"))
+        itemsRepository.save(new Item(ownerId: owner.id, name: "NY Apt", capacity: 3, location: "New York", type: "test"))
         when:
 
         def entity = testRestTemplate.getForEntity(URI.create("/owners/${owner.id}/items"), ItemsController.ItemsResponse)
@@ -50,7 +50,7 @@ class ItemsIntegrationTest extends Specification {
         def owner = new Owner(UUID.randomUUID(), LocalDateTime.of(2021, 5, 10, 10, 0).toInstant(ZoneOffset.UTC))
         given:
         ownersRepository.save(owner)
-        ItemsController.ItemRequest item = new ItemsController.ItemRequest(name: "Some Item", capacity: 1, location: "San Francisco")
+        ItemsController.ItemRequest item = new ItemsController.ItemRequest(name: "Some Item", details: new ItemsController.HotelRoomDetails(capacity: 1, location: "Test"))
         def request = new HttpEntity<ItemsController.ItemRequest>(item, new HttpHeaders(contentType: MediaType.APPLICATION_JSON))
 
         when:

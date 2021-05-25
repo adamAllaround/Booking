@@ -40,14 +40,14 @@ class ItemsControllerTest extends Specification {
     def "Add new item"() {
         given:
         UUID ownerId = UUID.randomUUID()
-        Item item = new Item(ownerId: ownerId,  name: "Some Item", location: "Test location", capacity: 3)
+        Item item = new Item(ownerId: ownerId,  name: "Some Item", location: "Test location", capacity: 3, type: "HotelRoom")
 
         when:
         itemsService.save(_ as Item) >> item
 
         then:
         mockMvc.perform(post("/owners/${ownerId}/items").contentType(MediaType.APPLICATION_JSON)
-                .content('{"name" : "Some Item", "location" : "Test location", "capacity": 3 }'))
+                .content('{"name" : "Some Item", "details": {"type" : "hotelRoom", "capacity": 3, "location" : "Test location"}}'))
         .andExpect(status().is(HttpStatus.CREATED.value()))
         .andExpect(content().string(containsString("Some Item")))
     }

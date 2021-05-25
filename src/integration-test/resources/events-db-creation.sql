@@ -26,7 +26,10 @@ CREATE TABLE IF NOT EXISTS Items
     ownerId  VARCHAR(100) NOT NULL,
     name     VARCHAR(100) NOT NULL,
     capacity INT          NOT NULL,
-    location VARCHAR(100) NOT NULL
+    location VARCHAR(100) NOT NULL,
+    type VARCHAR(100) NOT NULL,
+    hotelHourStart TIME NULL,
+    hotelHourEnd TIME NULL
 );
 
 CREATE TABLE IF NOT EXISTS OccupationItems

@@ -1,5 +1,7 @@
 package com.allaroundjava.booking.items;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.OffsetTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -64,16 +67,44 @@ class ItemsController {
     static class ItemRequest {
         UUID ownerId;
         String name;
-        int capacity;
-        String location;
+        ItemDetails details;
 
         Item toModelWithOwner(UUID ownerId) {
             Item item = new Item();
             item.setOwnerId(ownerId);
             item.setName(name);
+            details.fill(item);
+            return item;
+        }
+    }
+
+    @Data
+    @JsonTypeInfo(
+            use = JsonTypeInfo.Id.NAME,
+            property = "type")
+    @JsonSubTypes({
+            @JsonSubTypes.Type(value = HotelRoomDetails.class, name = "hotelRoom"),
+    })
+    static abstract class ItemDetails {
+        int capacity;
+        String location;
+
+        void fill(Item item) {
             item.setCapacity(capacity);
             item.setLocation(location);
-            return item;
+        }
+    }
+
+    @Data
+    static class HotelRoomDetails extends ItemDetails{
+        OffsetTime hotelHourStart;
+        OffsetTime hotelHourEnd;
+
+        void fill(Item item) {
+            super.fill(item);
+            item.setHotelHourEnd(hotelHourStart);
+            item.setHotelHourEnd(hotelHourEnd);
+            item.setType("HotelRoom");
         }
     }
 }
