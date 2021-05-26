@@ -1,19 +1,16 @@
 package com.allaroundjava.booking.common.events;
 
 import lombok.AllArgsConstructor;
-import lombok.Value;
+import lombok.Getter;
 
 import java.time.Instant;
 import java.util.UUID;
 
-@Value
+@Getter
 @AllArgsConstructor
-public class ItemCreatedEvent implements DomainEvent{
-    UUID eventId;
-    Instant created;
-    UUID subjectId;
-
-    public static ItemCreatedEvent now(UUID subjectId) {
-        return new ItemCreatedEvent(UUID.randomUUID() , Instant.now(), subjectId);
-    }
+public abstract class ItemCreatedEvent implements DomainEvent{
+    protected UUID eventId;
+    protected Instant created;
+    protected UUID subjectId;
 }
+

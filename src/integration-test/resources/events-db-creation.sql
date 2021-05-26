@@ -4,7 +4,9 @@ CREATE TABLE IF NOT EXISTS Events
     type      VARCHAR(100) NOT NULL,
     created   DATETIME     NOT NULL,
     published BOOLEAN      NOT NULL,
-    subjectId VARCHAR(100) NOT NULL
+    subjectId VARCHAR(100) NOT NULL,
+    hotelHourStart TIME NULL,
+    hotelHourEnd TIME NULL
 );
 
 CREATE TABLE IF NOT EXISTS Owners

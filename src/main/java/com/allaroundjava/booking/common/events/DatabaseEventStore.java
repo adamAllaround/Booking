@@ -10,13 +10,12 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import java.time.Instant;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.time.OffsetTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.allaroundjava.booking.common.events.DatabaseEventStore.EventDatabaseEntity.EventType.OwnerCreated;
-import static com.allaroundjava.booking.common.events.DatabaseEventStore.EventDatabaseEntity.EventType.ItemCreated;
+import static com.allaroundjava.booking.common.events.DatabaseEventStore.EventDatabaseEntity.EventType.HotelRoomCreated;
 
 @AllArgsConstructor
 public class DatabaseEventStore implements EventStore {
@@ -28,8 +27,10 @@ public class DatabaseEventStore implements EventStore {
         if (domainEvent instanceof OwnerCreatedEvent) {
             insert(domainEvent.getEventId(), domainEvent.getCreated(), domainEvent.getSubjectId(), OwnerCreated.name());
         }
-        if (domainEvent instanceof ItemCreatedEvent) {
-            insert(domainEvent.getEventId(), domainEvent.getCreated(), domainEvent.getSubjectId(), ItemCreated.name());
+        if (domainEvent instanceof HotelRoomCreatedEvent) {
+            HotelRoomCreatedEvent hotelRoomCreated = (HotelRoomCreatedEvent) domainEvent;
+            insert(hotelRoomCreated.getEventId(), hotelRoomCreated.getCreated(), hotelRoomCreated.getSubjectId(),
+                    HotelRoomCreated.name(), hotelRoomCreated.getHotelHourStart(), hotelRoomCreated.getHotelHourEnd());
         }
     }
 
@@ -40,6 +41,20 @@ public class DatabaseEventStore implements EventStore {
                 "published", false,
                 "subjectId", subjectId);
         jdbcTemplate.update("insert into Events (id, type, created, published, subjectId) values (:id,:type,:created,:published,:subjectId)",
+                params);
+    }
+//TODO refactor - introduce param object
+    private void insert(UUID eventId, Instant created, UUID subjectId, String eventType, OffsetTime hotelHourStart, OffsetTime hotelHourEnd) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", eventId);
+        params.put("type", eventType);
+        params.put("created", created);
+        params.put("published", false);
+        params.put("subjectId", subjectId);
+        params.put("hotelHourStart", hotelHourStart);
+        params.put("hotelHourEnd", hotelHourEnd);
+
+        jdbcTemplate.update("insert into Events (id, type, created, published, subjectId, hotelHourStart, hotelHourEnd) values (:id,:type,:created,:published,:subjectId, :hotelHourStart, :hotelHourEnd)",
                 params);
     }
 
@@ -69,7 +84,7 @@ public class DatabaseEventStore implements EventStore {
 
         enum EventType {
             OwnerCreated,
-            ItemCreated
+            HotelRoomCreated
         }
 
         private UUID id;
@@ -77,17 +92,18 @@ public class DatabaseEventStore implements EventStore {
         private Instant created;
         private boolean published;
         private UUID subjectId;
+        private OffsetTime hotelHourStart;
+        private OffsetTime hotelHourEnd;
 
         DomainEvent toDomainEvent() {
             switch (type) {
                 case OwnerCreated:
                     return new OwnerCreatedEvent(id, created, subjectId);
-                case ItemCreated:
-                    return new ItemCreatedEvent(id, created, subjectId);
+                case HotelRoomCreated:
+                    return new HotelRoomCreatedEvent(id, created, subjectId, hotelHourStart, hotelHourEnd);
                 default:
                     throw new IllegalArgumentException("Unknown event type");
             }
         }
-
     }
 }
