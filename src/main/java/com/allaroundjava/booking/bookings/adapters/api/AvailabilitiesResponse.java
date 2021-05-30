@@ -1,6 +1,6 @@
 package com.allaroundjava.booking.bookings.adapters.api;
 
-import com.allaroundjava.booking.bookings.domain.model.Availabilities;
+import com.allaroundjava.booking.bookings.domain.model.Availability;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -13,8 +13,10 @@ import java.util.stream.Collectors;
 class AvailabilitiesResponse {
     Collection<AvailabilityResponse> availabilities;
 
-    static AvailabilitiesResponse from(Availabilities availabilities) {
-        List<AvailabilityResponse> result = availabilities.map(AvailabilityResponse::from).collect(Collectors.toList());
+    static AvailabilitiesResponse from(List<Availability> availabilities) {
+        List<AvailabilityResponse> result = availabilities.stream()
+                .map(AvailabilityResponse::from)
+                .collect(Collectors.toList());
         return new AvailabilitiesResponse(result);
     }
 }
