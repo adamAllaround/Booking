@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NonNull;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @Getter
 public class Interval {
@@ -24,5 +25,11 @@ public class Interval {
 
     boolean covers(Interval interval) {
         return start.equals(interval.getStart()) && end.equals(interval.getEnd());
+    }
+
+    Interval plusDays(int days) {
+        Instant newStart = start.plus(1, ChronoUnit.DAYS);
+        Instant newEnd = end.plus(1, ChronoUnit.DAYS);
+        return new Interval(newStart, newEnd);
     }
 }

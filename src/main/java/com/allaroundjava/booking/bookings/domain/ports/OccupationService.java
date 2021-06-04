@@ -12,7 +12,7 @@ import java.util.UUID;
 public class OccupationService {
     private final OccupationRepository occupationRepository;
 
-    public Either<OccupationEvent.AddAvailabilityFailure, OccupationEvent.AddAvailabilitySuccess> addAvailability(UUID itemId, Availability availability) {
+    public Either<OccupationEvent.AddAvailabilityFailure, OccupationEvent.AddAvailabilitySuccess> addAvailabilities(UUID itemId, Availability availability) {
         Occupation occupation = occupationRepository.findById(itemId);
         return occupation.addAvailability(itemId, availability.getInterval());
     }

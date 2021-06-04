@@ -28,7 +28,7 @@ class OccupationAvailabilityTest extends Specification {
         Occupation occupation = withAvailabilityBetween(march(13).hour(16), march(14).hour(16))
 
         when:
-        def result = occupation.addAvailability(ITEM_ID, new Interval(march(10).hour(12), march(14).hour(12)))
+        def result = occupation.addAvailability(ITEM_ID, new Interval(march(13).hour(12), march(14).hour(12)))
 
         then:
         failure(result)
@@ -39,10 +39,10 @@ class OccupationAvailabilityTest extends Specification {
         Occupation occupation = emptyOccupation()
 
         and:
-        def addResult = occupation.addAvailability(ITEM_ID, new Interval(march(10).hour(12), march(10).hour(13)))
+        def addResult = occupation.addAvailability(ITEM_ID, new Interval(march(10).hour(12), march(11).hour(13)))
 
         when:
-        def result = occupation.removeAvailability(addResult.map({ success -> success.availability }).get())
+        def result = occupation.removeAvailability(addResult.map({ success -> success.availabilityList }).get().get(0))
 
         then:
         success(result)
@@ -64,11 +64,11 @@ class OccupationAvailabilityTest extends Specification {
         Occupation occupation = emptyOccupation()
 
         and:
-        occupation.addAvailability(ITEM_ID, new Interval(march(10).hour(12), march(13).hour(13))).get().availability
-        def toRemove = occupation.addAvailability(ITEM_ID, new Interval(march(13).hour(14), march(14).hour(15))).get().availability
+        occupation.addAvailability(ITEM_ID, new Interval(march(10).hour(12), march(13).hour(13))).get().availabilityList
+        def toRemove = occupation.addAvailability(ITEM_ID, new Interval(march(13).hour(14), march(14).hour(15))).get().availabilityList
 
         when:
-        def result = occupation.removeAvailability(toRemove)
+        def result = occupation.removeAvailability(toRemove.get(0))
 
         then:
         success(result)

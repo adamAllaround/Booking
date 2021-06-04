@@ -9,6 +9,7 @@ import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository;
 import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -43,13 +44,13 @@ public class OccupationDatabaseRepository implements OccupationRepository {
                 .map(BookingDatabaseEntity::toModel)
                 .collect(Collectors.toList());
 
-        return new Occupation(new Item(id), bookings, Availabilities.from(item.getItemType(), item.getHotelHourStart(), item.getHotelHourEnd(), availabilities));
+        return new Occupation(id, bookings, Availabilities.from(item.getItemType(), item.getHotelHourStart(), item.getHotelHourEnd(), availabilities));
     }
 
     @Override
     public void handle(OccupationEvent event) {
         if (event instanceof AddAvailabilitySuccess) {
-            saveNewAvailability((AddAvailabilitySuccess) event);
+            saveNewAvailabilities((AddAvailabilitySuccess) event);
         }
         if (event instanceof RemoveAvailabilitySuccess) {
             removeAvailability((RemoveAvailabilitySuccess) event);
@@ -63,13 +64,24 @@ public class OccupationDatabaseRepository implements OccupationRepository {
         }
     }
 
-    private void saveNewAvailability(AddAvailabilitySuccess event) {
-        Availability availability = event.getAvailability();
-        ImmutableMap<String, Object> params = ImmutableMap.of("id", availability.getId(),
+    private void saveNewAvailabilities(AddAvailabilitySuccess event) {
+        List<Availability> availabilities = event.getAvailabilityList();
+
+        jdbcTemplate.batchUpdate("insert into Availabilities (id, itemId, start, end) values (:id,:itemId, :start, :end);",
+                batchInsertParams(availabilities));
+    }
+
+    private MapSqlParameterSource[] batchInsertParams(List<Availability> availabilities) {
+        return availabilities.stream()
+                .map(this::toInsertParams)
+                .toArray(MapSqlParameterSource[]::new);
+    }
+
+    private MapSqlParameterSource toInsertParams(Availability availability) {
+        return new MapSqlParameterSource(ImmutableMap.of("id", availability.getId(),
                 "itemId", availability.getItemId(),
                 "start", OffsetDateTime.ofInstant(availability.getStart(), ZoneOffset.UTC),
-                "end", OffsetDateTime.ofInstant(availability.getEnd(), ZoneOffset.UTC));
-        jdbcTemplate.update("insert into Availabilities (id, itemId, start, end) values (:id,:itemId, :start, :end);", params);
+                "end", OffsetDateTime.ofInstant(availability.getEnd(), ZoneOffset.UTC)));
     }
 
     private void removeAvailability(RemoveAvailabilitySuccess event) {

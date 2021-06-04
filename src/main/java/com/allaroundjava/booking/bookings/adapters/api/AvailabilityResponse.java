@@ -3,9 +3,11 @@ package com.allaroundjava.booking.bookings.adapters.api;
 import com.allaroundjava.booking.bookings.domain.model.Availability;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.UUID;
 
 @Data

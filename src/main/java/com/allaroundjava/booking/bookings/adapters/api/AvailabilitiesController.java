@@ -22,17 +22,19 @@ class AvailabilitiesController {
     }
 
     @PostMapping("/{itemId}/availabilities")
-    ResponseEntity<AvailabilityResponse> addAvailability(@PathVariable UUID itemId, @RequestBody AvailabilityRequest request) {
-        Optional<AvailabilityResponse> response = occupation.save(itemId, request);
-        return response.map(resp -> ResponseEntity.created(getUri(resp)).body(resp))
+    ResponseEntity<AvailabilitiesResponse> addAvailability(@PathVariable UUID itemId, @RequestBody AvailabilityRequest request) {
+        Optional<AvailabilitiesResponse> response = occupation.save(itemId, request);
+        return response.map(resp -> ResponseEntity.created(getUri()).body(resp))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-    private URI getUri(AvailabilityResponse response) {
+    private URI getUri() {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(response.getId())
+                .build()
                 .toUri();
+//        This is not quite according to HTTP standard as we're not returning a location of created resource
+//        but since we're creating multiple we're accepting that we're returning items with ids in response
+//        together with a path to list all availabilities for given item
     }
 }

@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.Value;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 public interface OccupationEvent extends DomainEvent {
@@ -28,7 +29,7 @@ public interface OccupationEvent extends DomainEvent {
         UUID eventId = UUID.randomUUID();
         Instant created = Instant.now();
         @NonNull UUID itemId;
-        @NonNull Availability availability;
+        @NonNull List<Availability> availabilityList;
     }
 
     @Value

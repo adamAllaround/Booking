@@ -11,9 +11,9 @@ import java.util.UUID;
 @AllArgsConstructor
 class OccupationFacade {
     private final OccupationService occupationService;
-    public Optional<AvailabilityResponse> save(UUID itemId, AvailabilityRequest request) {
-        return occupationService.addAvailability(itemId, request.toDomainWithItemId(itemId))
-                .map(success -> AvailabilityResponse.from(success.getAvailability()))
+    public Optional<AvailabilitiesResponse> save(UUID itemId, AvailabilityRequest request) {
+        return occupationService.addAvailabilities(itemId, request.toDomainWithItemId(itemId))
+                .map(success -> AvailabilitiesResponse.from(success.getAvailabilityList()))
                 .map(Optional::of)
                 .getOrElse(Optional::empty);
     }
