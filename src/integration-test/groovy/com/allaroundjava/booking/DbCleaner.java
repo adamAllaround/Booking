@@ -10,4 +10,8 @@ public class DbCleaner {
     public void cleanAvailabilities() {
         jdbcTemplate.update("DELETE FROM Availabilities");
     }
+
+    public void cleanItems() {
+        jdbcTemplate.update("DELETE FROM OccupationItems");
+    }
 }

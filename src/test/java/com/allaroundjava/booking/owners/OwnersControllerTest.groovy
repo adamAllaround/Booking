@@ -13,10 +13,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class OwnersControllerTest extends Specification {
+    private static final UUID OWNER_ID = UUID.randomUUID()
     private OwnersService ownersService = Mock()
     private OwnersController ownersController
     private MockMvc mockMvc
-    private Owner owner = new Owner(id: 1, name: "Josh", contact: "56603982")
+    private Owner owner = new Owner(id: OWNER_ID, name: "Josh", contact: "56603982")
 
     void setup() {
         ownersController = new OwnersController(ownersService)
@@ -35,17 +36,17 @@ class OwnersControllerTest extends Specification {
 
     def "Get single owner when owner found"() {
         when: "Owner is returned by repository"
-        ownersService.getSingle(1L) >> Optional.of(owner)
+        ownersService.getSingle(OWNER_ID) >> Optional.of(owner)
 
         then: "Expecting http 200"
-        mockMvc.perform(get("/owners/1").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/owners/${OWNER_ID}").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(HttpStatus.OK.value()))
                 .andExpect(content().string(containsString("Josh")))
     }
 
     def "Get single owner when owner not present"() {
         when: "Owner is returned by repository"
-        ownersService.getSingle(1L) >> Optional.empty()
+        ownersService.getSingle(OWNER_ID) >> Optional.empty()
 
         then: "Expecting http 200"
         mockMvc.perform(get("/owners/1").contentType(MediaType.APPLICATION_JSON))

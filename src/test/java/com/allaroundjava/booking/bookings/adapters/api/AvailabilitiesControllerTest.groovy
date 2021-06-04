@@ -48,7 +48,7 @@ class AvailabilitiesControllerTest extends Specification {
         def availabilityResponse = new AvailabilityResponse(UUID.randomUUID(), itemId,
                 OffsetDateTime.of(LocalDateTime.of(2020, 5, 21, 10, 0, 0), ZoneOffset.UTC), OffsetDateTime.of(LocalDateTime.of(2020, 5, 21, 11, 0, 0), ZoneOffset.UTC))
         when:
-        occupationFacade.save(itemId, _ as AvailabilityRequest) >> Optional.of(availabilityResponse)
+        occupationFacade.save(itemId, _ as AvailabilityRequest) >> Optional.of(new AvailabilitiesResponse([availabilityResponse]))
 
         then:
         mockMvc.perform(post("/items/${itemId}/availabilities").contentType(MediaType.APPLICATION_JSON)

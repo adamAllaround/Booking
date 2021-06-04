@@ -4,7 +4,10 @@ import com.allaroundjava.booking.DbCleaner
 import com.allaroundjava.booking.IntegrationTestConfig
 import com.allaroundjava.booking.bookings.config.BookingsConfig
 import com.allaroundjava.booking.bookings.domain.model.Availability
+import com.allaroundjava.booking.bookings.domain.model.Dates2020
+import com.allaroundjava.booking.bookings.domain.model.ItemType
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent
+import com.allaroundjava.booking.bookings.domain.ports.ItemsRepository
 import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -15,6 +18,7 @@ import org.springframework.http.HttpStatus
 import spock.lang.Specification
 
 import java.time.OffsetDateTime
+import java.time.OffsetTime
 import java.time.ZoneOffset
 
 import static com.allaroundjava.booking.bookings.domain.model.AvailabilityFixture.*
@@ -28,6 +32,9 @@ class AvailabilitiesIntegrationTest extends Specification {
     private OccupationRepository occupationRepository
 
     @Autowired
+    private ItemsRepository itemsRepository
+
+    @Autowired
     private TestRestTemplate testRestTemplate
 
     @Autowired
@@ -35,6 +42,7 @@ class AvailabilitiesIntegrationTest extends Specification {
 
     void cleanup() {
         dbCleaner.cleanAvailabilities()
+        dbCleaner.cleanItems()
     }
 
     def "Should return all item availabilities"() {
@@ -65,7 +73,13 @@ class AvailabilitiesIntegrationTest extends Specification {
     }
 
     private existsAvailability(Availability availability) {
-        occupationRepository.handle(new OccupationEvent.AddAvailabilitySuccess(ITEM_ID, availability))
+        itemsRepository.saveNew(ITEM_ID,
+                Dates2020.may(20).hour(12),
+                ItemType.HotelRoom,
+                OffsetTime.of(15, 0, 0, 0, ZoneOffset.UTC),
+                OffsetTime.of(10, 0, 0, 0, ZoneOffset.UTC))
+
+        occupationRepository.handle(new OccupationEvent.AddAvailabilitySuccess(ITEM_ID, [availability]))
     }
 
     HttpEntity<AvailabilityRequest> may11AvailabilityRequest() {
