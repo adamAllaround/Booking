@@ -13,10 +13,11 @@ import java.util.UUID;
 
 @AllArgsConstructor
 public abstract class Availabilities {
+    protected final UUID itemId;
     protected final List<Availability> availabilities;
 
-    public static Availabilities from(ItemType itemType, OffsetTime hotelHourStart, OffsetTime hotelHourEnd, List<Availability> availabilities) {
-        return new HotelAvailabilities(availabilities, hotelHourStart, hotelHourEnd);
+    public static Availabilities from(Item item, List<Availability> availabilities) {
+        return new HotelAvailabilities(item.getId(), availabilities, item.getHotelHourStart(), item.getHotelHourEnd());
     }
 
     abstract Optional<List<Availability>> tryAdd(Interval interval);
@@ -30,6 +31,5 @@ public abstract class Availabilities {
                 .filter(avail -> avail.covers(interval))
                 .findFirst();
     }
-
 }
 

@@ -27,9 +27,10 @@ public class OccupationDatabaseRepository implements OccupationRepository {
     @Override
     public Occupation findById(UUID id) {
         ImmutableMap<String, UUID> params = ImmutableMap.of("id", id);
-        ItemDatabaseEntity item = jdbcTemplate.queryForObject("SELECT i.* from OccupationItems i where id=:id",
+        Item item = jdbcTemplate.queryForObject("SELECT i.* from OccupationItems i where id=:id",
                 params,
-                new BeanPropertyRowMapper<>(ItemDatabaseEntity.class));
+                new BeanPropertyRowMapper<>(ItemDatabaseEntity.class))
+                .toModel();
 
         List<Availability> availabilities = jdbcTemplate.query("select a.* from Availabilities a where a.itemId=:id",
                 params,
@@ -44,7 +45,7 @@ public class OccupationDatabaseRepository implements OccupationRepository {
                 .map(BookingDatabaseEntity::toModel)
                 .collect(Collectors.toList());
 
-        return new Occupation(id, bookings, Availabilities.from(item.getItemType(), item.getHotelHourStart(), item.getHotelHourEnd(), availabilities));
+        return new Occupation(id, bookings, Availabilities.from(item, availabilities));
     }
 
     @Override

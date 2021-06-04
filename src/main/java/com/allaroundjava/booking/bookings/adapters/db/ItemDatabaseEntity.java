@@ -17,6 +17,6 @@ class ItemDatabaseEntity {
     OffsetTime hotelHourEnd;
 
     Item toModel() {
-        return new Item(this.id);
+        return new Item(this.id, this.itemType, this.hotelHourStart, this.hotelHourEnd);
     }
 }

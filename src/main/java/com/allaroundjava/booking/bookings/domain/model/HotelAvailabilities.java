@@ -14,8 +14,8 @@ class HotelAvailabilities extends Availabilities {
     private final OffsetTime hotelHourStart;
     private final OffsetTime hotelHourEnd;
 
-    public HotelAvailabilities(List<Availability> availabilities, OffsetTime hotelHourStart, OffsetTime hotelHourEnd) {
-        super(availabilities);
+    public HotelAvailabilities(UUID itemId, List<Availability> availabilities, OffsetTime hotelHourStart, OffsetTime hotelHourEnd) {
+        super(itemId, availabilities);
         this.hotelHourStart = hotelHourStart;
         this.hotelHourEnd = hotelHourEnd;
     }
@@ -23,8 +23,7 @@ class HotelAvailabilities extends Availabilities {
     @Override
     Optional<List<Availability>> tryAdd(Interval interval) {
         Instant intervalAtHotelStart = atHotelStart(interval.getStart());
-        Instant intervalAtNextDayHotelEnd = atHotelEnd(intervalAtHotelStart.atZone(ZoneOffset.UTC)
-                .plus(1, ChronoUnit.DAYS).toInstant());
+        Instant intervalAtNextDayHotelEnd = atHotelEnd(nextDay(intervalAtHotelStart));
 
         Instant lastDayEndAtHotelHour = atHotelEnd(interval.getEnd());
 
@@ -42,7 +41,7 @@ class HotelAvailabilities extends Availabilities {
 
         while (!seek.getEnd().isAfter(lastDayEndAtHotelHour)) {
             if (!overlaps(seek)) {
-                newAvailabilities.add(Availability.from(UUID.randomUUID(), seek));
+                newAvailabilities.add(Availability.from(itemId, seek));
             }
             seek = seek.plusDays(1);
         }
@@ -59,6 +58,11 @@ class HotelAvailabilities extends Availabilities {
         return instant.atZone(ZoneOffset.UTC)
                 .withHour(hotelHourEnd.getHour())
                 .toInstant();
+    }
+
+    private Instant nextDay(Instant intervalAtHotelStart) {
+        return intervalAtHotelStart.atZone(ZoneOffset.UTC)
+                .plus(1, ChronoUnit.DAYS).toInstant();
     }
 
     private boolean overlaps(Interval seek) {

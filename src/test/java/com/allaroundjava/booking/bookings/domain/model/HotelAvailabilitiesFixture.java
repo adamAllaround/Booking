@@ -8,18 +8,19 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 class HotelAvailabilitiesFixture {
+    static final UUID ITEM_ID = UUID.randomUUID();
     static final OffsetTime STANDARD_HOTEL_START = OffsetTime.of(15, 0, 0, 0, ZoneOffset.UTC);
     static final OffsetTime STANDARD_HOTEL_END = OffsetTime.of(10, 0, 0, 0, ZoneOffset.UTC);
 
     public static Availabilities standardEmpty() {
-        return new HotelAvailabilities(new ArrayList<>(), STANDARD_HOTEL_START, STANDARD_HOTEL_END);
+        return new HotelAvailabilities(ITEM_ID, new ArrayList<>(), STANDARD_HOTEL_START, STANDARD_HOTEL_END);
     }
 
     public static Availabilities withExistingIntervals(Collection<Interval> intervals) {
         List<Availability> availabilities = intervals.stream()
                 .map(HotelAvailabilitiesFixture::availabilityFromInterval)
                 .collect(Collectors.toList());
-        return new HotelAvailabilities(availabilities, STANDARD_HOTEL_START, STANDARD_HOTEL_END);
+        return new HotelAvailabilities(ITEM_ID, availabilities, STANDARD_HOTEL_START, STANDARD_HOTEL_END);
     }
 
     public static Availabilities withExistingInterval(Interval interval) {
