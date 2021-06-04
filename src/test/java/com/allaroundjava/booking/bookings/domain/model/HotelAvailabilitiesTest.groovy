@@ -84,8 +84,7 @@ class HotelAvailabilitiesTest extends Specification {
         def result = availabilities.tryAdd(new Interval(may(20).hour(13), may(21).hour(12)))
 
         then:
-        result.isPresent()
-        result.get().isEmpty()
+        !result.isPresent()
     }
 
     void isStandardHotelNightAvailabilityOn(Availability availability, int startDay) {
