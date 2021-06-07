@@ -37,4 +37,8 @@ class HotelAvailabilitiesFixture {
 
         return new Availability(UUID.randomUUID(), UUID.randomUUID(), new Interval(startDateTime.toInstant(), endDateTime.toInstant()));
     }
+
+    public static Availabilities withConcreteAvailabilityList(List<Availability> availabilities) {
+        return new HotelAvailabilities(ITEM_ID, availabilities, STANDARD_HOTEL_START, STANDARD_HOTEL_END);
+    }
 }

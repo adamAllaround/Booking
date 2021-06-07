@@ -5,8 +5,9 @@ import io.vavr.control.Either;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.allaroundjava.booking.common.CommandResult.announceFailure;
 import static com.allaroundjava.booking.common.CommandResult.announceSuccess;
@@ -26,23 +27,32 @@ public class Occupation {
     }
 
     Either<RemoveAvailabilityFailure, RemoveAvailabilitySuccess> removeAvailability(Availability availability) {
-        if(availabilities.remove(availability)) {
+        if (availabilities.remove(availability)) {
             return announceSuccess(new RemoveAvailabilitySuccess(itemId, availability));
         }
 
         return announceFailure(new RemoveAvailabilityFailure(itemId, availability.getId(), "Availability does not exist"));
     }
 
-    public Either<BookingFailure, OccupationEvent.BookingSuccess> addBooking(Interval interval) {
-        Optional<Availability> availability = availabilities.findCovering(interval);
+    public Either<BookingFailure, OccupationEvent.BookingSuccess> addBooking(Booking booking) {
 
-        if (availability.isEmpty()) {
-            return announceFailure(new BookingFailure(itemId, interval, "Could not find suitable availability"));
+        Set<Availability> coveringAvailabilities = availabilities.getAllByIds(booking.getAvailabilityIds());
+
+        if (coveringAvailabilities.isEmpty()) {
+            return announceFailure(new BookingFailure(itemId, booking.getInterval(), "Could not find suitable availability"));
         }
 
-        Booking booking = Booking.from(availability.get());
-        bookings.add(booking);
-        availabilities.remove(availability.get());
+        if(coveringAvailabilities.stream().anyMatch(Availability::isBooked)){
+            return announceFailure(new BookingFailure(itemId, booking.getInterval(), "Cannot add booking to cover booked availability"));
+        }
+
+        Set<BookedAvailability> bookedAvailabilities = coveringAvailabilities.stream()
+                .map(availability -> availability.book(booking.getId()))
+                .collect(Collectors.toSet());
+
+        coveringAvailabilities.forEach(availabilities::remove);
+        availabilities.addAll(bookedAvailabilities);
+
         return announceSuccess(new BookingSuccess(itemId, booking));
     }
 

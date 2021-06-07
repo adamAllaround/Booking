@@ -1,12 +1,14 @@
 package com.allaroundjava.booking.bookings.domain.model;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import lombok.Value;
+import lombok.Getter;
 
 import java.time.Instant;
 import java.util.UUID;
 
-@Value
+@AllArgsConstructor
+@Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Availability {
     @EqualsAndHashCode.Include
@@ -15,7 +17,7 @@ public class Availability {
     Interval interval;
 
     public static Availability from(UUID itemId, Interval interval) {
-        return new Availability(UUID.randomUUID(),itemId,  interval);
+        return new Availability(UUID.randomUUID(), itemId, interval);
     }
 
     static Availability from(Booking booking) {
@@ -40,5 +42,32 @@ public class Availability {
 
     public Instant getEnd() {
         return interval.getEnd();
+    }
+
+    public boolean isBooked() {
+        return false;
+    }
+
+    public BookedAvailability book(UUID bookingId) {
+        return new BookedAvailability(id, itemId, interval, bookingId);
+    }
+}
+
+class BookedAvailability extends Availability {
+    UUID bookingId;
+
+    public BookedAvailability(UUID id, UUID itemId, Interval interval, UUID bookingId) {
+        super(id, itemId, interval);
+        this.bookingId = bookingId;
+    }
+
+    @Override
+    public boolean isBooked() {
+        return true;
+    }
+
+    @Override
+    public BookedAvailability book(UUID bookingId) {
+        throw new IllegalStateException("Cannot book already booked availability");
     }
 }

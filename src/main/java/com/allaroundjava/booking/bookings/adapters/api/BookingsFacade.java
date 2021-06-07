@@ -16,8 +16,4 @@ class BookingsFacade {
 
         return BookingsResponse.from(bookings);
     }
-
-    Optional<BookingResponse> save(UUID itemId, BookingRequest request) {
-        return Optional.empty();
-    }
 }

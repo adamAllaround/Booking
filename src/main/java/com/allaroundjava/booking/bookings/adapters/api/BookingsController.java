@@ -14,14 +14,16 @@ import java.util.UUID;
 @AllArgsConstructor
 class BookingsController {
     private final BookingsFacade bookingsFacade;
+    private final OccupationFacade occupation;
+
     @GetMapping("/{itemId}/bookings")
     ResponseEntity<BookingsResponse> getBookings(@PathVariable UUID itemId) {
         return ResponseEntity.ok(bookingsFacade.getAllByItemId(itemId));
     }
 
     @PostMapping("/{itemId}/bookings")
-    ResponseEntity<BookingResponse> addBooking(@PathVariable UUID itemId, @RequestBody BookingRequest request) {
-        Optional<BookingResponse> result = bookingsFacade.save(itemId, request);
+    ResponseEntity<BookingResponse> addBooking(@RequestBody BookingRequest request) {
+        Optional<BookingResponse> result = occupation.saveBooking(request);
         return result.map(resp -> ResponseEntity.created(getUri(resp)).body(resp))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }

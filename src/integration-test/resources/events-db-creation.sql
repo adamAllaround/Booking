@@ -49,7 +49,8 @@ CREATE TABLE IF NOT EXISTS Availabilities
     id     VARCHAR(100) PRIMARY KEY,
     itemId VARCHAR(100) NOT NULL,
     start  DATETIME     NOT NULL,
-    end    DATETIME     NOT NULL
+    end    DATETIME     NOT NULL,
+    bookingId VARCHAR(100) NULL
 );
 
 CREATE TABLE IF NOT EXISTS Bookings
