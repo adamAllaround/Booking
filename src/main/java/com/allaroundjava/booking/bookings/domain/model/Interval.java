@@ -28,8 +28,16 @@ public class Interval {
     }
 
     Interval plusDays(int days) {
-        Instant newStart = start.plus(1, ChronoUnit.DAYS);
-        Instant newEnd = end.plus(1, ChronoUnit.DAYS);
+        Instant newStart = start.plus(days, ChronoUnit.DAYS);
+        Instant newEnd = end.plus(days, ChronoUnit.DAYS);
         return new Interval(newStart, newEnd);
+    }
+
+    Interval expand(Interval interval) {
+        if (start.isBefore(interval.start)) {
+            return new Interval(start, interval.end);
+        } else {
+            return new Interval(interval.start, end);
+        }
     }
 }

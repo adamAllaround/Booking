@@ -17,4 +17,11 @@ class OccupationFacade {
                 .map(Optional::of)
                 .getOrElse(Optional::empty);
     }
+
+    public Optional<BookingResponse> saveBooking(BookingRequest request) {
+        return occupationService.addBooking(request.toDomain())
+                .map(success -> BookingResponse.from(success.getBooking()))
+                .map(Optional::of)
+                .getOrElse(Optional::empty);
+    }
 }

@@ -91,12 +91,23 @@ public class OccupationDatabaseRepository implements OccupationRepository {
     }
 
     private void saveNewBooking(BookingSuccess event) {
-        Booking booking = event.getBooking();
+        insertIntoBooking(event.getBooking());
+        updateAvailabilities(event.getBooking());
+    }
+
+    private void insertIntoBooking(Booking booking) {
         ImmutableMap<String, Object> params = ImmutableMap.of("id", booking.getId(),
                 "itemId", booking.getItemId(),
                 "start", OffsetDateTime.ofInstant(booking.getStart(), ZoneOffset.UTC),
                 "end", OffsetDateTime.ofInstant(booking.getEnd(), ZoneOffset.UTC));
         jdbcTemplate.update("insert into Bookings (id, itemId, start, end) values (:id,:itemId, :start, :end);", params);
+    }
+
+    private void updateAvailabilities(Booking booking) {
+        String availabilityIdStrings = booking.getAvailabilityIds().stream().map(UUID::toString).collect(Collectors.joining(","));
+        ImmutableMap<String, Object> params = ImmutableMap.of("bookingId", booking.getId(),
+                "availabilityIds", availabilityIdStrings);
+        jdbcTemplate.update("UPDATE Availabilities a set a.bookingId=:bookingId where a.id in (:availabilityIds)", params);
     }
 
     private void removeBooking(RemoveBookingSuccess event) {

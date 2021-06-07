@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.UUID;
 
 @Data
@@ -17,6 +19,6 @@ public class BookingDatabaseEntity {
     OffsetDateTime end;
 
     Booking toModel() {
-        return new Booking(id, itemId, new Interval(start.toInstant(), end.toInstant()));
+        return new Booking(id, itemId, new Interval(start.toInstant(), end.toInstant()), new HashSet<>());
     }
 }

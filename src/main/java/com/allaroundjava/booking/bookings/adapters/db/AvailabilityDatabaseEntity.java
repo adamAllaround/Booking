@@ -15,8 +15,13 @@ class AvailabilityDatabaseEntity {
     UUID itemId;
     OffsetDateTime start;
     OffsetDateTime end;
+    UUID bookingId;
 
     Availability toModel() {
-        return new Availability(id, itemId, new Interval(start.toInstant(), end.toInstant()));
+        Availability availability = new Availability(id, itemId, new Interval(start.toInstant(), end.toInstant()));
+        if (bookingId == null) {
+            return availability;
+        }
+        return availability.book(bookingId);
     }
 }

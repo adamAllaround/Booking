@@ -6,10 +6,8 @@ import java.time.Instant;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public abstract class Availabilities {
@@ -30,6 +28,16 @@ public abstract class Availabilities {
         return availabilities.stream()
                 .filter(avail -> avail.covers(interval))
                 .findFirst();
+    }
+
+    Set<Availability> getAllByIds(Set<UUID> availabilityIds) {
+        return availabilities
+                .stream()
+                .filter(availability -> availabilityIds.contains(availability.getId())).collect(Collectors.toUnmodifiableSet());
+    }
+
+    void addAll(Set<BookedAvailability> bookedAvailabilities) {
+        availabilities.addAll(bookedAvailabilities);
     }
 }
 

@@ -17,6 +17,11 @@ class OccupationFixture {
         return create(itemId, availability)
     }
 
+    static Occupation withConcreteAvailabilities(Availabilities availabilities) {
+        def itemId = UUID.randomUUID()
+        return create(itemId, availabilities)
+    }
+
     static Occupation withBookingBetween(Instant start, Instant end) {
         def itemId = UUID.randomUUID()
         Availabilities availabilities = standardEmpty()
