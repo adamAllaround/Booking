@@ -14,11 +14,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class BookingsControllerTest extends Specification {
     private static final ITEM_ID = UUID.randomUUID()
     private BookingsFacade bookingsFacade = Mock()
+    private OccupationFacade occupationFacade = Mock()
     private BookingsController controller
     private MockMvc mockMvc
 
     void setup() {
-        controller = new BookingsController(bookingsFacade)
+        controller = new BookingsController(bookingsFacade, occupationFacade)
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build()
     }
 
@@ -38,7 +39,7 @@ class BookingsControllerTest extends Specification {
         def bookingId = UUID.randomUUID()
 
         when:
-        bookingsFacade.save(ITEM_ID, _ as BookingRequest) >> Optional.of(mockBookingResponse(bookingId))
+        occupationFacade.saveBooking(_ as BookingRequest) >> Optional.of(mockBookingResponse(bookingId))
 
         then:
         mockMvc.perform(post("/items/${ITEM_ID}/bookings").contentType(MediaType.APPLICATION_JSON)
@@ -49,7 +50,7 @@ class BookingsControllerTest extends Specification {
 
     def "Unsuccessful booking add"() {
         when:
-        bookingsFacade.save(ITEM_ID, _ as BookingRequest) >> Optional.empty()
+        occupationFacade.saveBooking(_ as BookingRequest) >> Optional.empty()
 
         then:
         mockMvc.perform(post("/items/${ITEM_ID}/bookings").contentType(MediaType.APPLICATION_JSON)

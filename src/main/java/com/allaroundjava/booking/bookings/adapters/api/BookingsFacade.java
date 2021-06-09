@@ -3,11 +3,12 @@ package com.allaroundjava.booking.bookings.adapters.api;
 import com.allaroundjava.booking.bookings.domain.model.Booking;
 import com.allaroundjava.booking.bookings.domain.ports.BookingsService;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
+@Component
 @AllArgsConstructor
 class BookingsFacade {
     private final BookingsService bookingsService;
