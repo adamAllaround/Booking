@@ -18,4 +18,9 @@ public class BookingsConfig {
     OccupationService occupationService(OccupationRepository occupationRepository) {
         return new OccupationService(occupationRepository);
     }
+
+    @Bean
+    BookingsService bookingsService(BookingsRepository bookingsRepository) {
+        return new BookingsService(bookingsRepository);
+    }
 }
