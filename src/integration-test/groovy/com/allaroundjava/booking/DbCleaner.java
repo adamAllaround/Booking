@@ -14,4 +14,8 @@ public class DbCleaner {
     public void cleanItems() {
         jdbcTemplate.update("DELETE FROM OccupationItems");
     }
+
+    public void cleanBookings() {
+        jdbcTemplate.update("DELETE FROM Bookings");
+    }
 }
