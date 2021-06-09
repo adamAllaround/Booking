@@ -20,7 +20,7 @@ class BookingsDatabaseRepository implements BookingsRepository {
     @Override
     public List<Booking> getAllByItemId(UUID itemId) {
         ImmutableMap<String, UUID> params = ImmutableMap.of("itemId", itemId);
-        return jdbcTemplate.query("SELECT b.* FROM Bookimgs b where b.itemId=:itemId",
+        return jdbcTemplate.query("SELECT b.* FROM Bookings b where b.itemId=:itemId",
                 params,
                 new BeanPropertyRowMapper<>(BookingDatabaseEntity.class))
                 .stream()
