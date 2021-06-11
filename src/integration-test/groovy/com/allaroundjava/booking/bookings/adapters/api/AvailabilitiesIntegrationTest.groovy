@@ -7,6 +7,7 @@ import com.allaroundjava.booking.bookings.domain.model.Availability
 import com.allaroundjava.booking.bookings.domain.model.Dates2020
 import com.allaroundjava.booking.bookings.domain.model.ItemType
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent
+import com.allaroundjava.booking.bookings.domain.ports.AvailabilitiesRepository
 import com.allaroundjava.booking.bookings.domain.ports.ItemsRepository
 import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,7 +39,14 @@ class AvailabilitiesIntegrationTest extends Specification {
     private TestRestTemplate testRestTemplate
 
     @Autowired
+    private AvailabilitiesRepository availabilitiesRepository
+
+    @Autowired
     private DbCleaner dbCleaner
+
+    void setup() {
+        addItem()
+    }
 
     void cleanup() {
         dbCleaner.cleanAvailabilities()
@@ -66,24 +74,55 @@ class AvailabilitiesIntegrationTest extends Specification {
         def request = may11AvailabilityRequest()
 
         when:
-        def entity = testRestTemplate.postForEntity(URI.create("/items/${ITEM_ID}/availabilities"), request, AvailabilityResponse)
+        def entity = testRestTemplate.postForEntity(URI.create("/items/${ITEM_ID}/availabilities"), request, AvailabilitiesResponse)
 
         then:
         entity.statusCode == HttpStatus.CREATED
+
+        and:
+        availabilitiesExistInDb(entity.body.availabilities*.id)
     }
 
-    private existsAvailability(Availability availability) {
+    def "Should add multiple availabilities"() {
+        given:
+
+        def request = may10toMay12AvailabilityRequest()
+
+        when:
+        def entity = testRestTemplate.postForEntity(URI.create("/items/${ITEM_ID}/availabilities"), request, AvailabilitiesResponse)
+
+        then:
+        entity.statusCode == HttpStatus.CREATED
+
+        and:
+        availabilitiesExistInDb(entity.body.availabilities*.id)
+    }
+
+    private addItem() {
         itemsRepository.saveNew(ITEM_ID,
                 Dates2020.may(20).hour(12),
                 ItemType.HotelRoom,
                 OffsetTime.of(15, 0, 0, 0, ZoneOffset.UTC),
                 OffsetTime.of(10, 0, 0, 0, ZoneOffset.UTC))
+    }
 
+    private existsAvailability(Availability availability) {
         occupationRepository.handle(new OccupationEvent.AddAvailabilitySuccess(ITEM_ID, [availability]))
     }
 
     HttpEntity<AvailabilityRequest> may11AvailabilityRequest() {
         def request = new AvailabilityRequest(start: OffsetDateTime.ofInstant(MAY11.start, ZoneOffset.UTC), end: OffsetDateTime.ofInstant(MAY11.end, ZoneOffset.UTC))
         return new HttpEntity<AvailabilityRequest>(request)
+    }
+
+    HttpEntity<AvailabilityRequest> may10toMay12AvailabilityRequest() {
+        def request = new AvailabilityRequest(start: OffsetDateTime.ofInstant(MAY10.start, ZoneOffset.UTC), end: OffsetDateTime.ofInstant(MAY12.end, ZoneOffset.UTC))
+        return new HttpEntity<AvailabilityRequest>(request)
+    }
+
+    void availabilitiesExistInDb(ArrayList<UUID> uuids) {
+        uuids.forEach({
+            assert availabilitiesRepository.getSingle(it).isPresent()
+        })
     }
 }
