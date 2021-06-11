@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -96,13 +97,14 @@ class ItemsController {
     }
 
     @Data
+    @EqualsAndHashCode(callSuper = true)
     static class HotelRoomDetails extends ItemDetails{
         OffsetTime hotelHourStart;
         OffsetTime hotelHourEnd;
 
         void fill(Item item) {
             super.fill(item);
-            item.setHotelHourEnd(hotelHourStart);
+            item.setHotelHourStart(hotelHourStart);
             item.setHotelHourEnd(hotelHourEnd);
             item.setType("HotelRoom");
         }
