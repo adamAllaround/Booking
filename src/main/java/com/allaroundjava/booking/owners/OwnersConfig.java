@@ -17,8 +17,8 @@ public class OwnersConfig {
         return new OwnersService(ownersRepository, eventPublisher);
     }
 
-    @Bean
-    OwnersController ownersController(OwnersService ownersService) {
-        return new OwnersController(ownersService);
-    }
+//    @Bean
+//    OwnersController ownersController(OwnersService ownersService) {
+//        return new OwnersController(ownersService);
+//    }
 }

@@ -29,8 +29,8 @@ public class ItemsConfig {
         return new OwnerCreatedEventHandler(ownersRepository);
     }
 
-    @Bean
-    ItemsController itemsController(ItemsService itemsService) {
-        return new ItemsController(itemsService);
-    }
+//    @Bean
+//    ItemsController itemsController(ItemsService itemsService) {
+//        return new ItemsController(itemsService);
+//    }
 }
