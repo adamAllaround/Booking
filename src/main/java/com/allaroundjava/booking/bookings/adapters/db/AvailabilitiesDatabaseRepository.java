@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,5 +45,17 @@ class AvailabilitiesDatabaseRepository implements AvailabilitiesRepository {
         return jdbcTemplate.queryForObject("SELECT a.* FROM Availabilities a where a.id=:id",
                 params,
                 new BeanPropertyRowMapper<>(AvailabilityDatabaseEntity.class));
+    }
+
+    @Override
+    public List<Availability> getAllByIds(Collection<UUID> ids) {
+        ImmutableMap<String, Object> params = ImmutableMap.of("availabilityIds", ids);
+
+        return jdbcTemplate.query("SELECT a.* FROM Availabilities a where a.id in (:availabilityIds)",
+                params,
+                new BeanPropertyRowMapper<>(AvailabilityDatabaseEntity.class))
+                .stream()
+                .map(AvailabilityDatabaseEntity::toModel)
+                .collect(Collectors.toList());
     }
 }

@@ -7,6 +7,8 @@ import com.allaroundjava.booking.bookings.domain.model.Availability
 import com.allaroundjava.booking.bookings.domain.model.Dates2020
 import com.allaroundjava.booking.bookings.domain.model.ItemType
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent
+import com.allaroundjava.booking.bookings.domain.ports.AvailabilitiesRepository
+import com.allaroundjava.booking.bookings.domain.ports.BookingsRepository
 import com.allaroundjava.booking.bookings.domain.ports.ItemsRepository
 import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,6 +38,12 @@ class BookingIntegrationTest extends Specification {
 
     @Autowired
     private OccupationRepository occupationRepository
+
+    @Autowired
+    private BookingsRepository bookingsRepository
+
+    @Autowired
+    private AvailabilitiesRepository availabilitiesRepository
 
     @Autowired
     private DbCleaner dbCleaner
@@ -71,6 +79,12 @@ class BookingIntegrationTest extends Specification {
 
         then:
         response.statusCode == HttpStatus.CREATED
+
+        and:
+        bookingExistsInDatabase(response.body.id)
+
+        and:
+        availabilitiesMarkedBooked([MAY10])
     }
 
     def "Should add booking on multiple availabilities"() {
@@ -84,6 +98,12 @@ class BookingIntegrationTest extends Specification {
 
         then:
         response.statusCode == HttpStatus.CREATED
+
+        and:
+        bookingExistsInDatabase(response.body.id)
+
+        and:
+        availabilitiesMarkedBooked([MAY10,MAY11])
 
     }
 
@@ -123,5 +143,16 @@ class BookingIntegrationTest extends Specification {
                 availabilities: availabilities*.id
         )
         return new HttpEntity<BookingRequest>(request)
+    }
+
+    void bookingExistsInDatabase(UUID uuid) {
+        assert bookingsRepository.getSingle(uuid).isPresent()
+    }
+
+    void availabilitiesMarkedBooked(Collection<Availability> availabilities) {
+        availabilitiesRepository.getAllByIds(availabilities*.id).forEach({
+            println "availability ${it.id} is ${it.booked}"
+            assert it.booked
+        })
     }
 }
