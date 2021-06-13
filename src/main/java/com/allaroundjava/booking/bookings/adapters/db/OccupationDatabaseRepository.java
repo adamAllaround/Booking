@@ -104,9 +104,8 @@ public class OccupationDatabaseRepository implements OccupationRepository {
     }
 
     private void updateAvailabilities(Booking booking) {
-        String availabilityIdStrings = booking.getAvailabilityIds().stream().map(UUID::toString).collect(Collectors.joining(","));
         ImmutableMap<String, Object> params = ImmutableMap.of("bookingId", booking.getId(),
-                "availabilityIds", availabilityIdStrings);
+                "availabilityIds", booking.getAvailabilityIds());
         jdbcTemplate.update("UPDATE Availabilities a set a.bookingId=:bookingId where a.id in (:availabilityIds)", params);
     }
 
