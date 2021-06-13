@@ -24,13 +24,7 @@ public abstract class Availabilities {
         return availabilities.remove(availability);
     }
 
-    Optional<Availability> findCovering(Interval interval) {
-        return availabilities.stream()
-                .filter(avail -> avail.covers(interval))
-                .findFirst();
-    }
-
-    Set<Availability> getAllByIds(Set<UUID> availabilityIds) {
+    Set<Availability> matchingIds(Set<UUID> availabilityIds) {
         return availabilities
                 .stream()
                 .filter(availability -> availabilityIds.contains(availability.getId())).collect(Collectors.toUnmodifiableSet());
