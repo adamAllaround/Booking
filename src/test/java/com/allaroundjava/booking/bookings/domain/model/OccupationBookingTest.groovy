@@ -5,6 +5,8 @@ import spock.lang.Specification
 import java.util.stream.Collectors
 
 import static com.allaroundjava.booking.bookings.domain.model.AvailabilityFixture.*
+import static com.allaroundjava.booking.bookings.domain.model.AvailabilityFixture.MAY10
+import static com.allaroundjava.booking.bookings.domain.model.AvailabilityFixture.MAY12
 import static com.allaroundjava.booking.bookings.domain.model.CommandResult.failure
 import static com.allaroundjava.booking.bookings.domain.model.CommandResult.success
 import static com.allaroundjava.booking.bookings.domain.model.HotelAvailabilitiesFixture.withConcreteAvailabilityList
@@ -53,6 +55,25 @@ class OccupationBookingTest extends Specification {
         success(result)
     }
 
+    def "Cannot add booking that is not continuous availability"() {
+        given:
+        Availabilities availabilities = withConcreteAvailabilityList([MAY10, MAY11, MAY12])
+        Occupation occupation = withConcreteAvailabilities(availabilities)
+
+        when:
+        def result = occupation.addBooking(aBookingFor(MAY11))
+
+        then:
+        success(result)
+
+        when:
+        result = occupation.addBooking(aBookingFor([MAY10, MAY12].toSet()))
+
+        then:
+        failure(result)
+
+    }
+
     def "Cannot add booking in the past"() {
 
     }
@@ -92,32 +113,6 @@ class OccupationBookingTest extends Specification {
         then:
         failure(result)
     }
-
-//    def "Can remove existing booking"() {
-//        given:
-//        Occupation occupation = withAvailabilityBetween(march(10).hour(15), march(11).hour(15))
-//        def bookingResult = occupation.addBooking(booking)
-//
-//        when:
-//        def result = occupation.removeBooking(bookingResult.get().booking)
-//
-//        then:
-//        success(result)
-//    }
-//
-//    def "Can remove booking and add new one in same slot"() {
-//        given:
-//        Occupation occupation = withAvailabilityBetween(march(10).hour(15), march(11).hour(15))
-//        def bookingResult = occupation.addBooking(booking)
-//        and:
-//        occupation.removeBooking(bookingResult.get().booking)
-//
-//        when:
-//        def result = occupation.addBooking(booking)
-//
-//        then:
-//        success(result)
-//    }
 
     Booking aBookingFor(Availability availability) {
         new Booking(UUID.randomUUID(), ITEM_ID, availability.getInterval(), [availability.getId()].toSet())

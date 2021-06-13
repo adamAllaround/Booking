@@ -28,10 +28,6 @@ public class Availability {
         return interval.overlaps(candidate.getInterval());
     }
 
-    boolean covers(Interval interval) {
-        return this.interval.covers(interval);
-    }
-
     boolean overlaps(Interval candidate) {
         return interval.overlaps(candidate);
     }

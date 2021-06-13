@@ -4,10 +4,10 @@ import java.time.Instant;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 class HotelAvailabilities extends Availabilities {
 
@@ -24,28 +24,23 @@ class HotelAvailabilities extends Availabilities {
     Optional<List<Availability>> tryAdd(Interval interval) {
         Instant intervalAtHotelStart = atHotelStart(interval.getStart());
         Instant intervalAtNextDayHotelEnd = atHotelEnd(nextDay(intervalAtHotelStart));
+        Interval firstDay = new Interval(intervalAtHotelStart, intervalAtNextDayHotelEnd);
 
         Instant lastDayEndAtHotelHour = atHotelEnd(interval.getEnd());
 
-        List<Availability> newAvailabilities = findNewAvailabilities(intervalAtHotelStart, intervalAtNextDayHotelEnd, lastDayEndAtHotelHour);
+        List<Availability> newAvailabilities = getBetween(firstDay, lastDayEndAtHotelHour);
 
         availabilities.addAll(newAvailabilities);
 
         return newAvailabilities.isEmpty() ? Optional.empty() : Optional.of(newAvailabilities);
     }
 
-    private List<Availability> findNewAvailabilities(Instant intervalAtHotelStart, Instant intervalAtNextDayHotelEnd, Instant lastDayEndAtHotelHour) {
-        Interval seek = new Interval(intervalAtHotelStart, intervalAtNextDayHotelEnd);
-
-        List<Availability> newAvailabilities = new LinkedList<>();
-
-        while (!seek.getEnd().isAfter(lastDayEndAtHotelHour)) {
-            if (!overlaps(seek)) {
-                newAvailabilities.add(Availability.from(itemId, seek));
-            }
-            seek = seek.plusDays(1);
-        }
-        return newAvailabilities;
+    private List<Availability> getBetween(Interval firstAvailability, Instant lastDayEndAtHotelHour) {
+        return firstAvailability.multiplyTill(lastDayEndAtHotelHour)
+                .stream()
+                .filter(interval -> !overlapsExistingAvailabilities(interval))
+                .map(interval -> Availability.from(itemId, interval))
+                .collect(Collectors.toList());
     }
 
     private Instant atHotelStart(Instant instant) {
@@ -65,7 +60,7 @@ class HotelAvailabilities extends Availabilities {
                 .plus(1, ChronoUnit.DAYS).toInstant();
     }
 
-    private boolean overlaps(Interval seek) {
+    private boolean overlapsExistingAvailabilities(Interval seek) {
         return availabilities.stream().anyMatch(availability -> availability.overlaps(seek));
     }
 }

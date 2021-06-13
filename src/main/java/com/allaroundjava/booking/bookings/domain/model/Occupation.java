@@ -36,7 +36,7 @@ public class Occupation {
 
     public Either<BookingFailure, OccupationEvent.BookingSuccess> addBooking(Booking booking) {
 
-        Set<Availability> coveringAvailabilities = availabilities.getAllByIds(booking.getAvailabilityIds());
+        Set<Availability> coveringAvailabilities = availabilities.matchingIds(booking.getAvailabilityIds());
 
         if (coveringAvailabilities.isEmpty()) {
             return announceFailure(new BookingFailure(itemId, booking.getInterval(), "Could not find suitable availability"));
@@ -45,6 +45,8 @@ public class Occupation {
         if(coveringAvailabilities.stream().anyMatch(Availability::isBooked)){
             return announceFailure(new BookingFailure(itemId, booking.getInterval(), "Cannot add booking to cover booked availability"));
         }
+
+
 
         Set<BookedAvailability> bookedAvailabilities = coveringAvailabilities.stream()
                 .map(availability -> availability.book(booking.getId()))
