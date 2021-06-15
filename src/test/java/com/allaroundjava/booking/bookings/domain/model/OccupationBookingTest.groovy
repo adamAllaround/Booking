@@ -5,8 +5,6 @@ import spock.lang.Specification
 import java.util.stream.Collectors
 
 import static com.allaroundjava.booking.bookings.domain.model.AvailabilityFixture.*
-import static com.allaroundjava.booking.bookings.domain.model.AvailabilityFixture.MAY10
-import static com.allaroundjava.booking.bookings.domain.model.AvailabilityFixture.MAY12
 import static com.allaroundjava.booking.bookings.domain.model.CommandResult.failure
 import static com.allaroundjava.booking.bookings.domain.model.CommandResult.success
 import static com.allaroundjava.booking.bookings.domain.model.HotelAvailabilitiesFixture.withConcreteAvailabilityList

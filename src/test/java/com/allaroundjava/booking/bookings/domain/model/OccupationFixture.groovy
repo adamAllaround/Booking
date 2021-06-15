@@ -7,7 +7,7 @@ import static com.allaroundjava.booking.bookings.domain.model.HotelAvailabilitie
 
 class OccupationFixture {
     static Occupation emptyOccupation() {
-        new Occupation(UUID.randomUUID(), [], standardEmpty())
+        new Occupation(UUID.randomUUID(), [], standardEmpty(), BookingPolicies.allHotelRoomPolicies())
     }
 
     static Occupation withAvailabilityBetween(Instant start, Instant end) {
@@ -30,11 +30,11 @@ class OccupationFixture {
     }
 
     private static Occupation create(UUID itemId, Availabilities availabilities, ArrayList<Booking> bookings) {
-        return new Occupation(itemId, bookings, availabilities)
+        return new Occupation(itemId, bookings, availabilities, BookingPolicies.allHotelRoomPolicies())
     }
 
     private static Occupation create(UUID itemId, Availabilities availabilities) {
-        return new Occupation(itemId, new ArrayList<Booking>(), availabilities)
+        return new Occupation(itemId, new ArrayList<Booking>(), availabilities, BookingPolicies.allHotelRoomPolicies())
     }
 
 }

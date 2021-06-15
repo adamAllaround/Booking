@@ -10,7 +10,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Availability {
+public class Availability implements Comparable<Availability> {
     @EqualsAndHashCode.Include
     UUID id;
     UUID itemId;
@@ -46,6 +46,11 @@ public class Availability {
 
     public BookedAvailability book(UUID bookingId) {
         return new BookedAvailability(id, itemId, interval, bookingId);
+    }
+
+    @Override
+    public int compareTo(Availability other) {
+        return this.interval.getStart().compareTo(other.interval.getStart());
     }
 }
 
