@@ -45,7 +45,10 @@ public class OccupationDatabaseRepository implements OccupationRepository {
                 .map(BookingDatabaseEntity::toModel)
                 .collect(Collectors.toList());
 
-        return new Occupation(id, bookings, Availabilities.from(item, availabilities));
+        return new Occupation(id,
+                bookings,
+                Availabilities.from(item, availabilities),
+                BookingPolicies.allHotelRoomPolicies());
     }
 
     @Override

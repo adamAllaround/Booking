@@ -1,12 +1,11 @@
 package com.allaroundjava.booking.bookings.domain.model;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 class HotelAvailabilities extends Availabilities {
@@ -14,7 +13,7 @@ class HotelAvailabilities extends Availabilities {
     private final OffsetTime hotelHourStart;
     private final OffsetTime hotelHourEnd;
 
-    public HotelAvailabilities(UUID itemId, List<Availability> availabilities, OffsetTime hotelHourStart, OffsetTime hotelHourEnd) {
+    public HotelAvailabilities(UUID itemId, TreeSet<Availability> availabilities, OffsetTime hotelHourStart, OffsetTime hotelHourEnd) {
         super(itemId, availabilities);
         this.hotelHourStart = hotelHourStart;
         this.hotelHourEnd = hotelHourEnd;
@@ -62,5 +61,45 @@ class HotelAvailabilities extends Availabilities {
 
     private boolean overlapsExistingAvailabilities(Interval seek) {
         return availabilities.stream().anyMatch(availability -> availability.overlaps(seek));
+    }
+
+    @Override
+    Availabilities matchingIds(Set<UUID> availabilityIds) {
+        TreeSet<Availability> matchingIds = availabilitiesMatchingIds(availabilityIds);
+        return new HotelAvailabilities(itemId, matchingIds, hotelHourStart, hotelHourEnd);
+    }
+
+    private TreeSet<Availability> availabilitiesMatchingIds(Set<UUID> availabilityIds) {
+        return availabilities
+                .stream()
+                .filter(availability -> availabilityIds.contains(availability.getId())).collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    @Override
+    boolean isContinuous() {
+        if(availabilities.isEmpty()) return false;
+
+        Availability seek = availabilities.first();
+
+        for (Availability avail : availabilities) {
+            if(dayDifference(seek, avail) > 1) {
+                return false;
+            }
+            seek = avail;
+        }
+        return true;
+    }
+
+    private long dayDifference(Availability seek, Availability avail) {
+        return Duration.between(avail.getStart(), seek.getStart()).abs().toDays();
+    }
+
+    @Override
+    Availabilities bookAll(UUID bookingId) {
+        TreeSet<Availability> booked = availabilities.stream()
+                .map(availability -> availability.book(bookingId))
+                .collect(Collectors.toCollection(TreeSet::new));
+
+        return new HotelAvailabilities(itemId, booked, hotelHourStart, hotelHourEnd);
     }
 }
