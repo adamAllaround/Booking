@@ -5,6 +5,7 @@ import io.vavr.control.Either;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -18,6 +19,7 @@ public class Occupation {
 
     private final List<Booking> bookings;
     private final Availabilities availabilities;
+    private final BookingPolicies bookingPolicies;
 
     public Either<AddAvailabilityFailure, AddAvailabilitySuccess> addAvailability(UUID itemId, Interval interval) {
         return availabilities.tryAdd(interval)
@@ -36,26 +38,22 @@ public class Occupation {
 
     public Either<BookingFailure, OccupationEvent.BookingSuccess> addBooking(Booking booking) {
 
-        Set<Availability> coveringAvailabilities = availabilities.matchingIds(booking.getAvailabilityIds());
+        Availabilities coveringAvailabilities = availabilities.matchingIds(booking.getAvailabilityIds());
 
-        if (coveringAvailabilities.isEmpty()) {
-            return announceFailure(new BookingFailure(itemId, booking.getInterval(), "Could not find suitable availability"));
+        Optional<Rejection> canBook = bookingPolicies.canBook(coveringAvailabilities);
+
+        if (canBook.isEmpty()) {
+            bookAvailabilities(booking, coveringAvailabilities);
+            return announceSuccess(new BookingSuccess(itemId, booking));
         }
 
-        if(coveringAvailabilities.stream().anyMatch(Availability::isBooked)){
-            return announceFailure(new BookingFailure(itemId, booking.getInterval(), "Cannot add booking to cover booked availability"));
-        }
+        return announceFailure(new BookingFailure(itemId, booking.getInterval(), canBook.get().getReason()));
+    }
 
-
-
-        Set<BookedAvailability> bookedAvailabilities = coveringAvailabilities.stream()
-                .map(availability -> availability.book(booking.getId()))
-                .collect(Collectors.toSet());
-
-        coveringAvailabilities.forEach(availabilities::remove);
-        availabilities.addAll(bookedAvailabilities);
-
-        return announceSuccess(new BookingSuccess(itemId, booking));
+    private void bookAvailabilities(Booking booking, Availabilities coveringAvailabilities) {
+        Availabilities booked = coveringAvailabilities.bookAll(booking.getId());
+        availabilities.removeAll(coveringAvailabilities);
+        availabilities.addAll(booked);
     }
 
     Either<RemoveBookingFailure, RemoveBookingSuccess> removeBooking(Booking booking) {

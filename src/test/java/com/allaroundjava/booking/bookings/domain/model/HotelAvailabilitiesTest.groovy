@@ -87,6 +87,56 @@ class HotelAvailabilitiesTest extends Specification {
         !result.isPresent()
     }
 
+    def "Is Non continuous when break in availabilities"() {
+        when:
+        Availabilities availabilities = withExistingIntervals(
+                [new Interval(may(20).hour(15), may(21).hour(10)),
+                 new Interval(may(22).hour(15), may(23).hour(10))])
+
+        then:
+        !availabilities.isContinuous()
+    }
+
+    def "Is Non continuous when break in unordered availabilities"() {
+        when:
+        Availabilities availabilities = withExistingIntervals(
+                [new Interval(may(22).hour(15), may(23).hour(10)),
+                 new Interval(may(20).hour(15), may(21).hour(10)),
+                 new Interval(may(23).hour(15), may(24).hour(10)),
+                ])
+
+        then:
+        !availabilities.isContinuous()
+    }
+
+    def "Is continuous when no break in availabilities"() {
+        when:
+        Availabilities availabilities = withExistingIntervals(
+                [new Interval(may(22).hour(15), may(23).hour(10)),
+                 new Interval(may(21).hour(15), may(22).hour(10)),
+                 new Interval(may(22).hour(15), may(23).hour(10)),
+                ])
+
+        then:
+        availabilities.isContinuous()
+    }
+
+    def "Is non continuous when empty"() {
+        when:
+        Availabilities availabilities = standardEmpty()
+
+        then:
+        !availabilities.isContinuous()
+    }
+
+    def "Is continuous when single"() {
+        when:
+        Availabilities availabilities = withConcreteAvailabilityList([AvailabilityFixture.MAY11])
+
+        then:
+        availabilities.isContinuous()
+    }
+
     void isStandardHotelNightAvailabilityOn(Availability availability, int startDay) {
         assert availability.start == Instant.from(may(startDay).hour(STANDARD_HOTEL_START.get(ChronoField.HOUR_OF_DAY)))
         assert availability.end == Instant.from(may(startDay + 1).hour(STANDARD_HOTEL_END.get(ChronoField.HOUR_OF_DAY)))
