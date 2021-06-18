@@ -8,6 +8,8 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 
 @AllArgsConstructor
 public abstract class Availabilities {
@@ -48,6 +50,10 @@ public abstract class Availabilities {
 
     void addAll(Availabilities booked) {
         availabilities.addAll(booked.availabilities);
+    }
+
+    boolean anyEndsBefore(Instant now) {
+        return availabilities.stream().anyMatch(availability -> availability.getEnd().isBefore(now));
     }
 }
 

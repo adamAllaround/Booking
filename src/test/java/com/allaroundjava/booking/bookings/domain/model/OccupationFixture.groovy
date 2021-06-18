@@ -1,40 +1,36 @@
 package com.allaroundjava.booking.bookings.domain.model
 
+
+import java.time.Clock
 import java.time.Instant
 
 import static com.allaroundjava.booking.bookings.domain.model.HotelAvailabilitiesFixture.standardEmpty
 import static com.allaroundjava.booking.bookings.domain.model.HotelAvailabilitiesFixture.withExistingInterval
 
 class OccupationFixture {
-    static Occupation emptyOccupation() {
-        new Occupation(UUID.randomUUID(), [], standardEmpty(), BookingPolicies.allHotelRoomPolicies())
+    private Clock clock
+
+    Occupation empty() {
+        new Occupation(UUID.randomUUID(), [], standardEmpty(), BookingPolicies.allHotelRoomPolicies(clock))
     }
 
-    static Occupation withAvailabilityBetween(Instant start, Instant end) {
+    static OccupationFixture withClock(Clock aClock) {
+        return new OccupationFixture(clock: aClock)
+    }
+
+    Occupation andAvailabilityBetween(Instant start, Instant end) {
         def itemId = UUID.randomUUID()
         def availability = withExistingInterval(new Interval(start, end))
 
         return create(itemId, availability)
     }
 
-    static Occupation withConcreteAvailabilities(Availabilities availabilities) {
+    Occupation andConcreteAvailabilities(Availabilities availabilities) {
         def itemId = UUID.randomUUID()
         return create(itemId, availabilities)
     }
 
-    static Occupation withBookingBetween(Instant start, Instant end) {
-        def itemId = UUID.randomUUID()
-        Availabilities availabilities = standardEmpty()
-        List<Booking> bookings = [new Booking(UUID.randomUUID(), itemId, new Interval(start, end))]
-        return create(itemId, availabilities, bookings)
+    private Occupation create(UUID itemId, Availabilities availabilities) {
+        return new Occupation(itemId, new ArrayList<Booking>(), availabilities, BookingPolicies.allHotelRoomPolicies(clock))
     }
-
-    private static Occupation create(UUID itemId, Availabilities availabilities, ArrayList<Booking> bookings) {
-        return new Occupation(itemId, bookings, availabilities, BookingPolicies.allHotelRoomPolicies())
-    }
-
-    private static Occupation create(UUID itemId, Availabilities availabilities) {
-        return new Occupation(itemId, new ArrayList<Booking>(), availabilities, BookingPolicies.allHotelRoomPolicies())
-    }
-
 }
