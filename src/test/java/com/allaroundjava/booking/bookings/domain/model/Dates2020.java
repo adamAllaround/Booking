@@ -7,6 +7,8 @@ import java.time.*;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Dates2020 {
+    static final Clock JAN_CLOCK = Clock.fixed(january(1).hour(8), ZoneOffset.UTC);
+    static final Clock JUN_CLOCK = Clock.fixed(june(1).hour(8), ZoneOffset.UTC);
     LocalDate date;
     LocalTime time;
 

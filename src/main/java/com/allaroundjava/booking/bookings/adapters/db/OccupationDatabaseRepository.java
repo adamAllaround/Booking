@@ -13,6 +13,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -23,23 +25,25 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class OccupationDatabaseRepository implements OccupationRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final Clock clock;
 
     @Override
     public Occupation findById(UUID id) {
-        ImmutableMap<String, UUID> params = ImmutableMap.of("id", id);
+        ImmutableMap<String, Object> params = ImmutableMap.of("id", id,
+                "now", Instant.now(clock));
         Item item = jdbcTemplate.queryForObject("SELECT i.* from OccupationItems i where id=:id",
                 params,
                 new BeanPropertyRowMapper<>(ItemDatabaseEntity.class))
                 .toModel();
 
-        List<Availability> availabilities = jdbcTemplate.query("select a.* from Availabilities a where a.itemId=:id",
+        List<Availability> availabilities = jdbcTemplate.query("select a.* from Availabilities a where a.itemId=:id and a.end >:now",
                 params,
                 new BeanPropertyRowMapper<>(AvailabilityDatabaseEntity.class))
                 .stream()
                 .map(AvailabilityDatabaseEntity::toModel)
                 .collect(Collectors.toList());
 
-        List<Booking> bookings = jdbcTemplate.query("select b.* from Bookings b where b.itemId=:id", params,
+        List<Booking> bookings = jdbcTemplate.query("select b.* from Bookings b where b.itemId=:id and b.end >:now", params,
                 new BeanPropertyRowMapper<>(BookingDatabaseEntity.class))
                 .stream()
                 .map(BookingDatabaseEntity::toModel)
@@ -48,7 +52,7 @@ public class OccupationDatabaseRepository implements OccupationRepository {
         return new Occupation(id,
                 bookings,
                 Availabilities.from(item, availabilities),
-                BookingPolicies.allHotelRoomPolicies());
+                BookingPolicies.allHotelRoomPolicies(clock));
     }
 
     @Override
