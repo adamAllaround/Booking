@@ -2,6 +2,7 @@ package com.allaroundjava.booking.bookings.domain.model;
 
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.ToString;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@ToString
 public class Interval {
     private final Instant start;
     private final Instant end;

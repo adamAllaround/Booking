@@ -11,10 +11,12 @@ import com.allaroundjava.booking.bookings.domain.ports.AvailabilitiesRepository
 import com.allaroundjava.booking.bookings.domain.ports.BookingsRepository
 import com.allaroundjava.booking.bookings.domain.ports.ItemsRepository
 import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository
+import com.allaroundjava.booking.common.LoggingConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.context.annotation.EnableAspectJAutoProxy
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import spock.lang.Specification
@@ -26,7 +28,7 @@ import static com.allaroundjava.booking.bookings.domain.model.AvailabilityFixtur
 import static com.allaroundjava.booking.bookings.domain.model.BookingFixture.fromSingleAvailability
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = [BookingsConfig, IntegrationTestConfig])
+        classes = [BookingsConfig, IntegrationTestConfig, LoggingConfig])
 @EnableAutoConfiguration
 class BookingIntegrationTest extends Specification {
 

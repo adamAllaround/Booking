@@ -3,7 +3,6 @@ package com.allaroundjava.booking.bookings.domain.model;
 import lombok.Value;
 
 import java.time.Instant;
-import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
