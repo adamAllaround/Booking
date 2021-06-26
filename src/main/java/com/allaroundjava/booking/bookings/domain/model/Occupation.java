@@ -3,6 +3,7 @@ package com.allaroundjava.booking.bookings.domain.model;
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.*;
 import io.vavr.control.Either;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import static com.allaroundjava.booking.common.CommandResult.announceFailure;
 import static com.allaroundjava.booking.common.CommandResult.announceSuccess;
 
 @AllArgsConstructor
+@Log4j2
 public class Occupation {
     private final UUID itemId;
 
@@ -22,6 +24,7 @@ public class Occupation {
     private final BookingPolicies bookingPolicies;
 
     public Either<AddAvailabilityFailure, AddAvailabilitySuccess> addAvailability(UUID itemId, Interval interval) {
+        log.info("Attempting to add new availabilities for item {} and interval {}", itemId, interval);
         return availabilities.tryAdd(interval)
                 .<Either<AddAvailabilityFailure, AddAvailabilitySuccess>>map(
                         availabilityList -> announceSuccess(new AddAvailabilitySuccess(itemId, availabilityList)))
@@ -46,7 +49,7 @@ public class Occupation {
             bookAvailabilities(booking, coveringAvailabilities);
             return announceSuccess(new BookingSuccess(itemId, booking));
         }
-
+        log.warn("Cannot allow to book request {}. Reason {}",booking.getId(), canBook.get().getReason());
         return announceFailure(new BookingFailure(itemId, booking.getInterval(), canBook.get().getReason()));
     }
 

@@ -10,6 +10,7 @@ import com.allaroundjava.booking.bookings.domain.model.OccupationEvent
 import com.allaroundjava.booking.bookings.domain.ports.AvailabilitiesRepository
 import com.allaroundjava.booking.bookings.domain.ports.ItemsRepository
 import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository
+import com.allaroundjava.booking.common.LoggingConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
@@ -25,7 +26,7 @@ import java.time.ZoneOffset
 import static com.allaroundjava.booking.bookings.domain.model.AvailabilityFixture.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = [BookingsConfig, IntegrationTestConfig])
+        classes = [BookingsConfig, IntegrationTestConfig, LoggingConfig])
 @EnableAutoConfiguration
 class AvailabilitiesIntegrationTest extends Specification {
 
