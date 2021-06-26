@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 import static com.allaroundjava.booking.common.events.DatabaseEventStore.EventDatabaseEntity.EventType.OwnerCreated;
 import static com.allaroundjava.booking.common.events.DatabaseEventStore.EventDatabaseEntity.EventType.HotelRoomCreated;
 
+@Log4j2
 @AllArgsConstructor
 public class DatabaseEventStore implements EventStore {
 
@@ -24,6 +26,7 @@ public class DatabaseEventStore implements EventStore {
 
     @Override
     public void insert(DomainEvent domainEvent) {
+        log.info("Attempting  to store event {}", domainEvent);
         if (domainEvent instanceof OwnerCreatedEvent) {
             insert(domainEvent.getEventId(), domainEvent.getCreated(), domainEvent.getSubjectId(), OwnerCreated.name());
         }
@@ -32,6 +35,7 @@ public class DatabaseEventStore implements EventStore {
             insert(hotelRoomCreated.getEventId(), hotelRoomCreated.getCreated(), hotelRoomCreated.getSubjectId(),
                     HotelRoomCreated.name(), hotelRoomCreated.getHotelHourStart(), hotelRoomCreated.getHotelHourEnd());
         }
+        log.info("Successfully stored event {}", domainEvent.getEventId());
     }
 
     private void insert(UUID eventId, Instant created, UUID subjectId, String eventType) {
@@ -74,6 +78,7 @@ public class DatabaseEventStore implements EventStore {
                 .collect(Collectors.joining(","));
         SqlParameterSource parameters = new MapSqlParameterSource("ids", ids);
 
+        log.info("Marking events published {}", ids);
         jdbcTemplate.update("update Events e set e.published=true where e.id in (:ids)", parameters);
     }
 

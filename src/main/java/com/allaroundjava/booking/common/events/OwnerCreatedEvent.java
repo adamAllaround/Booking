@@ -1,6 +1,7 @@
 package com.allaroundjava.booking.common.events;
 
 import lombok.AllArgsConstructor;
+import lombok.ToString;
 import lombok.Value;
 
 import java.time.Instant;
