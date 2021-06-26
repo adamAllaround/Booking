@@ -9,22 +9,22 @@ import org.aspectj.lang.annotation.Before;
 
 @Log4j2
 @Aspect
-public class ServiceLoggingAspect {
+public class LoggingAspect {
 
     @Before("execution(public * com.allaroundjava.booking.bookings.domain.ports.*Service.*(..))")
-    public void beforePublicMethod(JoinPoint joinPoint) {
+    public void beforeServicePublicMethod(JoinPoint joinPoint) {
         log.info("Calling {}", joinPoint.toShortString());
     }
 
     @AfterReturning(pointcut = "execution(public * com.allaroundjava.booking.bookings.domain.ports.*Service.*(..))",
     returning = "returnValue")
-    public void afterPublicMethod(Object returnValue) {
+    public void afterServicePublicMethod(Object returnValue) {
         log.info("Returning {}", returnValue.toString());
     }
 
     @AfterThrowing(pointcut = "execution(public * com.allaroundjava.booking.bookings.domain.ports.*Service.*(..))",
             throwing = "exception")
-    public void afterPublicMethodThrows(Throwable exception) {
+    public void afterServicePublicMethodThrows(Throwable exception) {
         log.error("Exception thrown within service method call", exception);
     }
 }

@@ -40,7 +40,7 @@ public class BookingsConfig {
     }
 
     @Bean
-    ServiceLoggingAspect aggregateLoggingAspect() {
-        return new ServiceLoggingAspect();
+    LoggingAspect loggingAspect() {
+        return new LoggingAspect();
     }
 }

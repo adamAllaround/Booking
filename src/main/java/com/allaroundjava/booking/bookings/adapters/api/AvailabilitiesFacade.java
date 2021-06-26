@@ -1,6 +1,5 @@
 package com.allaroundjava.booking.bookings.adapters.api;
 
-import com.allaroundjava.booking.bookings.domain.model.Availabilities;
 import com.allaroundjava.booking.bookings.domain.model.Availability;
 import com.allaroundjava.booking.bookings.domain.ports.AvailabilitiesService;
 import lombok.AllArgsConstructor;
