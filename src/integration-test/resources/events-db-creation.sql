@@ -46,18 +46,17 @@ CREATE TABLE IF NOT EXISTS OccupationItems
 
 CREATE TABLE IF NOT EXISTS Availabilities
 (
-    id     VARCHAR(100) PRIMARY KEY,
-    itemId VARCHAR(100) NOT NULL,
-    start  DATETIME     NOT NULL,
-    end    DATETIME     NOT NULL,
+    id        VARCHAR(100) PRIMARY KEY,
+    itemId    VARCHAR(100) NOT NULL,
+    startTime DATETIME     NOT NULL,
+    endTime   DATETIME     NOT NULL,
     bookingId VARCHAR(100) NULL
 );
 
 CREATE TABLE IF NOT EXISTS Bookings
 (
-    id     VARCHAR(100) PRIMARY KEY,
-    itemId VARCHAR(100) NOT NULL,
-    start  DATETIME     NOT NULL,
-    end    DATETIME     NOT NULL
+    id        VARCHAR(100) PRIMARY KEY,
+    itemId    VARCHAR(100) NOT NULL,
+    startTime DATETIME     NOT NULL,
+    endTime   DATETIME     NOT NULL
 );
-

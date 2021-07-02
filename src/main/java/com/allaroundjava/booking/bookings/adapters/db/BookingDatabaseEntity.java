@@ -2,12 +2,9 @@ package com.allaroundjava.booking.bookings.adapters.db;
 
 import com.allaroundjava.booking.bookings.domain.model.Booking;
 import com.allaroundjava.booking.bookings.domain.model.Interval;
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -15,10 +12,10 @@ import java.util.UUID;
 public class BookingDatabaseEntity {
     UUID id;
     UUID itemId;
-    OffsetDateTime start;
-    OffsetDateTime end;
+    OffsetDateTime startTime;
+    OffsetDateTime endTime;
 
     Booking toModel() {
-        return new Booking(id, itemId, new Interval(start.toInstant(), end.toInstant()), new HashSet<>());
+        return new Booking(id, itemId, new Interval(startTime.toInstant(), endTime.toInstant()), new HashSet<>());
     }
 }
