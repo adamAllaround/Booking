@@ -13,12 +13,12 @@ import java.util.UUID;
 class AvailabilityDatabaseEntity {
     UUID id;
     UUID itemId;
-    OffsetDateTime start;
-    OffsetDateTime end;
+    OffsetDateTime startTime;
+    OffsetDateTime endTime;
     UUID bookingId;
 
     Availability toModel() {
-        Availability availability = new Availability(id, itemId, new Interval(start.toInstant(), end.toInstant()));
+        Availability availability = new Availability(id, itemId, new Interval(startTime.toInstant(), endTime.toInstant()));
         if (bookingId == null) {
             return availability;
         }
