@@ -21,6 +21,7 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import spock.lang.Specification
 
+import java.time.OffsetDateTime
 import java.time.OffsetTime
 import java.time.ZoneOffset
 
@@ -141,7 +142,8 @@ class BookingIntegrationTest extends Specification {
         BookingRequest request = new BookingRequest(itemId: availabilities.first().getItemId(),
                 firstName: "Test",
                 lastName: "Test",
-                interval: availabilities.first().getInterval(),
+                start: OffsetDateTime.ofInstant(availabilities.first().getInterval().start, ZoneOffset.UTC),
+                end: OffsetDateTime.ofInstant(availabilities.first().getInterval().end, ZoneOffset.UTC),
                 availabilities: availabilities*.id
         )
         return new HttpEntity<BookingRequest>(request)
