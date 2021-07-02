@@ -36,14 +36,14 @@ public class OccupationDatabaseRepository implements OccupationRepository {
                 new BeanPropertyRowMapper<>(ItemDatabaseEntity.class))
                 .toModel();
 
-        List<Availability> availabilities = jdbcTemplate.query("select a.* from Availabilities a where a.itemId=:id and a.end >:now",
+        List<Availability> availabilities = jdbcTemplate.query("select a.* from Availabilities a where a.itemId=:id and a.endTime >:now",
                 params,
                 new BeanPropertyRowMapper<>(AvailabilityDatabaseEntity.class))
                 .stream()
                 .map(AvailabilityDatabaseEntity::toModel)
                 .collect(Collectors.toList());
 
-        List<Booking> bookings = jdbcTemplate.query("select b.* from Bookings b where b.itemId=:id and b.end >:now", params,
+        List<Booking> bookings = jdbcTemplate.query("select b.* from Bookings b where b.itemId=:id and b.endTime >:now", params,
                 new BeanPropertyRowMapper<>(BookingDatabaseEntity.class))
                 .stream()
                 .map(BookingDatabaseEntity::toModel)
@@ -75,7 +75,7 @@ public class OccupationDatabaseRepository implements OccupationRepository {
     private void saveNewAvailabilities(AddAvailabilitySuccess event) {
         List<Availability> availabilities = event.getAvailabilityList();
 
-        jdbcTemplate.batchUpdate("insert into Availabilities (id, itemId, start, end) values (:id,:itemId, :start, :end);",
+        jdbcTemplate.batchUpdate("insert into Availabilities (id, itemId, startTime, endTime) values (:id,:itemId, :start, :end);",
                 batchInsertParams(availabilities));
     }
 
@@ -107,7 +107,7 @@ public class OccupationDatabaseRepository implements OccupationRepository {
                 "itemId", booking.getItemId(),
                 "start", OffsetDateTime.ofInstant(booking.getStart(), ZoneOffset.UTC),
                 "end", OffsetDateTime.ofInstant(booking.getEnd(), ZoneOffset.UTC));
-        jdbcTemplate.update("insert into Bookings (id, itemId, start, end) values (:id,:itemId, :start, :end);", params);
+        jdbcTemplate.update("insert into Bookings (id, itemId, startTime, endTime) values (:id,:itemId, :start, :end);", params);
     }
 
     private void updateAvailabilities(Booking booking) {
