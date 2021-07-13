@@ -26,7 +26,7 @@ class AvailabilitiesDatabaseRepository implements AvailabilitiesRepository {
 
         return jdbcTemplate.query("select a.* from Availabilities a where a.itemId=:itemId",
                 params,
-                new BeanPropertyRowMapper<>(AvailabilityDatabaseEntity.class))
+                new AvailabilityDatabaseEntity.RowMapper())
                 .stream()
                 .map(AvailabilityDatabaseEntity::toModel)
                 .collect(Collectors.toList());
@@ -44,7 +44,7 @@ class AvailabilitiesDatabaseRepository implements AvailabilitiesRepository {
     private AvailabilityDatabaseEntity queryForSingle(ImmutableMap<String, UUID> params) {
         return jdbcTemplate.queryForObject("SELECT a.* FROM Availabilities a where a.id=:id",
                 params,
-                new BeanPropertyRowMapper<>(AvailabilityDatabaseEntity.class));
+                new AvailabilityDatabaseEntity.RowMapper());
     }
 
     @Override

@@ -20,9 +20,10 @@ public class IntegrationTestConfig {
     @Bean
     @Profile("test")
     DataSource createTestDataSource() {
+
         return new EmbeddedDatabaseBuilder()
-                .generateUniqueName(true)
                 .setType(EmbeddedDatabaseType.H2)
+                .setName("test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE")
                 .addScript("events-db-creation.sql")
                 .build();
     }

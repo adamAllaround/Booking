@@ -22,7 +22,8 @@ class BookingsController {
     }
 
     @PostMapping("/{itemId}/bookings")
-    ResponseEntity<BookingResponse> addBooking(@RequestBody BookingRequest request) {
+    ResponseEntity<BookingResponse> addBooking(@RequestBody BookingRequest request, @PathVariable UUID itemId) {
+        request.setItemId(itemId);
         Optional<BookingResponse> result = occupation.saveBooking(request);
         return result.map(resp -> ResponseEntity.created(getUri(resp)).body(resp))
                 .orElseGet(() -> ResponseEntity.badRequest().build());

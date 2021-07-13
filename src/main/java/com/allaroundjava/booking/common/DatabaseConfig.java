@@ -1,5 +1,6 @@
 package com.allaroundjava.booking.common;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,13 +12,23 @@ import javax.sql.DataSource;
 
 @Configuration
 public class DatabaseConfig {
+
+    @Value("${datasource.username}")
+    String username;
+    @Value("${datasource.password}")
+    String password;
+    @Value("${datasource.url}")
+    String url;
+    @Value("${datasource.driver-class-name}")
+    String driver;
+
     @Bean
     DataSource createDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.h2.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/booking");
-        dataSource.setUsername("sa");
-        dataSource.setPassword("");
+        dataSource.setDriverClassName(driver);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
 
         return dataSource;
     }

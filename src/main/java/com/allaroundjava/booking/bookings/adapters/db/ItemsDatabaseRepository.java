@@ -9,8 +9,11 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.OffsetTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -25,10 +28,10 @@ public class ItemsDatabaseRepository implements ItemsRepository {
     public void saveNew(UUID itemId, Instant created, ItemType itemType, OffsetTime hotelHourStart, OffsetTime hotelHourEnd) {
         Map<String, Object> params = new HashMap<>();
         params.put("itemId", itemId);
-        params.put("created", created);
+        params.put("created", Timestamp.from(created));
         params.put("type", itemType.name());
-        params.put("hotelHourStart", hotelHourStart);
-        params.put("hotelHourEnd", hotelHourEnd);
+        params.put("hotelHourStart", Time.valueOf(hotelHourStart.withOffsetSameInstant(ZoneOffset.UTC).toLocalTime()));
+        params.put("hotelHourEnd", Time.valueOf(hotelHourEnd.withOffsetSameInstant(ZoneOffset.UTC).toLocalTime()));
 
         jdbcTemplate.update("INSERT INTO OccupationItems (id, created, type, hotelHourStart, hotelHourEnd) values (:itemId, :created, :type, :hotelHourStart, :hotelHourEnd)", params);
     }

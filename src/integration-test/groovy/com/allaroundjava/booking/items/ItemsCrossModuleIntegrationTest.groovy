@@ -15,6 +15,7 @@ import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
 import java.time.LocalDateTime
+import java.time.OffsetTime
 import java.time.ZoneOffset
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -56,11 +57,18 @@ class ItemsCrossModuleIntegrationTest extends Specification {
         item.setCapacity(20)
         item.setOwnerId(owner.getId())
         item.setName("Test Name")
+        item.setHotelHourStart(OffsetTime.of(14, 0, 0, 0, ZoneOffset.UTC))
+        item.setHotelHourEnd(OffsetTime.of(12, 0, 0, 0, ZoneOffset.UTC))
         return item
     }
 
     ResponseEntity<ItemsController.ItemResponse> createItemWithHttpPost(Item item) {
-        def requestObject = new ItemsController.ItemRequest(ownerId: item.getOwnerId(), name: item.getName(), details:  new ItemsController.HotelRoomDetails(capacity: item.getCapacity(), location: item.getLocation()))
+        def requestObject = new ItemsController.ItemRequest(ownerId: item.getOwnerId(),
+                name: item.getName(),
+                details:  new ItemsController.HotelRoomDetails(capacity: item.getCapacity(),
+                        location: item.getLocation(),
+                        hotelHourStart: item.getHotelHourStart(),
+                        hotelHourEnd: item.getHotelHourEnd()))
         def request = new HttpEntity<ItemsController.ItemRequest>(requestObject)
         return testRestTemplate.postForEntity(URI.create("/owners/${item.getOwnerId()}/items"), request, ItemsController.ItemResponse)
     }
