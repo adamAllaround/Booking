@@ -5,18 +5,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.OffsetTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.allaroundjava.booking.common.events.DatabaseEventStore.EventDatabaseEntity.EventType.OwnerCreated;
 import static com.allaroundjava.booking.common.events.DatabaseEventStore.EventDatabaseEntity.EventType.HotelRoomCreated;
+import static com.allaroundjava.booking.common.events.DatabaseEventStore.EventDatabaseEntity.EventType.OwnerCreated;
 
 @Log4j2
 @AllArgsConstructor
@@ -41,7 +45,7 @@ public class DatabaseEventStore implements EventStore {
     private void insert(UUID eventId, Instant created, UUID subjectId, String eventType) {
         ImmutableMap<String, Object> params = ImmutableMap.of("id", eventId,
                 "type", eventType,
-                "created", created,
+                "created", Timestamp.from(created),
                 "published", false,
                 "subjectId", subjectId);
         jdbcTemplate.update("insert into Events (id, type, created, published, subjectId) values (:id,:type,:created,:published,:subjectId)",
@@ -52,11 +56,11 @@ public class DatabaseEventStore implements EventStore {
         Map<String, Object> params = new HashMap<>();
         params.put("id", eventId);
         params.put("type", eventType);
-        params.put("created", created);
+        params.put("created", Timestamp.from(created));
         params.put("published", false);
         params.put("subjectId", subjectId);
-        params.put("hotelHourStart", hotelHourStart);
-        params.put("hotelHourEnd", hotelHourEnd);
+        params.put("hotelHourStart", Time.valueOf(hotelHourStart.withOffsetSameInstant(ZoneOffset.UTC).toLocalTime()));
+        params.put("hotelHourEnd", Time.valueOf(hotelHourEnd.withOffsetSameInstant(ZoneOffset.UTC).toLocalTime()));
 
         jdbcTemplate.update("insert into Events (id, type, created, published, subjectId, hotelHourStart, hotelHourEnd) values (:id,:type,:created,:published,:subjectId, :hotelHourStart, :hotelHourEnd)",
                 params);
@@ -65,7 +69,7 @@ public class DatabaseEventStore implements EventStore {
 
     @Override
     public List<DomainEvent> getUnpublishedEvents() {
-        return jdbcTemplate.query("select e.* from Events e where e.published=false", new BeanPropertyRowMapper<>(EventDatabaseEntity.class))
+        return jdbcTemplate.query("select e.* from Events e where e.published=false", new EventDatabaseEntity.RowMapper())
                 .stream()
                 .map(EventDatabaseEntity::toDomainEvent)
                 .collect(Collectors.toUnmodifiableList());
@@ -73,13 +77,13 @@ public class DatabaseEventStore implements EventStore {
 
     @Override
     public void markPublished(Collection<DomainEvent> toPublish) {
-        String ids = toPublish.stream()
-                .map(event -> event.getEventId().toString())
-                .collect(Collectors.joining(","));
+        List<UUID> ids = toPublish.stream()
+                .map(DomainEvent::getEventId)
+                .collect(Collectors.toList());
         SqlParameterSource parameters = new MapSqlParameterSource("ids", ids);
 
         log.info("Marking events published {}", ids);
-        jdbcTemplate.update("update Events e set e.published=true where e.id in (:ids)", parameters);
+        jdbcTemplate.update("update Events set published=true where id in (:ids)", parameters);
     }
 
 
@@ -108,6 +112,28 @@ public class DatabaseEventStore implements EventStore {
                     return new HotelRoomCreatedEvent(id, created, subjectId, hotelHourStart, hotelHourEnd);
                 default:
                     throw new IllegalArgumentException("Unknown event type");
+            }
+        }
+
+        static class RowMapper implements org.springframework.jdbc.core.RowMapper<EventDatabaseEntity> {
+
+            @Override
+            public EventDatabaseEntity mapRow(ResultSet resultSet, int i) throws SQLException {
+                EventDatabaseEntity entity = new EventDatabaseEntity();
+                entity.id = UUID.fromString(resultSet.getObject("id").toString());
+                entity.type = EventType.valueOf(resultSet.getString("type"));
+                entity.created = resultSet.getTimestamp("created").toInstant();
+                entity.published = resultSet.getBoolean("published");
+                entity.subjectId = UUID.fromString(resultSet.getObject("subjectId").toString());
+                entity.hotelHourStart = offsetTime(resultSet, "hotelHourStart");
+                entity.hotelHourEnd = offsetTime(resultSet, "hotelHourEnd");
+
+                return entity;
+            }
+
+            private OffsetTime offsetTime(ResultSet resultSet, String column) throws SQLException {
+                return Optional.ofNullable(resultSet.getTime(column)).map(Time::toLocalTime)
+                        .map(localTime -> OffsetTime.of(localTime, ZoneOffset.UTC)).orElse(null);
             }
         }
     }

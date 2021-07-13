@@ -5,7 +5,6 @@ import com.allaroundjava.booking.bookings.domain.ports.BookingsRepository;
 import com.google.common.collect.ImmutableMap;
 import io.vavr.control.Try;
 import lombok.AllArgsConstructor;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +23,7 @@ class BookingsDatabaseRepository implements BookingsRepository {
         ImmutableMap<String, UUID> params = ImmutableMap.of("itemId", itemId);
         return jdbcTemplate.query("SELECT b.* FROM Bookings b where b.itemId=:itemId",
                 params,
-                new BeanPropertyRowMapper<>(BookingDatabaseEntity.class))
+                new BookingDatabaseEntity.RowMapper())
                 .stream()
                 .map(BookingDatabaseEntity::toModel)
                 .collect(Collectors.toList());
@@ -42,6 +41,6 @@ class BookingsDatabaseRepository implements BookingsRepository {
     private BookingDatabaseEntity queryForSingle(ImmutableMap<String, UUID> params) {
         return jdbcTemplate.queryForObject("SELECT b.* FROM Bookings b where b.id=:id",
                 params,
-                new BeanPropertyRowMapper<>(BookingDatabaseEntity.class));
+                new BookingDatabaseEntity.RowMapper());
     }
 }

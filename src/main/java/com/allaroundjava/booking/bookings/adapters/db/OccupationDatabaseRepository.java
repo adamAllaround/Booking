@@ -8,15 +8,12 @@ import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.RemoveBoo
 import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository;
 import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.sql.Timestamp;
+import java.time.*;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -30,21 +27,21 @@ public class OccupationDatabaseRepository implements OccupationRepository {
     @Override
     public Occupation findById(UUID id) {
         ImmutableMap<String, Object> params = ImmutableMap.of("id", id,
-                "now", Instant.now(clock));
-        Item item = jdbcTemplate.queryForObject("SELECT i.* from OccupationItems i where id=:id",
+                "now", Timestamp.from(Instant.now(clock)));
+        Item item = jdbcTemplate.queryForObject("SELECT * from OccupationItems where id=:id",
                 params,
-                new BeanPropertyRowMapper<>(ItemDatabaseEntity.class))
+                new ItemDatabaseEntity.RowMapper())
                 .toModel();
 
-        List<Availability> availabilities = jdbcTemplate.query("select a.* from Availabilities a where a.itemId=:id and a.endTime >:now",
+        List<Availability> availabilities = jdbcTemplate.query("select * from Availabilities where itemId=:id and endTime >:now",
                 params,
-                new BeanPropertyRowMapper<>(AvailabilityDatabaseEntity.class))
+                new AvailabilityDatabaseEntity.RowMapper())
                 .stream()
                 .map(AvailabilityDatabaseEntity::toModel)
                 .collect(Collectors.toList());
 
-        List<Booking> bookings = jdbcTemplate.query("select b.* from Bookings b where b.itemId=:id and b.endTime >:now", params,
-                new BeanPropertyRowMapper<>(BookingDatabaseEntity.class))
+        List<Booking> bookings = jdbcTemplate.query("select * from Bookings where itemId=:id and endTime >:now", params,
+                new BookingDatabaseEntity.RowMapper())
                 .stream()
                 .map(BookingDatabaseEntity::toModel)
                 .collect(Collectors.toList());
@@ -88,13 +85,13 @@ public class OccupationDatabaseRepository implements OccupationRepository {
     private MapSqlParameterSource toInsertParams(Availability availability) {
         return new MapSqlParameterSource(ImmutableMap.of("id", availability.getId(),
                 "itemId", availability.getItemId(),
-                "start", OffsetDateTime.ofInstant(availability.getStart(), ZoneOffset.UTC),
-                "end", OffsetDateTime.ofInstant(availability.getEnd(), ZoneOffset.UTC)));
+                "start", Timestamp.from(availability.getStart().atZone(ZoneOffset.UTC).toInstant()),
+                "end", Timestamp.from(availability.getEnd().atZone(ZoneOffset.UTC).toInstant())));
     }
 
     private void removeAvailability(RemoveAvailabilitySuccess event) {
         ImmutableMap<String, Object> params = ImmutableMap.of("id", event.getAvailability().getId());
-        jdbcTemplate.update("delete from Availabilities a where a.id=:id", params);
+        jdbcTemplate.update("delete from Availabilities where id=:id", params);
     }
 
     private void saveNewBooking(BookingSuccess event) {
@@ -105,19 +102,19 @@ public class OccupationDatabaseRepository implements OccupationRepository {
     private void insertIntoBooking(Booking booking) {
         ImmutableMap<String, Object> params = ImmutableMap.of("id", booking.getId(),
                 "itemId", booking.getItemId(),
-                "start", OffsetDateTime.ofInstant(booking.getStart(), ZoneOffset.UTC),
-                "end", OffsetDateTime.ofInstant(booking.getEnd(), ZoneOffset.UTC));
+                "start", Timestamp.from(booking.getStart().atZone(ZoneOffset.UTC).toInstant()),
+                "end", Timestamp.from(booking.getEnd().atZone(ZoneOffset.UTC).toInstant()));
         jdbcTemplate.update("insert into Bookings (id, itemId, startTime, endTime) values (:id,:itemId, :start, :end);", params);
     }
 
     private void updateAvailabilities(Booking booking) {
         ImmutableMap<String, Object> params = ImmutableMap.of("bookingId", booking.getId(),
                 "availabilityIds", booking.getAvailabilityIds());
-        jdbcTemplate.update("UPDATE Availabilities a set a.bookingId=:bookingId where a.id in (:availabilityIds)", params);
+        jdbcTemplate.update("UPDATE Availabilities set bookingId=:bookingId where id in (:availabilityIds)", params);
     }
 
     private void removeBooking(RemoveBookingSuccess event) {
         ImmutableMap<String, Object> params = ImmutableMap.of("id", event.getAvailability().getId());
-        jdbcTemplate.update("delete from Bookings b where b.id=:id", params);
+        jdbcTemplate.update("delete from Bookings where id=:id", params);
     }
 }

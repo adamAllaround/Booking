@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,7 +15,7 @@ class OwnersRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public Owner save(Owner owner) {
-        jdbcTemplate.update("INSERT INTO ItemsOwners (id, created) values (?, ? )", owner.getId(), owner.getCreated());
+        jdbcTemplate.update("INSERT INTO ItemsOwners (id, created) values (?, ? )", owner.getId(), Timestamp.from(owner.getCreated()));
         return owner;
     }
 

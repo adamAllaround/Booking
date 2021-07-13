@@ -14,6 +14,7 @@ import org.springframework.http.MediaType
 import spock.lang.Specification
 
 import java.time.LocalDateTime
+import java.time.OffsetTime
 import java.time.ZoneOffset
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -50,7 +51,12 @@ class ItemsIntegrationTest extends Specification {
         def owner = new Owner(UUID.randomUUID(), LocalDateTime.of(2021, 5, 10, 10, 0).toInstant(ZoneOffset.UTC))
         given:
         ownersRepository.save(owner)
-        ItemsController.ItemRequest item = new ItemsController.ItemRequest(name: "Some Item", details: new ItemsController.HotelRoomDetails(capacity: 1, location: "Test"))
+        ItemsController.ItemRequest item = new ItemsController.ItemRequest(name: "Some Item",
+                details:
+                        new ItemsController.HotelRoomDetails(capacity: 1,
+                                location: "Test",
+                                "hotelHourStart": OffsetTime.of(15,0,0,0,ZoneOffset.UTC),
+                                "hotelHourEnd": OffsetTime.of(10,0,0,0,ZoneOffset.UTC)))
         def request = new HttpEntity<ItemsController.ItemRequest>(item, new HttpHeaders(contentType: MediaType.APPLICATION_JSON))
 
         when:
