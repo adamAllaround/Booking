@@ -5,6 +5,7 @@ import com.allaroundjava.booking.bookings.domain.model.ItemType;
 import com.allaroundjava.booking.bookings.domain.ports.ItemsRepository;
 import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -40,9 +41,16 @@ public class ItemsDatabaseRepository implements ItemsRepository {
     public Optional<Item> findById(UUID itemId) {
         ImmutableMap<String, Object> params = ImmutableMap.of("itemId", itemId);
 
-        ItemDatabaseEntity itemDatabaseEntity = jdbcTemplate.queryForObject("SELECT i.* FROM OccupationItems i where id=:itemId",
-                params, new BeanPropertyRowMapper<>(ItemDatabaseEntity.class));
-        return Optional.ofNullable(itemDatabaseEntity)
-                .map(ItemDatabaseEntity::toModel);
+        try {
+            ItemDatabaseEntity itemDatabaseEntity = jdbcTemplate.queryForObject("SELECT i.* FROM OccupationItems i where id=:itemId",
+                    params, new BeanPropertyRowMapper<>(ItemDatabaseEntity.class));
+
+            return Optional.ofNullable(itemDatabaseEntity)
+                    .map(ItemDatabaseEntity::toModel);
+
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+
     }
 }
