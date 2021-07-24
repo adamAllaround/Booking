@@ -12,10 +12,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.OffsetTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.allaroundjava.booking.common.events.DatabaseEventStore.EventType.HotelRoomCreated;
@@ -32,57 +33,16 @@ public class DatabaseEventStore implements EventStore {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
+    private final DbInsertFactory dbInsertFactory;
 
     @Override
     public void insert(DomainEvent domainEvent) {
         log.info("Attempting  to store event {}", domainEvent);
-        if (domainEvent instanceof OwnerCreatedEvent) {
-            insert(domainEvent.getEventId(), domainEvent.getCreated(), domainEvent.getSubjectId(), OwnerCreated.name(),
-                    domainEvent);
-        }
-        if (domainEvent instanceof HotelRoomCreatedEvent) {
-            HotelRoomCreatedEvent hotelRoomCreated = (HotelRoomCreatedEvent) domainEvent;
-            insert(hotelRoomCreated.getEventId(), hotelRoomCreated.getCreated(), hotelRoomCreated.getSubjectId(),
-                    HotelRoomCreated.name(), hotelRoomCreated.getHotelHourStart(), hotelRoomCreated.getHotelHourEnd());
-        }
+        DbInsert insert = dbInsertFactory.get(domainEvent);
+        jdbcTemplate.update(insert.getInsertStatement(), insert.getParams());
+
         log.info("Successfully stored event {}", domainEvent.getEventId());
     }
-
-    private void insert(UUID eventId, Instant created, UUID subjectId, String eventType, DomainEvent domainEvent) {
-        Map<String, Object> params = new HashMap<>();
-
-        params.put("id", eventId);
-        params.put("type", eventType);
-        params.put("created", Timestamp.from(created));
-        params.put("published", false);
-        params.put("subjectId", subjectId);
-        params.put("payload", "{}");
-
-        jdbcTemplate.update("insert into Events (id, type, created, published, subjectId, payload) values (:id,:type,:created,:published,:subjectId, :payload::json)",
-                params);
-    }
-
-    //TODO refactor - introduce param object
-    private void insert(UUID eventId, Instant created, UUID subjectId, String eventType, OffsetTime hotelHourStart, OffsetTime hotelHourEnd) {
-        try {
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", eventId);
-            params.put("type", eventType);
-            params.put("created", Timestamp.from(created));
-            params.put("published", false);
-            params.put("subjectId", subjectId);
-            HotelRoomCreatedEventPayload eventPayload = new HotelRoomCreatedEventPayload();
-            eventPayload.setHotelHourStart(hotelHourStart);
-            eventPayload.setHotelHourEnd(hotelHourEnd);
-            params.put("payload", objectMapper.writeValueAsString(eventPayload));
-
-            jdbcTemplate.update("insert into Events (id, type, created, published, subjectId, payload) values (:id,:type,:created,:published,:subjectId, :payload::json)",
-                    params);
-        } catch (JsonProcessingException e) {
-            log.error("Could serialize event to jason and persist event {} - {}", eventId, e.getMessage());
-        }
-    }
-
 
     @Override
     public List<DomainEvent> getUnpublishedEvents() {
@@ -178,7 +138,7 @@ public class DatabaseEventStore implements EventStore {
                     entity.created = resultSet.getTimestamp("created").toInstant();
                     entity.published = resultSet.getBoolean("published");
                     entity.subjectId = UUID.fromString(resultSet.getObject("subjectId").toString());
-                    HotelRoomCreatedEventPayload payload = objectMapper.readValue(resultSet.getString("payload"), HotelRoomCreatedEventPayload.class);
+                    EventPayload.HotelRoom payload = objectMapper.readValue(resultSet.getString("payload"), EventPayload.HotelRoom.class);
                     entity.hotelHourStart = payload.getHotelHourStart();
                     entity.hotelHourEnd = payload.getHotelHourEnd();
 
@@ -189,11 +149,5 @@ public class DatabaseEventStore implements EventStore {
                 }
             }
         }
-    }
-
-    @Data
-    static class HotelRoomCreatedEventPayload {
-        OffsetTime hotelHourStart;
-        OffsetTime hotelHourEnd;
     }
 }

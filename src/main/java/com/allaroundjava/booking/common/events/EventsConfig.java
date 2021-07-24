@@ -17,8 +17,13 @@ public class EventsConfig {
     private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
 
     @Bean
-    EventStore eventStore(NamedParameterJdbcTemplate jdbcTemplate) {
-        return new DatabaseEventStore(jdbcTemplate, objectMapper);
+    DbInsertFactory dbInsertFactory() {
+        return new DbInsertFactory(objectMapper);
+    }
+
+    @Bean
+    EventStore eventStore(NamedParameterJdbcTemplate jdbcTemplate, DbInsertFactory factory) {
+        return new DatabaseEventStore(jdbcTemplate, objectMapper, factory);
     }
 
     @Bean
