@@ -11,12 +11,14 @@ import com.allaroundjava.booking.bookings.domain.ports.AvailabilitiesRepository
 import com.allaroundjava.booking.bookings.domain.ports.ItemsRepository
 import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository
 import com.allaroundjava.booking.common.LoggingConfig
+import io.zonky.test.db.AutoConfigureEmbeddedDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
+import org.springframework.test.context.jdbc.Sql
 import spock.lang.Specification
 
 import java.time.OffsetDateTime
@@ -24,10 +26,13 @@ import java.time.OffsetTime
 import java.time.ZoneOffset
 
 import static com.allaroundjava.booking.bookings.domain.model.AvailabilityFixture.*
+import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = [BookingsConfig, IntegrationTestConfig, LoggingConfig])
 @EnableAutoConfiguration
+@AutoConfigureEmbeddedDatabase(provider = ZONKY, beanName = "dataSource")
+@Sql("/events-db-creation.sql")
 class AvailabilitiesIntegrationTest extends Specification {
 
     @Autowired

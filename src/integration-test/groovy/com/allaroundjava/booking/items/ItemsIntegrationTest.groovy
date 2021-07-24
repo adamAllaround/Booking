@@ -1,8 +1,9 @@
 package com.allaroundjava.booking.items
 
-import com.allaroundjava.booking.IntegrationTestConfig
+
 import com.allaroundjava.booking.common.events.EventsConfig
 import com.allaroundjava.booking.owners.OwnersConfig
+import io.zonky.test.db.AutoConfigureEmbeddedDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
@@ -11,15 +12,20 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.test.context.jdbc.Sql
 import spock.lang.Specification
 
 import java.time.LocalDateTime
 import java.time.OffsetTime
 import java.time.ZoneOffset
 
+import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = [IntegrationTestConfig, EventsConfig, OwnersConfig, ItemsConfig])
+        classes = [EventsConfig, OwnersConfig, ItemsConfig])
 @EnableAutoConfiguration
+@AutoConfigureEmbeddedDatabase(provider = ZONKY, beanName = "dataSource")
+@Sql("/events-db-creation.sql")
 class ItemsIntegrationTest extends Specification {
     @Autowired
     private TestRestTemplate testRestTemplate

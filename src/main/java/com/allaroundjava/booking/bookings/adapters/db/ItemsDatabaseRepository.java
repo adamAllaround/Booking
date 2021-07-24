@@ -43,7 +43,7 @@ public class ItemsDatabaseRepository implements ItemsRepository {
 
         try {
             ItemDatabaseEntity itemDatabaseEntity = jdbcTemplate.queryForObject("SELECT i.* FROM OccupationItems i where id=:itemId",
-                    params, new BeanPropertyRowMapper<>(ItemDatabaseEntity.class));
+                    params, new ItemDatabaseEntity.RowMapper());
 
             return Optional.ofNullable(itemDatabaseEntity)
                     .map(ItemDatabaseEntity::toModel);

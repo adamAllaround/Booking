@@ -26,6 +26,9 @@
             <AppenderRef ref="RollingFile"/>
             <AppenderRef ref="Console"/>
         </Logger>
+        <Logger name="io.zonky.test" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
         <Root level="info">
             <AppenderRef ref="RollingFile"/>
             <AppenderRef ref="Console"/>
