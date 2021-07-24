@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS Events
     type      varchar(100) NOT NULL,
     created   timestamp    NOT NULL,
     published boolean      NOT NULL,
-    content   jsonb        not null
+    subjectId      uuid NOT NULL,
+    payload   json        not null
 );
 
 CREATE TABLE IF NOT EXISTS Owners

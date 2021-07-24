@@ -21,3 +21,4 @@ public class HotelRoomCreatedEvent extends ItemCreatedEvent {
         return new HotelRoomCreatedEvent(UUID.randomUUID(), Instant.now(), subjectId, hotelHourStart, hotelHourEnd);
     }
 }
+

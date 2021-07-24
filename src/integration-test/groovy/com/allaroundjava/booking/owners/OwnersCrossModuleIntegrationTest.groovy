@@ -4,6 +4,7 @@ import com.allaroundjava.booking.IntegrationTestConfig
 import com.allaroundjava.booking.common.LoggingConfig
 import com.allaroundjava.booking.common.events.EventsConfig
 import com.allaroundjava.booking.items.ItemsConfig
+import io.zonky.test.db.AutoConfigureEmbeddedDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
@@ -12,12 +13,17 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.test.context.jdbc.Sql
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
+
+import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = [IntegrationTestConfig, EventsConfig, OwnersConfig, ItemsConfig, LoggingConfig])
 @EnableAutoConfiguration
+@AutoConfigureEmbeddedDatabase(provider = ZONKY, beanName = "dataSource")
+@Sql("/events-db-creation.sql")
 class OwnersCrossModuleIntegrationTest extends Specification {
 
     @Autowired
