@@ -1,11 +1,11 @@
 CREATE TABLE IF NOT EXISTS Events
 (
-    id             uuid PRIMARY KEY,
-    type           varchar(100) NOT NULL,
-    created        timestamp    NOT NULL,
-    published      boolean      NOT NULL,
-    subjectId      uuid         NOT NULL,
-    payload        json         not null
+    id        uuid PRIMARY KEY,
+    type      varchar(100) NOT NULL,
+    created   timestamp    NOT NULL,
+    published boolean      NOT NULL,
+    subjectId uuid         NOT NULL,
+    payload   json         not null
 );
 
 CREATE TABLE IF NOT EXISTS Owners
@@ -57,4 +57,13 @@ CREATE TABLE IF NOT EXISTS Bookings
     itemId    uuid      NOT NULL,
     startTime timestamp NOT NULL,
     endTime   timestamp NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Notifications
+(
+    id      uuid PRIMARY KEY,
+    created timestamp    NOT NULL,
+    sent    boolean      NOT NULL,
+    type    VARCHAR(100) NOT NULL,
+    payload json         not null
 );

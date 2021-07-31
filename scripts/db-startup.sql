@@ -58,3 +58,12 @@ CREATE TABLE IF NOT EXISTS Bookings
     startTime  timestamp NOT NULL,
     endTime    timestamp NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS Notifications
+(
+    id      uuid PRIMARY KEY,
+    created timestamp    NOT NULL,
+    sent    boolean      NOT NULL,
+    type    VARCHAR(100) NOT NULL,
+    payload json         not null
+);

@@ -43,14 +43,17 @@ public class Occupation {
 
         Availabilities coveringAvailabilities = availabilities.matchingIds(booking.getAvailabilityIds());
 
-        Optional<Rejection> canBook = bookingPolicies.canBook(coveringAvailabilities);
+        Optional<Rejection> rejections = bookingPolicies.canBook(coveringAvailabilities);
 
-        if (canBook.isEmpty()) {
+        if (rejections.isEmpty()) {
             bookAvailabilities(booking, coveringAvailabilities);
-            return announceSuccess(new BookingSuccess(itemId, booking));
+            return announceSuccess(BookingSuccess.now(booking.getId(),
+                    itemId,
+                    booking.getInterval(),
+                    booking.getAvailabilityIds()));
         }
-        log.warn("Cannot allow to book request {}. Reason {}",booking.getId(), canBook.get().getReason());
-        return announceFailure(new BookingFailure(itemId, booking.getInterval(), canBook.get().getReason()));
+        log.warn("Cannot allow to book request {}. Reason {}",booking.getId(), rejections.get().getReason());
+        return announceFailure(new BookingFailure(itemId, booking.getInterval(), rejections.get().getReason()));
     }
 
     private void bookAvailabilities(Booking booking, Availabilities coveringAvailabilities) {

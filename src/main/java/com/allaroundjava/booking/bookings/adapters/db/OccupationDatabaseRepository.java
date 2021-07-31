@@ -8,6 +8,7 @@ import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.RemoveBoo
 import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository;
 import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.sql.Timestamp;
 import java.time.*;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -95,21 +97,21 @@ public class OccupationDatabaseRepository implements OccupationRepository {
     }
 
     private void saveNewBooking(BookingSuccess event) {
-        insertIntoBooking(event.getBooking());
-        updateAvailabilities(event.getBooking());
+        insertIntoBooking(event.getEventId(), event.getItemId(), event.getInterval());
+        updateAvailabilities(event.getAvailabilityIds(), event.getSubjectId());
     }
 
-    private void insertIntoBooking(Booking booking) {
-        ImmutableMap<String, Object> params = ImmutableMap.of("id", booking.getId(),
-                "itemId", booking.getItemId(),
-                "start", Timestamp.from(booking.getStart().atZone(ZoneOffset.UTC).toInstant()),
-                "end", Timestamp.from(booking.getEnd().atZone(ZoneOffset.UTC).toInstant()));
+    private void insertIntoBooking(UUID bookingId, UUID itemId, Interval interval) {
+        ImmutableMap<String, Object> params = ImmutableMap.of("id", bookingId,
+                "itemId", itemId,
+                "start", Timestamp.from(interval.getStart().atZone(ZoneOffset.UTC).toInstant()),
+                "end", Timestamp.from(interval.getEnd().atZone(ZoneOffset.UTC).toInstant()));
         jdbcTemplate.update("insert into Bookings (id, itemId, startTime, endTime) values (:id,:itemId, :start, :end);", params);
     }
 
-    private void updateAvailabilities(Booking booking) {
-        ImmutableMap<String, Object> params = ImmutableMap.of("bookingId", booking.getId(),
-                "availabilityIds", booking.getAvailabilityIds());
+    private void updateAvailabilities(Set<UUID> availabilityIds, UUID bookingId) {
+        ImmutableMap<String, Object> params = ImmutableMap.of("bookingId", bookingId,
+                "availabilityIds", availabilityIds);
         jdbcTemplate.update("UPDATE Availabilities set bookingId=:bookingId where id in (:availabilityIds)", params);
     }
 
