@@ -97,8 +97,8 @@ public class OccupationDatabaseRepository implements OccupationRepository {
     }
 
     private void saveNewBooking(BookingSuccess event) {
-        insertIntoBooking(event.getEventId(), event.getItemId(), event.getInterval());
-        updateAvailabilities(event.getAvailabilityIds(), event.getSubjectId());
+        insertIntoBooking(event.getBookingId(), event.getItemId(), event.getInterval());
+        updateAvailabilities(event.getAvailabilityIds(), event.getBookingId());
     }
 
     private void insertIntoBooking(UUID bookingId, UUID itemId, Interval interval) {

@@ -12,6 +12,7 @@ import com.allaroundjava.booking.bookings.domain.ports.BookingsRepository
 import com.allaroundjava.booking.bookings.domain.ports.ItemsRepository
 import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository
 import com.allaroundjava.booking.common.LoggingConfig
+import com.allaroundjava.booking.common.events.EventsConfig
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -31,7 +32,7 @@ import static com.allaroundjava.booking.bookings.domain.model.BookingFixture.fro
 import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = [BookingsConfig, IntegrationTestConfig, LoggingConfig])
+        classes = [BookingsConfig, IntegrationTestConfig, LoggingConfig, EventsConfig])
 @EnableAutoConfiguration
 @AutoConfigureEmbeddedDatabase(provider = ZONKY, beanName = "dataSource")
 @Sql("/events-db-creation.sql")
@@ -117,7 +118,8 @@ class BookingIntegrationTest extends Specification {
     private void existBookings(Collection<Availability> availabilities) {
         availabilities.forEach({ availability ->
             existsAvailability(availability)
-            occupationRepository.handle(new OccupationEvent.BookingSuccess(ITEM_ID, fromSingleAvailability(availability)))
+            def booking = fromSingleAvailability(availability)
+            occupationRepository.handle(OccupationEvent.BookingSuccess.now(booking.id, ITEM_ID, booking.interval, booking.availabilityIds))
         })
     }
 
