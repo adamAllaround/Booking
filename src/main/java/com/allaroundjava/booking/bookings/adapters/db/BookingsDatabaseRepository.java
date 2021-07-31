@@ -39,7 +39,7 @@ class BookingsDatabaseRepository implements BookingsRepository {
     }
 
     private BookingDatabaseEntity queryForSingle(ImmutableMap<String, UUID> params) {
-        return jdbcTemplate.queryForObject("SELECT b.* FROM Bookings b where b.id=:id",
+        return jdbcTemplate.queryForObject("SELECT * FROM Bookings where id=:id",
                 params,
                 new BookingDatabaseEntity.RowMapper());
     }
