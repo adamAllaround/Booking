@@ -15,7 +15,7 @@ class BookingsResponse {
 
     static BookingsResponse from(List<Booking> bookings) {
         List<BookingResponse> bookingResponses = bookings.stream()
-                .map(BookingResponse::from).collect(Collectors.toList());
+                .map(booking -> BookingResponse.withBookingId(booking.getId())).collect(Collectors.toList());
         return new BookingsResponse(bookingResponses);
     }
 }

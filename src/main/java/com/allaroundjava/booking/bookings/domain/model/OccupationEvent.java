@@ -6,6 +6,7 @@ import lombok.Value;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface OccupationEvent extends DomainEvent {
@@ -60,10 +61,15 @@ public interface OccupationEvent extends DomainEvent {
 
     @Value
     class BookingSuccess implements OccupationEvent {
-        UUID eventId = UUID.randomUUID();
-        Instant created = Instant.now();
+        @NonNull UUID eventId;
+        @NonNull Instant created;
+        @NonNull UUID bookingId;
         @NonNull UUID itemId;
-        @NonNull Booking booking;
+        @NonNull Interval interval;
+        @NonNull Set<UUID> availabilityIds;
+        static BookingSuccess now(UUID bookingId, UUID itemId, Interval interval, Set<UUID> availabilityIds) {
+            return new BookingSuccess(UUID.randomUUID(), Instant.now(),bookingId, itemId, interval, availabilityIds);
+        }
     }
 
     @Value

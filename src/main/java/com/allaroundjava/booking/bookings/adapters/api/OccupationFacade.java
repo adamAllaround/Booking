@@ -20,7 +20,7 @@ class OccupationFacade {
 
     public Optional<BookingResponse> saveBooking(BookingRequest request) {
         return occupationService.addBooking(request.toDomain())
-                .map(success -> BookingResponse.from(success.getBooking()))
+                .map(success -> BookingResponse.withBookingId(success.getBookingId()))
                 .map(Optional::of)
                 .getOrElse(Optional::empty);
     }

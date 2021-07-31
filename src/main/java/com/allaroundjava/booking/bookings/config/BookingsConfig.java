@@ -2,6 +2,7 @@ package com.allaroundjava.booking.bookings.config;
 
 import com.allaroundjava.booking.bookings.domain.model.BookingPolicies;
 import com.allaroundjava.booking.bookings.domain.ports.*;
+import com.allaroundjava.booking.common.events.EventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +21,8 @@ public class BookingsConfig {
     }
 
     @Bean
-    OccupationService occupationService(OccupationRepository occupationRepository) {
-        return new OccupationService(occupationRepository);
+    OccupationService occupationService(OccupationRepository occupationRepository, EventPublisher eventPublisher) {
+        return new OccupationService(occupationRepository, eventPublisher);
     }
 
     @Bean
