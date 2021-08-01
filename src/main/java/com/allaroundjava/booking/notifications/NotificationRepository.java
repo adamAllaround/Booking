@@ -1,5 +1,6 @@
 package com.allaroundjava.booking.notifications;
 
+import com.allaroundjava.booking.common.events.DomainEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
@@ -7,12 +8,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -46,26 +50,28 @@ class NotificationRepository {
         }
     }
 
-    public Optional<Notification> findById(UUID uuid) {
-        ImmutableMap<String, Object> params = ImmutableMap.of("id", uuid);
-
-        try {
-            NotificationEntity entity = jdbcTemplate.queryForObject("SELECT * FROM Notifications i where id=:id",
-                    params, new NotificationRowMapper(objectMapper));
-
-            return Optional.ofNullable(entity)
-                    .map(NotificationEntity::toDomainModel);
-
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
-    }
-
     public Collection<Notification> all() {
         return jdbcTemplate.query("SELECT * FROM Notifications", new NotificationRowMapper(objectMapper))
                 .stream()
                 .map(NotificationEntity::toDomainModel)
                 .collect(Collectors.toList());
+    }
+
+    Collection<Notification> allUnsent() {
+        return jdbcTemplate.query("SELECT * FROM Notifications where sent=false", new NotificationRowMapper(objectMapper))
+                .stream()
+                .map(NotificationEntity::toDomainModel)
+                .collect(Collectors.toList());
+    }
+
+    void markPublished(Collection<Notification> toPublish) {
+        List<UUID> ids = toPublish.stream()
+                .map(Notification::getId)
+                .collect(Collectors.toList());
+        SqlParameterSource parameters = new MapSqlParameterSource("ids", ids);
+
+        log.info("Marking notifications sent {}", ids);
+        jdbcTemplate.update("UPDATE Notifications set sent=true where id in (:ids)", parameters);
     }
 
     @Data
