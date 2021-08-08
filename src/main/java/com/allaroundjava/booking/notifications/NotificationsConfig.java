@@ -1,5 +1,7 @@
 package com.allaroundjava.booking.notifications;
 
+import com.allaroundjava.booking.notifications.owners.OwnerCreatedEventHandler;
+import com.allaroundjava.booking.notifications.owners.OwnersRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,5 +20,15 @@ public class NotificationsConfig {
     @Bean
     BookingSuccessEventHandler bookingSuccessEventHandler(NotificationRepository repository) {
         return new BookingSuccessEventHandler(repository);
+    }
+
+    @Bean
+    OwnersRepository notificationModuleOwnersRepository(NamedParameterJdbcTemplate jdbcTemplate) {
+        return new OwnersRepository(jdbcTemplate);
+    }
+
+    @Bean
+    OwnerCreatedEventHandler notificationModuleOwnerCreatedHandler(OwnersRepository ownersRepository) {
+        return new OwnerCreatedEventHandler(ownersRepository);
     }
 }

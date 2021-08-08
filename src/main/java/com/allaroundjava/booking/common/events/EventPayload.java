@@ -8,6 +8,11 @@ import java.util.Set;
 import java.util.UUID;
 
 class EventPayload {
+
+    @Data
+    static class Owner {
+        String email;
+    }
     @Data
     static class HotelRoom {
         OffsetTime hotelHourStart;

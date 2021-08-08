@@ -9,7 +9,7 @@ class DbInsertFactory {
     private final ObjectMapper objectMapper;
     DbInsert get(DomainEvent domainEvent) {
         if (domainEvent instanceof OwnerCreatedEvent) {
-            return new OwnerCreatedDbInsert((OwnerCreatedEvent) domainEvent);
+            return new OwnerCreatedDbInsert((OwnerCreatedEvent) domainEvent, objectMapper);
         }
         if (domainEvent instanceof HotelRoomCreatedEvent) {
             return new HotelRoomCreatedDbInsert((HotelRoomCreatedEvent) domainEvent, objectMapper);
