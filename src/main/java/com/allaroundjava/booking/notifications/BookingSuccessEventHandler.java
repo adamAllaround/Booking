@@ -15,8 +15,14 @@ class BookingSuccessEventHandler {
     @EventListener
     public void handle(OccupationEvent.BookingSuccess event) {
         log.info("Received new BookingSuccess event {}", event);
-        repository.save(new BookingSuccessNotification(event.getEventId(), event.getBookingId(), Instant.now(),
-                false, "ownerEmail", "receiverEmail"));
+        repository.save(new BookingSuccessNotification(event.getEventId(),
+                event.getBookingId(),
+                Instant.now(),
+                false,
+                "ownerEmail",
+                "receiverEmail",
+                new Interval(event.getInterval().getStart(), event.getInterval().getEnd()),
+                event.getAvailabilityIds().size()));
         log.info("Persisted Booking Success notification request {}", event.getEventId());
     }
 }

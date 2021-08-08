@@ -1,13 +1,11 @@
 package com.allaroundjava.booking.notifications;
 
-import com.allaroundjava.booking.common.events.DomainEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -15,9 +13,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -34,6 +32,9 @@ class NotificationRepository {
         payload.setOwnerEmail(bookingSuccessNotification.getOwnerEmail());
         payload.setBookerEmail(bookingSuccessNotification.getReceiverEmail());
         payload.setBookingId(bookingSuccessNotification.getBookingId());
+        payload.setNights(bookingSuccessNotification.getNights());
+        payload.setStart(bookingSuccessNotification.getInterval().getStart());
+        payload.setEnd(bookingSuccessNotification.getInterval().getEnd());
         try {
             ImmutableMap<String, Object> params = ImmutableMap.of(
                     "id", bookingSuccessNotification.getId(),
@@ -104,6 +105,9 @@ class NotificationRepository {
         UUID bookingId;
         String ownerEmail;
         String bookerEmail;
+        Instant start;
+        Instant end;
+        int nights;
 
         @Override
         Notification toDomainModel() {
@@ -112,7 +116,9 @@ class NotificationRepository {
                     created.toInstant(),
                     sent,
                     ownerEmail,
-                    bookerEmail);
+                    bookerEmail,
+                    new Interval(start, end),
+                    nights);
         }
 
         @AllArgsConstructor
@@ -132,6 +138,9 @@ class NotificationRepository {
                     entity.ownerEmail = payload.getOwnerEmail();
                     entity.bookerEmail = payload.getBookerEmail();
                     entity.bookingId = payload.getBookingId();
+                    entity.start = payload.getStart();
+                    entity.end = payload.getEnd();
+                    entity.nights = payload.getNights();
 
                     return entity;
                 } catch (JsonProcessingException e) {
