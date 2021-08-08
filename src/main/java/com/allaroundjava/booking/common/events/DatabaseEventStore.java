@@ -78,7 +78,7 @@ public class DatabaseEventStore implements EventStore {
         public EventEntity mapRow(ResultSet resultSet, int i) throws SQLException {
             EventType type = EventType.valueOf(resultSet.getString("type"));
             if (OwnerCreated.equals(type)) {
-                return new OwnerCreatedEventEntity.RowMapper().mapRow(resultSet, i);
+                return new OwnerCreatedEventEntity.RowMapper(objectMapper).mapRow(resultSet, i);
             } else if (HotelRoomCreated.equals(type)) {
                 return new HotelRoomCreatedEventEntity.RowMapper(objectMapper).mapRow(resultSet, i);
             } else if (BookingSuccess.equals(type)) {
@@ -101,18 +101,26 @@ public class DatabaseEventStore implements EventStore {
             return new OwnerCreatedEvent(id, created, subjectId, email);
         }
 
+        @AllArgsConstructor
         static class RowMapper implements org.springframework.jdbc.core.RowMapper<OwnerCreatedEventEntity> {
+            private final ObjectMapper objectMapper;
 
             @Override
             public OwnerCreatedEventEntity mapRow(ResultSet resultSet, int i) throws SQLException {
+                try {
                 OwnerCreatedEventEntity entity = new OwnerCreatedEventEntity();
                 entity.id = UUID.fromString(resultSet.getObject("id").toString());
                 entity.created = resultSet.getTimestamp("created").toInstant();
                 entity.published = resultSet.getBoolean("published");
                 entity.subjectId = UUID.fromString(resultSet.getObject("subjectId").toString());
-                //entity.email = resultSet.getString("email"); //TODO needs to be a payload
+                EventPayload.Owner payload = objectMapper.readValue(resultSet.getString("payload"), EventPayload.Owner.class);
+                entity.email = payload.getEmail();
 
                 return entity;
+                } catch (JsonProcessingException e) {
+                    log.error("Could not parse event payload from json. Event Id {}, reason {}", resultSet.getObject("id").toString(), e.getMessage());
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
@@ -135,7 +143,7 @@ public class DatabaseEventStore implements EventStore {
         @AllArgsConstructor
         static class RowMapper implements org.springframework.jdbc.core.RowMapper<HotelRoomCreatedEventEntity> {
 
-            private ObjectMapper objectMapper;
+            private final ObjectMapper objectMapper;
 
             @Override
             public HotelRoomCreatedEventEntity mapRow(ResultSet resultSet, int i) throws SQLException {
@@ -178,7 +186,7 @@ public class DatabaseEventStore implements EventStore {
         @Log4j2
         static class RowMapper implements org.springframework.jdbc.core.RowMapper<BookingSuccessEventEntity> {
 
-            private ObjectMapper objectMapper;
+            private final ObjectMapper objectMapper;
 
             @Override
             public BookingSuccessEventEntity mapRow(ResultSet resultSet, int i) throws SQLException {

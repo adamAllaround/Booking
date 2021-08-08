@@ -20,9 +20,11 @@ interface DbInsert {
     Map<String, Object> getParams();
 }
 
+@Log4j2
 @AllArgsConstructor
 class OwnerCreatedDbInsert implements DbInsert {
     private final OwnerCreatedEvent event;
+    private final ObjectMapper objectMapper;
 
     @Override
     public String getInsertStatement() {
@@ -31,14 +33,21 @@ class OwnerCreatedDbInsert implements DbInsert {
 
     @Override
     public Map<String, Object> getParams() {
+        EventPayload.Owner eventPayload = new EventPayload.Owner();
+        eventPayload.setEmail(event.getOwnerContactEmail());
+        try {
         return ImmutableMap.<String, Object>builder()
                 .put("id", event.getEventId())
                 .put("type", OwnerCreated.name())
                 .put("created", Timestamp.from(event.getCreated()))
                 .put("published", false)
                 .put("subjectId", event.getSubjectId())
-                .put("payload", "{}")
+                .put("payload", objectMapper.writeValueAsString(eventPayload))
                 .build();
+        } catch (JsonProcessingException e) {
+            log.error("Could serialize event to json and persist owner created event {}", event);
+            throw new RuntimeException(e);
+        }
     }
 }
 
@@ -68,7 +77,7 @@ class HotelRoomCreatedDbInsert implements DbInsert {
                     .put("payload", objectMapper.writeValueAsString(eventPayload))
                     .build();
         } catch (JsonProcessingException e) {
-            log.error("Could serialize event to json and persist event {}", event);
+            log.error("Could serialize event to json and persist hotel room created event {}", event);
             throw new RuntimeException(e);
         }
     }
@@ -102,7 +111,7 @@ class BookingSuccessDbInsert implements DbInsert {
                     .put("payload", objectMapper.writeValueAsString(eventPayload))
                     .build();
         } catch (JsonProcessingException e) {
-            log.error("Could serialize event to jason and persist event {}", event);
+            log.error("Could serialize event to jason and persist booking success event {}", event);
             throw new RuntimeException(e);
         }
     }

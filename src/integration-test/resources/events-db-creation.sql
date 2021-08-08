@@ -67,3 +67,10 @@ CREATE TABLE IF NOT EXISTS Notifications
     type    VARCHAR(100) NOT NULL,
     payload json         not null
 );
+
+CREATE TABLE IF NOT EXISTS NotificationsOwners
+(
+    id      uuid PRIMARY KEY,
+    email    VARCHAR(100) NOT NULL
+);
+
