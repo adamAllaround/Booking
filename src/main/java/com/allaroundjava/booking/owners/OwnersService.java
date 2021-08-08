@@ -23,7 +23,7 @@ class OwnersService {
 
     Owner save(Owner owner) {
         Owner newOwner = repository.save(owner);
-        eventPublisher.publish(OwnerCreatedEvent.now(newOwner.getId()));
+        eventPublisher.publish(OwnerCreatedEvent.now(newOwner.getId(), owner.getEmail()));
         return newOwner;
     }
 }

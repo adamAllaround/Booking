@@ -63,7 +63,7 @@ class OwnersController {
         String contact;
 
         static OwnerResponse from(Owner owner) {
-            return new OwnerResponse(owner.getId(), owner.getName(), owner.getContact());
+            return new OwnerResponse(owner.getId(), owner.getName(), owner.getEmail());
         }
     }
 
@@ -75,7 +75,7 @@ class OwnersController {
         Owner toModel() {
             Owner owner = new Owner();
             owner.setName(name);
-            owner.setContact(contact);
+            owner.setEmail(contact);
             return owner;
         }
     }

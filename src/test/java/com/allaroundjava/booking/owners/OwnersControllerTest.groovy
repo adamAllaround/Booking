@@ -17,7 +17,7 @@ class OwnersControllerTest extends Specification {
     private OwnersService ownersService = Mock()
     private OwnersController ownersController
     private MockMvc mockMvc
-    private Owner owner = new Owner(id: OWNER_ID, name: "Josh", contact: "56603982")
+    private Owner owner = new Owner(id: OWNER_ID, name: "Josh", setEmail: "56603982")
 
     void setup() {
         ownersController = new OwnersController(ownersService)

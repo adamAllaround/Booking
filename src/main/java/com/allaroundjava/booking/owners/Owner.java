@@ -8,5 +8,5 @@ import java.util.UUID;
 class Owner {
     UUID id = UUID.randomUUID();
     String name;
-    String contact;
+    String email;
 }

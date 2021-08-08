@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS Owners
 (
     id      uuid PRIMARY KEY,
     name    VARCHAR(100) NOT NULL,
-    contact VARCHAR(100) NOT NULL
+    email VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS ItemsOwners

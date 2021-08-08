@@ -13,8 +13,9 @@ public class OwnerCreatedEvent implements DomainEvent {
     UUID eventId;
     Instant created;
     UUID subjectId;
+    String ownerContactEmail;
 
-    public static OwnerCreatedEvent now(UUID subjectId) {
-        return new OwnerCreatedEvent(UUID.randomUUID(), Instant.now(), subjectId);
+    public static OwnerCreatedEvent now(UUID subjectId, String ownerContactEmail) {
+        return new OwnerCreatedEvent(UUID.randomUUID(), Instant.now(), subjectId, ownerContactEmail);
     }
 }
