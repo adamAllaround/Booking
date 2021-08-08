@@ -19,6 +19,9 @@ class NotificationPublisher {
     @Transactional
     void publishAllPeriodically() {
         Collection<Notification> toPublish = repository.allUnsent();
+        //each message will produce an owner and a client message
+        //unability to send an owner message cannot block client to receive it and the other way round
+        //unability to send one client message cannot block other from receiving it.
         toPublish.stream().map(Notification::toMessage).forEach(message -> message.send(sender));
         if (!toPublish.isEmpty()) {
             log.info("Attempting to publish events {}", toPublish);

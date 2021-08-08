@@ -2,6 +2,7 @@ package com.allaroundjava.booking.notifications;
 
 import lombok.Data;
 
+import java.time.Instant;
 import java.util.UUID;
 
 class NotificationPayload {
@@ -10,5 +11,8 @@ class NotificationPayload {
         UUID bookingId;
         String ownerEmail;
         String bookerEmail;
+        int nights;
+        Instant start;
+        Instant end;
     }
 }
