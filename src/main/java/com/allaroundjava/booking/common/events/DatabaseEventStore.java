@@ -95,9 +95,10 @@ public class DatabaseEventStore implements EventStore {
         private Instant created;
         private boolean published;
         private UUID subjectId;
+        private String email;
 
         DomainEvent toDomainEvent() {
-            return new OwnerCreatedEvent(id, created, subjectId);
+            return new OwnerCreatedEvent(id, created, subjectId, email);
         }
 
         static class RowMapper implements org.springframework.jdbc.core.RowMapper<OwnerCreatedEventEntity> {
@@ -109,6 +110,7 @@ public class DatabaseEventStore implements EventStore {
                 entity.created = resultSet.getTimestamp("created").toInstant();
                 entity.published = resultSet.getBoolean("published");
                 entity.subjectId = UUID.fromString(resultSet.getObject("subjectId").toString());
+                //entity.email = resultSet.getString("email"); //TODO needs to be a payload
 
                 return entity;
             }

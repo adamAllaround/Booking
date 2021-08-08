@@ -29,8 +29,8 @@ class OwnersRepository {
     }
 
     Owner save(Owner owner) {
-        jdbcTemplate.update("INSERT INTO Owners (id, name, contact) values (?,?,?)",
-                owner.getId(), owner.getName(), owner.getContact());
+        jdbcTemplate.update("INSERT INTO Owners (id, name, email) values (?,?,?)",
+                owner.getId(), owner.getName(), owner.getEmail());
         return owner;
     }
 
@@ -39,13 +39,13 @@ class OwnersRepository {
     static class OwnerDatabaseEntity {
         private UUID id;
         private String name;
-        private String contact;
+        private String email;
 
         Owner toDomainModel() {
             Owner owner = new Owner();
             owner.setId(id);
             owner.setName(name);
-            owner.setContact(contact);
+            owner.setEmail(email);
             return owner;
         }
     }
