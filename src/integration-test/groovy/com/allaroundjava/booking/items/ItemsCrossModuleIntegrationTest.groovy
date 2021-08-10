@@ -4,6 +4,7 @@ import com.allaroundjava.booking.IntegrationTestConfig
 import com.allaroundjava.booking.bookings.config.BookingsConfig
 import com.allaroundjava.booking.common.LoggingConfig
 import com.allaroundjava.booking.common.events.EventsConfig
+import com.allaroundjava.booking.notifications.NotificationsConfig
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -23,7 +24,7 @@ import java.time.ZoneOffset
 import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = [IntegrationTestConfig, EventsConfig, ItemsConfig, BookingsConfig, LoggingConfig])
+        classes = [IntegrationTestConfig, EventsConfig, ItemsConfig, BookingsConfig, LoggingConfig, NotificationsConfig])
 @EnableAutoConfiguration
 @AutoConfigureEmbeddedDatabase(provider = ZONKY, beanName = "dataSource")
 @Sql("/events-db-creation.sql")
@@ -37,6 +38,9 @@ class ItemsCrossModuleIntegrationTest extends Specification {
 
     @Autowired
     private com.allaroundjava.booking.bookings.domain.ports.ItemsRepository itemsRepository
+
+    @Autowired
+    private com.allaroundjava.booking.notifications.items.ItemsRepository notificationItemsRepo
 
     private PollingConditions pollingConditions = new PollingConditions(initialDelay: 2, timeout: 6)
 
@@ -53,6 +57,9 @@ class ItemsCrossModuleIntegrationTest extends Specification {
 
         and:
         itemPresentInBookingsModule(createResponse.getBody().getId())
+
+        and:
+        itemPresentInNotificationsModule(createResponse.getBody().getId())
 
     }
 
@@ -90,5 +97,11 @@ class ItemsCrossModuleIntegrationTest extends Specification {
         return ownersRepository.save(
                 new Owner(UUID.randomUUID(),
                         LocalDateTime.of(2020, 5, 23, 9, 54, 0).toInstant(ZoneOffset.UTC)))
+    }
+
+    void itemPresentInNotificationsModule(UUID uuid) {
+        pollingConditions.eventually {
+            assert notificationItemsRepo.findById(uuid).isPresent()
+        }
     }
 }

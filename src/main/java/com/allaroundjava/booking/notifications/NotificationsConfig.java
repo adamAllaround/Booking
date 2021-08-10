@@ -1,5 +1,7 @@
 package com.allaroundjava.booking.notifications;
 
+import com.allaroundjava.booking.notifications.items.HotelRoomCreatedEventHandler;
+import com.allaroundjava.booking.notifications.items.ItemsRepository;
 import com.allaroundjava.booking.notifications.owners.OwnerCreatedEventHandler;
 import com.allaroundjava.booking.notifications.owners.OwnersRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,5 +32,15 @@ public class NotificationsConfig {
     @Bean
     OwnerCreatedEventHandler notificationModuleOwnerCreatedHandler(OwnersRepository ownersRepository) {
         return new OwnerCreatedEventHandler(ownersRepository);
+    }
+
+    @Bean
+    ItemsRepository notificationModuleItemsRepo(NamedParameterJdbcTemplate jdbcTemplate) {
+        return new ItemsRepository(jdbcTemplate);
+    }
+
+    @Bean
+    HotelRoomCreatedEventHandler notificationModuleHotelRoomCreatedHandler(ItemsRepository itemsRepository) {
+        return new HotelRoomCreatedEventHandler(itemsRepository);
     }
 }

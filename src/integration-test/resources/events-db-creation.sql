@@ -74,3 +74,10 @@ CREATE TABLE IF NOT EXISTS NotificationsOwners
     email    VARCHAR(100) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS NotificationsItems
+(
+    id      uuid PRIMARY KEY,
+    hotelHourStart TIME NULL,
+    hotelHourEnd   TIME NULL
+);
+
