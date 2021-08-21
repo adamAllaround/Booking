@@ -8,6 +8,7 @@ import java.util.UUID;
 @Value
 public class HotelRoom {
     UUID id;
+    UUID ownerId;
     OffsetTime hotelHourStart;
     OffsetTime hotelHourEnd;
 }

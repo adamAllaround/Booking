@@ -135,9 +135,10 @@ public class DatabaseEventStore implements EventStore {
         private UUID subjectId;
         private OffsetTime hotelHourStart;
         private OffsetTime hotelHourEnd;
+        private UUID ownerId;
 
         DomainEvent toDomainEvent() {
-            return new HotelRoomCreatedEvent(id, created, subjectId, hotelHourStart, hotelHourEnd);
+            return new HotelRoomCreatedEvent(id, ownerId, created, subjectId, hotelHourStart, hotelHourEnd);
         }
 
         @AllArgsConstructor
@@ -156,6 +157,7 @@ public class DatabaseEventStore implements EventStore {
                     EventPayload.HotelRoom payload = objectMapper.readValue(resultSet.getString("payload"), EventPayload.HotelRoom.class);
                     entity.hotelHourStart = payload.getHotelHourStart();
                     entity.hotelHourEnd = payload.getHotelHourEnd();
+                    entity.ownerId = payload.getOwnerId();
 
                     return entity;
                 } catch (JsonProcessingException e) {

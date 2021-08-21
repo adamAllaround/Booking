@@ -13,7 +13,7 @@ public class HotelRoomCreatedEventHandler {
     @EventListener
     public void handle(HotelRoomCreatedEvent event) {
         log.info("Received new OwnerCreated event {}", event);
-        itemsRepository.save(new HotelRoom(event.getSubjectId(), event.getHotelHourStart(), event.getHotelHourEnd()));
+        itemsRepository.save(new HotelRoom(event.getSubjectId(), event.getOwnerId(), event.getHotelHourStart(), event.getHotelHourEnd()));
         log.info("Persisted new owner {} details in notification module. Event Id {}", event.getSubjectId(), event.getEventId());
     }
 }

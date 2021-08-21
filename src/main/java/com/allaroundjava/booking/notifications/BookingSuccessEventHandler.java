@@ -10,17 +10,16 @@ import java.time.Instant;
 @Log4j2
 @AllArgsConstructor
 class BookingSuccessEventHandler {
-    private final NotificationRepository repository;
+    private final EventRepository repository;
 
     @EventListener
     public void handle(OccupationEvent.BookingSuccess event) {
         log.info("Received new BookingSuccess event {}", event);
-        repository.save(new BookingSuccessNotification(event.getEventId(),
+        repository.save(new BookingSuccessEvent(event.getEventId(),
                 event.getBookingId(),
+                event.getItemId(),
                 Instant.now(),
                 false,
-                "ownerEmail",
-                "receiverEmail",
                 new Interval(event.getInterval().getStart(), event.getInterval().getEnd()),
                 event.getAvailabilityIds().size()));
         log.info("Persisted Booking Success notification request {}", event.getEventId());
