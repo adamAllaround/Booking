@@ -11,14 +11,14 @@ public class HotelRoomCreatedEvent extends ItemCreatedEvent {
     OffsetTime hotelHourStart;
     OffsetTime hotelHourEnd;
 
-    HotelRoomCreatedEvent(UUID eventId, Instant created, UUID subjectId, OffsetTime hotelHourStart, OffsetTime hotelHourEnd) {
-        super(eventId, created, subjectId);
+    HotelRoomCreatedEvent(UUID eventId,UUID ownerId, Instant created, UUID itemId, OffsetTime hotelHourStart, OffsetTime hotelHourEnd) {
+        super(eventId, created, itemId, ownerId);
         this.hotelHourStart = hotelHourStart;
         this.hotelHourEnd = hotelHourEnd;
     }
 
-    public static ItemCreatedEvent now(UUID subjectId, OffsetTime hotelHourStart, OffsetTime hotelHourEnd) {
-        return new HotelRoomCreatedEvent(UUID.randomUUID(), Instant.now(), subjectId, hotelHourStart, hotelHourEnd);
+    public static ItemCreatedEvent now(UUID itemId,UUID ownerId, OffsetTime hotelHourStart, OffsetTime hotelHourEnd) {
+        return new HotelRoomCreatedEvent(UUID.randomUUID(), ownerId, Instant.now(), itemId, hotelHourStart, hotelHourEnd);
     }
 }
 

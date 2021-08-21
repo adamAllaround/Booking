@@ -77,6 +77,7 @@ CREATE TABLE IF NOT EXISTS NotificationsOwners
 CREATE TABLE IF NOT EXISTS NotificationsItems
 (
     id      uuid PRIMARY KEY,
+    ownerId uuid NOT NULL,
     hotelHourStart TIME NULL,
     hotelHourEnd   TIME NULL
 );

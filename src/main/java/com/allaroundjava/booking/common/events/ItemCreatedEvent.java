@@ -12,5 +12,6 @@ public abstract class ItemCreatedEvent implements DomainEvent{
     protected UUID eventId;
     protected Instant created;
     protected UUID subjectId;
+    protected UUID ownerId;
 }
 

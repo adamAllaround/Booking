@@ -28,7 +28,7 @@ public class OwnersRepository {
         try {
             OwnerDatabaseEntity ownerDatabaseEntity = jdbcTemplate.queryForObject("SELECT * FROM NotificationsOwners o where id=:id",
                     params, new BeanPropertyRowMapper<>(OwnerDatabaseEntity.class));
-            return Optional.ofNullable(ownerDatabaseEntity.toDomainModel());
+            return Optional.ofNullable(ownerDatabaseEntity.toDomain());
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
@@ -36,12 +36,13 @@ public class OwnersRepository {
 
     @Data
     @NoArgsConstructor
-    static class OwnerDatabaseEntity {
+    public static class OwnerDatabaseEntity {
         private UUID id;
         private String email;
 
-        Owner toDomainModel() {
+        public Owner toDomain() {
             return new Owner(id, email);
         }
+
     }
 }

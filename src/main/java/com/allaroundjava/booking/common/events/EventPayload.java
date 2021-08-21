@@ -15,6 +15,7 @@ class EventPayload {
     }
     @Data
     static class HotelRoom {
+        UUID ownerId;
         OffsetTime hotelHourStart;
         OffsetTime hotelHourEnd;
     }

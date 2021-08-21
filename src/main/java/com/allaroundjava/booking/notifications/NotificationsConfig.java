@@ -15,12 +15,12 @@ public class NotificationsConfig {
 
 
     @Bean
-    NotificationRepository notificationRepository(NamedParameterJdbcTemplate jdbcTemplate) {
-        return new NotificationRepository(jdbcTemplate, objectMapper);
+    EventRepository notificationRepository(NamedParameterJdbcTemplate jdbcTemplate) {
+        return new EventRepository(jdbcTemplate, objectMapper);
     }
 
     @Bean
-    BookingSuccessEventHandler bookingSuccessEventHandler(NotificationRepository repository) {
+    BookingSuccessEventHandler bookingSuccessEventHandler(EventRepository repository) {
         return new BookingSuccessEventHandler(repository);
     }
 

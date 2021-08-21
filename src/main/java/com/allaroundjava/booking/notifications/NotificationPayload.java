@@ -9,8 +9,7 @@ class NotificationPayload {
     @Data
     static class BookingSuccess {
         UUID bookingId;
-        String ownerEmail;
-        String bookerEmail;
+        UUID itemId;
         int nights;
         Instant start;
         Instant end;

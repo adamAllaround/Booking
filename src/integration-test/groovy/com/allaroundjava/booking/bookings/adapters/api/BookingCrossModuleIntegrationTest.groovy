@@ -10,7 +10,7 @@ import com.allaroundjava.booking.bookings.domain.ports.ItemsRepository
 import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository
 import com.allaroundjava.booking.common.LoggingConfig
 import com.allaroundjava.booking.common.events.EventsConfig
-import com.allaroundjava.booking.notifications.BookingSuccessNotification
+import com.allaroundjava.booking.notifications.BookingSuccessEvent
 import com.allaroundjava.booking.notifications.NotificationRepository
 import com.allaroundjava.booking.notifications.NotificationsConfig
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase
@@ -103,7 +103,7 @@ class BookingCrossModuleIntegrationTest extends Specification {
     void bookingNotificationExists(UUID bookingId) {
         pollingConditions.eventually {
             assert notificationRepository.all()
-                    .any {it instanceof BookingSuccessNotification && bookingId.equals(it.bookingId)}
+                    .any {it instanceof BookingSuccessEvent && bookingId.equals(it.bookingId)}
         }
     }
 }

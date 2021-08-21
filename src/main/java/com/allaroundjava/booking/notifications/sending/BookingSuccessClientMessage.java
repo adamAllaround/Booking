@@ -9,18 +9,21 @@ import lombok.AllArgsConstructor;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.time.OffsetTime;
 import java.util.Map;
 import java.util.UUID;
 
 @AllArgsConstructor
-public class BookingSuccessMessage implements Message {
+public class BookingSuccessClientMessage implements Message {
 
 
-    UUID bookingId;
-    String ownerEmail;
-    String receiverEmail;
-    Interval interval;
-    int nights;
+    private final UUID bookingId;
+    private final String ownerEmail;
+    private final String receiverEmail;
+    private final Interval interval;
+    private final int nights;
+    private final OffsetTime hotelHourStart;
+    private final OffsetTime hotelHourEnd;
 
     @Override
     public void send(EmailSender sender) {
@@ -37,6 +40,8 @@ public class BookingSuccessMessage implements Message {
                     .put("bookerEmail", receiverEmail)
                     .put("interval", interval)
                     .put("nights", nights)
+                    .put("hotelHourStart", hotelHourStart)
+                    .put("hotelHourEnd", hotelHourEnd)
                     .build();
 
             MustacheFactory mustacheFactory = new DefaultMustacheFactory();
