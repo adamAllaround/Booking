@@ -10,6 +10,7 @@ import java.util.UUID;
 public class Booking {
     UUID id;
     UUID itemId;
+    String email;
     Interval interval;
     Set<UUID> availabilityIds;
 

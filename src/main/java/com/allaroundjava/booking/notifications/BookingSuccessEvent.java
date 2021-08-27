@@ -14,4 +14,5 @@ public class BookingSuccessEvent {
     boolean sent;
     Interval interval;
     int nights;
+    String bookerEmail;
 }

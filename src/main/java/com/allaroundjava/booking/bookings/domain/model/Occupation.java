@@ -50,7 +50,8 @@ public class Occupation {
             return announceSuccess(BookingSuccess.now(booking.getId(),
                     itemId,
                     booking.getInterval(),
-                    booking.getAvailabilityIds()));
+                    booking.getAvailabilityIds(),
+                    booking.getEmail()));
         }
         log.warn("Cannot allow to book request {}. Reason {}",booking.getId(), rejections.get().getReason());
         return announceFailure(new BookingFailure(itemId, booking.getInterval(), rejections.get().getReason()));

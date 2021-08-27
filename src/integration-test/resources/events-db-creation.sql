@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS Bookings
     endTime   timestamp NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Notifications
+CREATE TABLE IF NOT EXISTS NotificationEvents
 (
     id      uuid PRIMARY KEY,
     created timestamp    NOT NULL,

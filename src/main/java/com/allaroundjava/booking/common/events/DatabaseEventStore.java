@@ -179,9 +179,10 @@ public class DatabaseEventStore implements EventStore {
         private UUID itemId;
         private Interval interval;
         private Set<UUID> availabilityIds;
+        private String bookerEmail;
 
         DomainEvent toDomainEvent() {
-            return new OccupationEvent.BookingSuccess(id, created, bookingId, itemId, interval, availabilityIds);
+            return new OccupationEvent.BookingSuccess(id, created, bookingId, itemId, interval, availabilityIds, bookerEmail);
         }
 
         @AllArgsConstructor
@@ -202,6 +203,7 @@ public class DatabaseEventStore implements EventStore {
                     entity.interval = payload.getInterval();
                     entity.availabilityIds = payload.getAvailabilityIds();
                     entity.bookingId = payload.getBookingId();
+                    entity.bookerEmail = payload.getBookerEmail();
 
                     return entity;
                 } catch (JsonProcessingException e) {

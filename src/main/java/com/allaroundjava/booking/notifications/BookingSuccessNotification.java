@@ -53,6 +53,7 @@ public class BookingSuccessNotification implements Notification {
     @Override
     public Notification enrichItemsData(Map<UUID, HotelRoom> items) {
         return builder()
+                .id(this.id)
                 .bookingId(this.bookingId)
                 .itemId(this.itemId)
                 .ownerId(items.get(this.itemId).getOwnerId())
@@ -68,6 +69,7 @@ public class BookingSuccessNotification implements Notification {
     @Override
     public Notification enrichOwnersData(Map<UUID, Owner> owners) {
         return builder()
+                .id(this.id)
                 .bookingId(this.bookingId)
                 .itemId(this.itemId)
                 .receiverEmail(this.receiverEmail)

@@ -27,8 +27,7 @@ public class BookingSuccessClientMessage implements Message {
 
     @Override
     public void send(EmailSender sender) {
-
-
+        sender.send(receiverEmail, getContent());
     }
 
     public String getContent() {

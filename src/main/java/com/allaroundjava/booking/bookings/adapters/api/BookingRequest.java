@@ -14,6 +14,7 @@ class BookingRequest {
     UUID itemId;
     String firstName;
     String lastName;
+    String email;
     OffsetDateTime start;
     OffsetDateTime end;
     Collection<UUID> availabilities;
@@ -21,6 +22,7 @@ class BookingRequest {
     Booking toDomain() {
         return new Booking(UUID.randomUUID(),
                 itemId,
+                email,
                 new Interval(start.toInstant(), end.toInstant()),
                 new HashSet<>(availabilities));
     }

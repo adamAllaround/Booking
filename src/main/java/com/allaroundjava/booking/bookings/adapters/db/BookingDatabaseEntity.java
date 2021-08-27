@@ -17,9 +17,10 @@ public class BookingDatabaseEntity {
     UUID itemId;
     OffsetDateTime startTime;
     OffsetDateTime endTime;
+    String bookerEmail;
 
     Booking toModel() {
-        return new Booking(id, itemId, new Interval(startTime.toInstant(), endTime.toInstant()), new HashSet<>());
+        return new Booking(id, itemId, bookerEmail, new Interval(startTime.toInstant(), endTime.toInstant()), new HashSet<>());
     }
 
     static class RowMapper implements org.springframework.jdbc.core.RowMapper<BookingDatabaseEntity> {

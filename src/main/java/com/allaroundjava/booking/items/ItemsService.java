@@ -36,7 +36,7 @@ class ItemsService {
 
     private DomainEvent findEventType(Item newItem) {
         if ("HotelRoom".equals(newItem.getType())) {
-            return HotelRoomCreatedEvent.now(newItem.getId(), newItem.getHotelHourStart(), newItem.getHotelHourEnd());
+            return HotelRoomCreatedEvent.now(newItem.getId(), newItem.getOwnerId(), newItem.getHotelHourStart(), newItem.getHotelHourEnd());
         }
         throw new IllegalArgumentException("Unknown event type passed to publish()");
     }

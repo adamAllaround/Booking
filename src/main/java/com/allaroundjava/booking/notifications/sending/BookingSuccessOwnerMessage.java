@@ -14,6 +14,11 @@ public class BookingSuccessOwnerMessage implements Message  {
     private final int nights;
     @Override
     public void send(EmailSender sender) {
+        sender.send(ownerEmail, getContent());
+    }
 
+    @Override
+    public String getContent() {
+        return null;
     }
 }

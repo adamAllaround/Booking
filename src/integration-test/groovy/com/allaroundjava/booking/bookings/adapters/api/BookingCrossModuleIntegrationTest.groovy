@@ -102,8 +102,8 @@ class BookingCrossModuleIntegrationTest extends Specification {
 
     void bookingNotificationExists(UUID bookingId) {
         pollingConditions.eventually {
-            assert notificationRepository.all()
-                    .any {it instanceof BookingSuccessEvent && bookingId.equals(it.bookingId)}
+            assert notificationRepository.allUnsent()
+                    .any {it instanceof BookingSuccessEvent && bookingId == it.bookingId }
         }
     }
 }

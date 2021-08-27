@@ -21,7 +21,8 @@ class BookingSuccessEventHandler {
                 Instant.now(),
                 false,
                 new Interval(event.getInterval().getStart(), event.getInterval().getEnd()),
-                event.getAvailabilityIds().size()));
+                event.getAvailabilityIds().size(),
+                event.getBookerEmail()));
         log.info("Persisted Booking Success notification request {}", event.getEventId());
     }
 }
