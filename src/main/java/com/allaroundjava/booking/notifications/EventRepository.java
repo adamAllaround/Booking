@@ -34,6 +34,7 @@ class EventRepository {
         payload.setNights(bookingSuccessEvent.getNights());
         payload.setStart(bookingSuccessEvent.getInterval().getStart());
         payload.setEnd(bookingSuccessEvent.getInterval().getEnd());
+        payload.setBookerEmail(bookingSuccessEvent.getBookerEmail());
         try {
             ImmutableMap<String, Object> params = ImmutableMap.of(
                     "id", bookingSuccessEvent.getId(),
@@ -115,6 +116,7 @@ class EventRepository {
                     entity.start = payload.getStart();
                     entity.end = payload.getEnd();
                     entity.nights = payload.getNights();
+                    entity.bookerEmail = payload.getBookerEmail();
 
                     return entity;
                 } catch (JsonProcessingException e) {

@@ -26,5 +26,6 @@ class EventPayload {
         UUID bookingId;
         Interval interval;
         Set<UUID> availabilityIds;
+        String bookerEmail;
     }
 }

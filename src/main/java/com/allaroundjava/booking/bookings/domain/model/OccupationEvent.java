@@ -67,8 +67,9 @@ public interface OccupationEvent extends DomainEvent {
         @NonNull UUID itemId;
         @NonNull Interval interval;
         @NonNull Set<UUID> availabilityIds;
-        static BookingSuccess now(UUID bookingId, UUID itemId, Interval interval, Set<UUID> availabilityIds) {
-            return new BookingSuccess(UUID.randomUUID(), Instant.now(),bookingId, itemId, interval, availabilityIds);
+        @NonNull String bookerEmail;
+        static BookingSuccess now(UUID bookingId, UUID itemId, Interval interval, Set<UUID> availabilityIds, String bookerEmail) {
+            return new BookingSuccess(UUID.randomUUID(), Instant.now(),bookingId, itemId, interval, availabilityIds, bookerEmail);
         }
     }
 

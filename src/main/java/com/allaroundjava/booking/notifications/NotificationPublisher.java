@@ -14,7 +14,7 @@ class NotificationPublisher {
     private final NotificationRepository repository;
     private final EmailSender sender;
 
-    @Scheduled(fixedDelayString = "${notification.sending.delay.millis}")
+    @Scheduled(fixedRate = 2000)
     @Transactional
     void publishAllPeriodically() {
         Collection<Notification> toPublish = repository.allUnsent();

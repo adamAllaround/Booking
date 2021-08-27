@@ -13,5 +13,6 @@ class NotificationPayload {
         int nights;
         Instant start;
         Instant end;
+        String bookerEmail;
     }
 }

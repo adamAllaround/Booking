@@ -67,6 +67,7 @@ class HotelRoomCreatedDbInsert implements DbInsert {
         EventPayload.HotelRoom eventPayload = new EventPayload.HotelRoom();
         eventPayload.setHotelHourStart(event.getHotelHourStart());
         eventPayload.setHotelHourEnd(event.getHotelHourEnd());
+        eventPayload.setOwnerId(event.getOwnerId());
         try {
             return ImmutableMap.<String, Object>builder()
                     .put("id", event.getEventId())
@@ -101,6 +102,7 @@ class BookingSuccessDbInsert implements DbInsert {
         eventPayload.setInterval(event.getInterval());
         eventPayload.setAvailabilityIds(event.getAvailabilityIds());
         eventPayload.setBookingId(event.getBookingId());
+        eventPayload.setBookerEmail(event.getBookerEmail());
         try {
             return ImmutableMap.<String, Object>builder()
                     .put("id", event.getEventId())
