@@ -10,9 +10,7 @@ import com.allaroundjava.booking.notifications.items.HotelRoom
 import com.allaroundjava.booking.notifications.items.ItemsRepository
 import com.allaroundjava.booking.notifications.owners.Owner
 import com.allaroundjava.booking.notifications.owners.OwnersRepository
-import com.allaroundjava.booking.notifications.sending.EmailSender
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase
-import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
@@ -43,13 +41,13 @@ class EventToNotificationTest extends Specification {
     private ItemsRepository itemsRepository
 
     @Autowired
+    private MessageRepository messageRepository
+
+    @Autowired
     private TestRestTemplate testRestTemplate
 
     @Autowired
     private ApplicationEventPublisher publisher
-
-    @SpringBean
-    private EmailSender emailSender = Mock()
 
     private PollingConditions pollingConditions = new PollingConditions(timeout: 10)
 
@@ -57,12 +55,16 @@ class EventToNotificationTest extends Specification {
         given:
         Owner owner = createOwner()
         HotelRoom hotelRoom = hotelRoomFor(owner)
+        def bookingSuccessEvent = bookingSuccessEvent(hotelRoom)
 
         when:
-        bookingSuccessNotification(hotelRoom)
+        eventPublished(bookingSuccessEvent)
 
         then:
-        emailIsSent()
+        messagesCreated(bookingSuccessEvent.getEventId())
+
+        and:
+        messagesMarkedSent()
     }
 
     Owner createOwner() {
@@ -80,18 +82,27 @@ class EventToNotificationTest extends Specification {
         return hotelRoom
     }
 
-    void bookingSuccessNotification(HotelRoom hotelRoom) {
+    OccupationEvent.BookingSuccess bookingSuccessEvent(HotelRoom hotelRoom) {
         Instant start = LocalDateTime.of(2021, 8, 21, 10,0).toInstant(ZoneOffset.UTC)
         Instant end = LocalDateTime.of(2021, 8, 23, 10,0).toInstant(ZoneOffset.UTC)
         com.allaroundjava.booking.bookings.domain.model.Interval interval = new com.allaroundjava.booking.bookings.domain.model.Interval(start, end)
-        publisher.publishEvent(new OccupationEvent.BookingSuccess(UUID.randomUUID(), Instant.now(),
-        UUID.randomUUID(), hotelRoom.getId(), interval, [UUID.randomUUID(), UUID.randomUUID()].toSet(), "booker@email.com" ))
+        return new OccupationEvent.BookingSuccess(UUID.randomUUID(), Instant.now(),
+                UUID.randomUUID(), hotelRoom.getId(), interval, [UUID.randomUUID(), UUID.randomUUID()].toSet(), "booker@email.com")
     }
 
-    void emailIsSent() {
+    void eventPublished(OccupationEvent.BookingSuccess event) {
+        publisher.publishEvent(event)
+    }
+
+    void messagesCreated(UUID eventId) {
         pollingConditions.eventually {
-            1 * emailSender.send("owner@email.com", _ as String)
-            1 * emailSender.send("booker@email.com", _ as String)
+            assert messageRepository.allUnsent().findAll {it.eventId == eventId}.size() == 2
+        }
+    }
+
+    void messagesMarkedSent() {
+        pollingConditions.eventually {
+            assert messageRepository.allUnsent().isEmpty()
         }
     }
 }

@@ -51,7 +51,17 @@ public class NotificationsConfig {
     }
 
     @Bean
-    NotificationPublisher notificationPublisher(NotificationRepository repository) {
-        return new NotificationPublisher(repository, new EmailSender());
+    MessageRepository messageRepository(NamedParameterJdbcTemplate jdbcTemplate) {
+        return new MessageRepository(jdbcTemplate);
+    }
+
+    @Bean
+    NotificationConverter notificationPublisher(NotificationRepository notificationRepository, MessageRepository messageRepository) {
+        return new NotificationConverter(notificationRepository, messageRepository);
+    }
+
+    @Bean
+    MessageSender messageSender(MessageRepository messageRepository) {
+        return new MessageSender(new EmailSender(), messageRepository);
     }
 }

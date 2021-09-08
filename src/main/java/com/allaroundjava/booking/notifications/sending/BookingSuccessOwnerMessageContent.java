@@ -6,19 +6,15 @@ import lombok.AllArgsConstructor;
 import java.util.UUID;
 
 @AllArgsConstructor
-public class BookingSuccessOwnerMessage implements Message  {
+public class BookingSuccessOwnerMessageContent implements MessageContent {
     private final UUID bookingId;
     private final String ownerEmail;
     private final String receiverEmail;
     private final Interval interval;
     private final int nights;
-    @Override
-    public void send(EmailSender sender) {
-        sender.send(ownerEmail, getContent());
-    }
 
     @Override
     public String getContent() {
-        return null;
+        return "empty";
     }
 }
