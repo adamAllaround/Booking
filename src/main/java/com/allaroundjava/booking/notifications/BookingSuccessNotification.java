@@ -2,9 +2,8 @@ package com.allaroundjava.booking.notifications;
 
 import com.allaroundjava.booking.notifications.items.HotelRoom;
 import com.allaroundjava.booking.notifications.owners.Owner;
-import com.allaroundjava.booking.notifications.sending.BookingSuccessClientMessage;
-import com.allaroundjava.booking.notifications.sending.BookingSuccessOwnerMessage;
-import com.allaroundjava.booking.notifications.sending.Message;
+import com.allaroundjava.booking.notifications.sending.BookingSuccessClientMessageContent;
+import com.allaroundjava.booking.notifications.sending.BookingSuccessOwnerMessageContent;
 import lombok.Builder;
 import lombok.Value;
 
@@ -36,18 +35,24 @@ public class BookingSuccessNotification implements Notification {
     @Override
     public List<Message> toMessages() {
         return List.of(
-                new BookingSuccessClientMessage(bookingId,
+                new Message(UUID.randomUUID(),
+                        id,
+                        receiverEmail,
+                        new BookingSuccessClientMessageContent(bookingId,
                         ownerEmail,
                         receiverEmail,
                         interval,
                         nights,
                         hotelHourStart,
-                        hotelHourEnd),
-                new BookingSuccessOwnerMessage(bookingId,
+                        hotelHourEnd).getContent()),
+                new Message(UUID.randomUUID(),
+                        id,
+                        ownerEmail,
+                        new BookingSuccessOwnerMessageContent(bookingId,
                         ownerEmail,
                         receiverEmail,
                         interval,
-                        nights));
+                        nights).getContent()));
     }
 
     @Override

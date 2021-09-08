@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @AllArgsConstructor
-public class BookingSuccessClientMessage implements Message {
+public class BookingSuccessClientMessageContent implements MessageContent {
 
 
     private final UUID bookingId;
@@ -24,11 +24,6 @@ public class BookingSuccessClientMessage implements Message {
     private final int nights;
     private final OffsetTime hotelHourStart;
     private final OffsetTime hotelHourEnd;
-
-    @Override
-    public void send(EmailSender sender) {
-        sender.send(receiverEmail, getContent());
-    }
 
     public String getContent() {
 

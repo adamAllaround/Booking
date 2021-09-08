@@ -2,9 +2,8 @@ package com.allaroundjava.booking.notifications;
 
 import com.allaroundjava.booking.notifications.items.HotelRoom;
 import com.allaroundjava.booking.notifications.owners.Owner;
-import com.allaroundjava.booking.notifications.sending.Message;
+import com.allaroundjava.booking.notifications.sending.MessageContent;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;

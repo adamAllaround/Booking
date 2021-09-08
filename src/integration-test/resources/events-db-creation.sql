@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS Events
 
 CREATE TABLE IF NOT EXISTS Owners
 (
-    id      uuid PRIMARY KEY,
-    name    VARCHAR(100) NOT NULL,
+    id    uuid PRIMARY KEY,
+    name  VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL
 );
 
@@ -70,15 +70,24 @@ CREATE TABLE IF NOT EXISTS NotificationEvents
 
 CREATE TABLE IF NOT EXISTS NotificationsOwners
 (
-    id      uuid PRIMARY KEY,
-    email    VARCHAR(100) NOT NULL
+    id    uuid PRIMARY KEY,
+    email VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS NotificationsItems
 (
-    id      uuid PRIMARY KEY,
-    ownerId uuid NOT NULL,
+    id             uuid PRIMARY KEY,
+    ownerId        uuid NOT NULL,
     hotelHourStart TIME NULL,
     hotelHourEnd   TIME NULL
+);
+
+CREATE TABLE IF NOT EXISTS Messages
+(
+    id        uuid PRIMARY KEY,
+    eventId   uuid         NOT NULL,
+    sent      BOOLEAN      NOT NULL,
+    recipient VARCHAR(100) NOT NULL,
+    content   TEXT         NOT NULL
 );
 
