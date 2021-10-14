@@ -123,7 +123,7 @@ class OccupationBookingTest extends Specification {
     }
 
     Booking aBookingFor(Availability availability) {
-        new Booking(UUID.randomUUID(), ITEM_ID, availability.getInterval(), [availability.getId()].toSet())
+        new Booking(UUID.randomUUID(), ITEM_ID, "test@booker.email", availability.getInterval(), [availability.getId()].toSet())
     }
 
     Booking aBookingFor(Set<Availability> availabilities) {
@@ -136,6 +136,6 @@ class OccupationBookingTest extends Specification {
                 .map({ avail -> avail.getId() })
                 .collect(Collectors.toSet())
 
-        new Booking(UUID.randomUUID(), ITEM_ID, intervalCovering, availabilityIds)
+        new Booking(UUID.randomUUID(), ITEM_ID,"test@booker.email", intervalCovering, availabilityIds)
     }
 }

@@ -119,7 +119,7 @@ class BookingIntegrationTest extends Specification {
         availabilities.forEach({ availability ->
             existsAvailability(availability)
             def booking = fromSingleAvailability(availability)
-            occupationRepository.handle(OccupationEvent.BookingSuccess.now(booking.id, ITEM_ID, booking.interval, booking.availabilityIds))
+            occupationRepository.handle(OccupationEvent.BookingSuccess.now(booking.id, ITEM_ID, booking.interval, booking.availabilityIds, booking.email))
         })
     }
 
@@ -150,7 +150,8 @@ class BookingIntegrationTest extends Specification {
                 lastName: "Test",
                 start: OffsetDateTime.ofInstant(availabilities.first().getInterval().start, ZoneOffset.UTC),
                 end: OffsetDateTime.ofInstant(availabilities.first().getInterval().end, ZoneOffset.UTC),
-                availabilities: availabilities*.id
+                availabilities: availabilities*.id,
+                email: "test@booker.email"
         )
         return new HttpEntity<BookingRequest>(request)
     }

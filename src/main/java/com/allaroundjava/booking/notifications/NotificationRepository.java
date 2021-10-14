@@ -1,18 +1,14 @@
 package com.allaroundjava.booking.notifications;
 
-import com.allaroundjava.booking.notifications.items.HotelRoom;
-import com.allaroundjava.booking.notifications.items.ItemsRepository;
-import com.allaroundjava.booking.notifications.owners.Owner;
-import com.allaroundjava.booking.notifications.owners.OwnersRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
+import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -20,31 +16,35 @@ import java.util.stream.Collectors;
 class NotificationRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
+    private final EnrichmentVisitor enrichmentVisitor;
 
     List<Notification> allUnsent() {
 
-        List<Notification> notifications = jdbcTemplate.query("select * from NotificationEvents where sent = false",
+        return queryCollection("select * from NotificationEvents where sent = false");
+    }
+
+    private List<Notification> queryCollection(String sql) {
+        return jdbcTemplate.query(sql,
                 new EventRepository.EventRowMapper(objectMapper))
                 .stream()
                 .map(EventRepository.EventEntity::toNotification)
+                .map(partialNotification -> partialNotification.enrich(enrichmentVisitor))
+                .flatMap(Optional::stream)
                 .collect(Collectors.toList());
+    }
 
+    public Optional<Notification> getSingle(UUID uuid) {
+        ImmutableMap<String, UUID> params = ImmutableMap.of("id", uuid);
+        return Try.of(() -> queryForSingle(params))
+                .getOrElseGet((throwable) -> Optional.empty());
+    }
 
-        //TODO smaller subset required
-        Map<UUID, HotelRoom> items = jdbcTemplate.query("SELECT * FROM NotificationsItems",
-                new ItemsRepository.ItemDatabaseEntity.RowMapper())
-                .stream()
-                .collect(Collectors.toMap(ItemsRepository.ItemDatabaseEntity::getId, ItemsRepository.ItemDatabaseEntity::toDomain));
-
-        Map<UUID, Owner> owners = jdbcTemplate.query("SELECT * FROM NotificationsOwners",
-                new BeanPropertyRowMapper<>(OwnersRepository.OwnerDatabaseEntity.class))
-                .stream()
-                .collect(Collectors.toMap(OwnersRepository.OwnerDatabaseEntity::getId, OwnersRepository.OwnerDatabaseEntity::toDomain));
-
-        return notifications.stream()
-                .map(notification -> notification.enrichItemsData(items))
-                .map(notification -> notification.enrichOwnersData(owners))
-                .collect(Collectors.toList());
+    private Optional<Notification> queryForSingle(ImmutableMap<String, UUID> params) {
+        return jdbcTemplate.queryForObject("select * from NotificationEvents where id=:notificationId",
+                params,
+                new EventRepository.EventRowMapper(objectMapper))
+                .toNotification()
+                .enrich(enrichmentVisitor);
     }
 
     void markPublished(Collection<Notification> toPublish) {

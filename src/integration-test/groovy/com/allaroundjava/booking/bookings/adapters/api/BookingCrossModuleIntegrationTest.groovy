@@ -4,26 +4,30 @@ import com.allaroundjava.booking.IntegrationTestConfig
 import com.allaroundjava.booking.bookings.config.BookingsConfig
 import com.allaroundjava.booking.bookings.domain.model.Availability
 import com.allaroundjava.booking.bookings.domain.model.Dates2020
-import com.allaroundjava.booking.bookings.domain.model.ItemType
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent
 import com.allaroundjava.booking.bookings.domain.ports.ItemsRepository
 import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository
 import com.allaroundjava.booking.common.LoggingConfig
 import com.allaroundjava.booking.common.events.EventsConfig
-import com.allaroundjava.booking.notifications.BookingSuccessEvent
+import com.allaroundjava.booking.common.events.HotelRoomCreatedEvent
+import com.allaroundjava.booking.common.events.OwnerCreatedEvent
+import com.allaroundjava.booking.notifications.BookingSuccessNotification
 import com.allaroundjava.booking.notifications.NotificationRepository
 import com.allaroundjava.booking.notifications.NotificationsConfig
+import com.allaroundjava.booking.notifications.owners.OwnersRepository
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.jdbc.Sql
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
+import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.OffsetTime
 import java.time.ZoneOffset
@@ -38,8 +42,11 @@ import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZO
 @AutoConfigureEmbeddedDatabase(provider = ZONKY, beanName = "dataSource")
 @Sql("/events-db-creation.sql")
 class BookingCrossModuleIntegrationTest extends Specification {
+    public static final UUID OWNER_ID = UUID.randomUUID()
     @Autowired
     private ItemsRepository itemsRepository
+
+    @Autowired com.allaroundjava.booking.notifications.items.ItemsRepository notificationItemsRepository
 
     @Autowired
     private OccupationRepository occupationRepository
@@ -48,12 +55,19 @@ class BookingCrossModuleIntegrationTest extends Specification {
     private TestRestTemplate restTemplate
 
     @Autowired
+    private OwnersRepository notificationOwnersRepository
+
+    @Autowired
     private NotificationRepository notificationRepository
 
-    private PollingConditions pollingConditions = new PollingConditions(initialDelay: 2, timeout: 6)
+    @Autowired
+    private ApplicationEventPublisher publisher
+
+    private PollingConditions pollingConditions = new PollingConditions(timeout: 6)
 
     def "Booking Notification added after booking done"() {
         given:
+
         existAvailabilities([MAY10])
 
         def request = bookingRequestFor([MAY10])
@@ -69,6 +83,7 @@ class BookingCrossModuleIntegrationTest extends Specification {
     }
 
     private void existAvailabilities(Collection<Availability> availabilities) {
+        existsOwner()
         existsItem()
         availabilities.forEach({
             availability ->
@@ -76,16 +91,21 @@ class BookingCrossModuleIntegrationTest extends Specification {
         })
     }
 
+    void existsOwner() {
+        publisher.publishEvent(new OwnerCreatedEvent(UUID.randomUUID(), Instant.now(), OWNER_ID, "ownerEmail@email.com"))
+    }
+
     private void existsAvailability(Availability availability) {
         occupationRepository.handle(new OccupationEvent.AddAvailabilitySuccess(ITEM_ID, [availability]))
     }
 
     private void existsItem() {
-        itemsRepository.saveNew(ITEM_ID,
+        publisher.publishEvent(new HotelRoomCreatedEvent(UUID.randomUUID(),
+                OWNER_ID,
                 Dates2020.may(20).hour(12),
-                ItemType.HotelRoom,
+                ITEM_ID,
                 OffsetTime.of(15, 0, 0, 0, ZoneOffset.UTC),
-                OffsetTime.of(10, 0, 0, 0, ZoneOffset.UTC))
+                OffsetTime.of(10, 0, 0, 0, ZoneOffset.UTC)))
     }
 
     private static HttpEntity<BookingRequest> bookingRequestFor(Collection<Availability> availabilities) {
@@ -93,6 +113,7 @@ class BookingCrossModuleIntegrationTest extends Specification {
         BookingRequest request = new BookingRequest(itemId: availabilities.first().getItemId(),
                 firstName: "Test",
                 lastName: "Test",
+                email: "test@email.com",
                 start: OffsetDateTime.ofInstant(availabilities.first().getInterval().start, ZoneOffset.UTC),
                 end: OffsetDateTime.ofInstant(availabilities.first().getInterval().end, ZoneOffset.UTC),
                 availabilities: availabilities*.id
@@ -103,7 +124,7 @@ class BookingCrossModuleIntegrationTest extends Specification {
     void bookingNotificationExists(UUID bookingId) {
         pollingConditions.eventually {
             assert notificationRepository.allUnsent()
-                    .any {it instanceof BookingSuccessEvent && bookingId == it.bookingId }
+                    .any {it instanceof BookingSuccessNotification && bookingId == it.bookingId }
         }
     }
 }

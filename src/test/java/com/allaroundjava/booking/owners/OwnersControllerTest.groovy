@@ -13,11 +13,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class OwnersControllerTest extends Specification {
-    private static final UUID OWNER_ID = UUID.randomUUID()
     private OwnersService ownersService = Mock()
     private OwnersController ownersController
     private MockMvc mockMvc
-    private Owner owner = new Owner(id: OWNER_ID, name: "Josh", setEmail: "56603982")
+    private Owner owner = new Owner("Josh","test@owner.email")
 
     void setup() {
         ownersController = new OwnersController(ownersService)
@@ -36,17 +35,17 @@ class OwnersControllerTest extends Specification {
 
     def "Get single owner when owner found"() {
         when: "Owner is returned by repository"
-        ownersService.getSingle(OWNER_ID) >> Optional.of(owner)
+        ownersService.getSingle(owner.getId()) >> Optional.of(owner)
 
         then: "Expecting http 200"
-        mockMvc.perform(get("/owners/${OWNER_ID}").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/owners/${owner.getId()}").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(HttpStatus.OK.value()))
                 .andExpect(content().string(containsString("Josh")))
     }
 
     def "Get single owner when owner not present"() {
         when: "Owner is returned by repository"
-        ownersService.getSingle(OWNER_ID) >> Optional.empty()
+        ownersService.getSingle(owner.getId()) >> Optional.empty()
 
         then: "Expecting http 200"
         mockMvc.perform(get("/owners/1").contentType(MediaType.APPLICATION_JSON))
@@ -59,7 +58,7 @@ class OwnersControllerTest extends Specification {
 
         then: "Expecting http 201"
         mockMvc.perform(post("/owners").contentType(MediaType.APPLICATION_JSON)
-                .content('{"name": "James", "contact":"123455"}'))
+                .content('{"name": "James", "email":"123455"}'))
                 .andExpect(status().is(HttpStatus.CREATED.value()))
     }
 }

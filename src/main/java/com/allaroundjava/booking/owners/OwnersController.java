@@ -70,13 +70,10 @@ class OwnersController {
     @Data
     static class OwnerRequest {
         String name;
-        String contact;
+        String email;
 
         Owner toModel() {
-            Owner owner = new Owner();
-            owner.setName(name);
-            owner.setEmail(contact);
-            return owner;
+            return new Owner(name, email);
         }
     }
 }
