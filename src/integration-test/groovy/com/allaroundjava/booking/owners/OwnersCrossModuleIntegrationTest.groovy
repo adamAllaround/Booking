@@ -44,7 +44,7 @@ class OwnersCrossModuleIntegrationTest extends Specification {
 
     def "Should populate user in items ownersDbs and notifications"() {
         given: "A new Owner Request"
-        def user = new OwnersController.OwnerRequest(name: "James", contact: "12346777")
+        def user = new OwnersController.OwnerRequest(name: "James", email: "test@owner.email")
         def request = new HttpEntity<OwnersController.OwnerRequest>(user, new HttpHeaders(contentType: MediaType.APPLICATION_JSON))
         when: "Creating the owner"
         def entity = testRestTemplate.postForEntity(URI.create("/owners"), request, OwnersController.OwnerResponse)

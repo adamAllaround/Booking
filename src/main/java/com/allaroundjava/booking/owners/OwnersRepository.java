@@ -42,11 +42,7 @@ class OwnersRepository {
         private String email;
 
         Owner toDomainModel() {
-            Owner owner = new Owner();
-            owner.setId(id);
-            owner.setName(name);
-            owner.setEmail(email);
-            return owner;
+            return new Owner(name, email);
         }
     }
 

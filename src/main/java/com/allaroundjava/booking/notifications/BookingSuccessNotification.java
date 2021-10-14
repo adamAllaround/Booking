@@ -9,7 +9,7 @@ import lombok.Value;
 
 import java.time.OffsetTime;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Value
@@ -56,33 +56,38 @@ public class BookingSuccessNotification implements Notification {
     }
 
     @Override
-    public Notification enrichItemsData(Map<UUID, HotelRoom> items) {
+    public Optional<Notification> enrich(EnrichmentVisitor visitor) {
+        return visitor.enrichBookingSuccess(this);
+    }
+
+    @Override
+    public Notification enrichOwnerData(Owner owner) {
         return builder()
                 .id(this.id)
                 .bookingId(this.bookingId)
                 .itemId(this.itemId)
-                .ownerId(items.get(this.itemId).getOwnerId())
                 .receiverEmail(this.receiverEmail)
                 .interval(this.interval)
                 .nights(this.nights)
-                .ownerEmail(this.ownerEmail)
-                .hotelHourStart(items.get(this.itemId).getHotelHourStart())
-                .hotelHourEnd(items.get(this.itemId).getHotelHourEnd())
+                .ownerEmail(owner.getEmail())
+                .hotelHourStart(this.getHotelHourStart())
+                .hotelHourEnd(this.getHotelHourEnd())
                 .build();
     }
 
     @Override
-    public Notification enrichOwnersData(Map<UUID, Owner> owners) {
+    public Notification enrichItemData(HotelRoom item) {
         return builder()
                 .id(this.id)
                 .bookingId(this.bookingId)
                 .itemId(this.itemId)
+                .ownerId(item.getOwnerId())
                 .receiverEmail(this.receiverEmail)
                 .interval(this.interval)
                 .nights(this.nights)
-                .ownerEmail(owners.get(this.ownerId).getEmail())
-                .hotelHourStart(this.getHotelHourStart())
-                .hotelHourEnd(this.getHotelHourEnd())
+                .ownerEmail(this.ownerEmail)
+                .hotelHourStart(item.getHotelHourStart())
+                .hotelHourEnd(item.getHotelHourEnd())
                 .build();
     }
 }

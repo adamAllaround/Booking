@@ -2,6 +2,7 @@ package com.allaroundjava.booking.notifications;
 
 import com.allaroundjava.booking.notifications.items.HotelRoomCreatedEventHandler;
 import com.allaroundjava.booking.notifications.items.ItemsRepository;
+import com.allaroundjava.booking.notifications.owners.Owner;
 import com.allaroundjava.booking.notifications.owners.OwnerCreatedEventHandler;
 import com.allaroundjava.booking.notifications.owners.OwnersRepository;
 import com.allaroundjava.booking.notifications.sending.EmailSender;
@@ -46,8 +47,13 @@ public class NotificationsConfig {
     }
 
     @Bean
-    NotificationRepository notificationRepository(NamedParameterJdbcTemplate jdbcTemplate) {
-        return new NotificationRepository(jdbcTemplate, objectMapper);
+    EnrichmentVisitor enrichmentVisitor(OwnersRepository ownersRepository, ItemsRepository itemsRepository) {
+        return new EnrichmentVisitor(ownersRepository, itemsRepository);
+    }
+
+    @Bean
+    NotificationRepository notificationRepository(NamedParameterJdbcTemplate jdbcTemplate, EnrichmentVisitor enrichmentVisitor) {
+        return new NotificationRepository(jdbcTemplate, objectMapper, enrichmentVisitor);
     }
 
     @Bean
