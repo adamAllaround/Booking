@@ -21,8 +21,8 @@ public class BookingsConfig {
     }
 
     @Bean
-    OccupationService occupationService(OccupationRepository occupationRepository, EventPublisher eventPublisher) {
-        return new OccupationService(occupationRepository, eventPublisher);
+    OccupationService occupationService(RoomRepository roomRepository, EventPublisher eventPublisher) {
+        return new OccupationService(roomRepository, eventPublisher);
     }
 
     @Bean

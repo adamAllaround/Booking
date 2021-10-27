@@ -12,8 +12,8 @@ import java.util.UUID;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Availability implements Comparable<Availability> {
     @EqualsAndHashCode.Include
-    UUID id;
-    UUID itemId;
+    UUID id;//TODO can we remove the id from here ?
+    UUID itemId; //and this one too ?
     Interval interval;
 
     public static Availability from(UUID itemId, Interval interval) {

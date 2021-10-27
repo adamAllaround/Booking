@@ -5,20 +5,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 class HotelAvailabilitiesFixture {
-    static final UUID ITEM_ID = UUID.randomUUID();
-    static final OffsetTime STANDARD_HOTEL_START = OffsetTime.of(15, 0, 0, 0, ZoneOffset.UTC);
-    static final OffsetTime STANDARD_HOTEL_END = OffsetTime.of(10, 0, 0, 0, ZoneOffset.UTC);
-    static final Item item = new Item(ITEM_ID, ItemType.HotelRoom, STANDARD_HOTEL_START, STANDARD_HOTEL_END);
 
     public static Availabilities standardEmpty() {
-        return Availabilities.from(item, new ArrayList<>());
+        return Availabilities.from(RoomFixture.getROOM_DETAILS(), new ArrayList<>());
     }
 
     public static Availabilities withExistingIntervals(Collection<Interval> intervals) {
         List<Availability> availabilities = intervals.stream()
                 .map(HotelAvailabilitiesFixture::availabilityFromInterval)
                 .collect(Collectors.toList());
-        return Availabilities.from(item, availabilities);
+        return Availabilities.from(RoomFixture.getROOM_DETAILS(), availabilities);
     }
 
     public static Availabilities withExistingInterval(Interval interval) {
@@ -30,13 +26,13 @@ class HotelAvailabilitiesFixture {
     private static Availability availabilityFromInterval(Interval interval) {
         LocalDate start = LocalDate.ofInstant(interval.getStart(), ZoneOffset.UTC);
         LocalDate end = LocalDate.ofInstant(interval.getEnd(), ZoneOffset.UTC);
-        OffsetDateTime startDateTime = start.atTime(STANDARD_HOTEL_START);
-        OffsetDateTime endDateTime = end.atTime(STANDARD_HOTEL_END);
+        OffsetDateTime startDateTime = start.atTime(RoomFixture.getROOM_DETAILS().getHotelHourStart());
+        OffsetDateTime endDateTime = end.atTime(RoomFixture.getROOM_DETAILS().getHotelHourEnd());
 
         return new Availability(UUID.randomUUID(), UUID.randomUUID(), new Interval(startDateTime.toInstant(), endDateTime.toInstant()));
     }
 
     public static Availabilities withConcreteAvailabilityList(List<Availability> availabilities) {
-        return Availabilities.from(item, availabilities);
+        return Availabilities.from(RoomFixture.getROOM_DETAILS(), availabilities);
     }
 }

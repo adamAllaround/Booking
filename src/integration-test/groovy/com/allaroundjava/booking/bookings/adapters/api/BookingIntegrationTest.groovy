@@ -10,7 +10,7 @@ import com.allaroundjava.booking.bookings.domain.model.OccupationEvent
 import com.allaroundjava.booking.bookings.domain.ports.AvailabilitiesRepository
 import com.allaroundjava.booking.bookings.domain.ports.BookingsRepository
 import com.allaroundjava.booking.bookings.domain.ports.ItemsRepository
-import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository
+import com.allaroundjava.booking.bookings.domain.ports.RoomRepository
 import com.allaroundjava.booking.common.LoggingConfig
 import com.allaroundjava.booking.common.events.EventsConfig
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase
@@ -45,7 +45,7 @@ class BookingIntegrationTest extends Specification {
     private TestRestTemplate restTemplate
 
     @Autowired
-    private OccupationRepository occupationRepository
+    private RoomRepository occupationRepository
 
     @Autowired
     private BookingsRepository bookingsRepository

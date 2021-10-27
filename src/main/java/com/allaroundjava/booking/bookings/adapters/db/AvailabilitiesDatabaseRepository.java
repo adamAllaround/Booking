@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-class AvailabilitiesDatabaseRepository implements AvailabilitiesRepository {
+class AvailabilitiesDatabaseRepository implements AvailabilitiesRepository { //TODO - rethink - this is a read model
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
