@@ -11,10 +11,10 @@ import java.util.UUID;
 @Component
 @AllArgsConstructor
 class BookingsFacade {
-    private final BookingsService bookingsService;
-    BookingsResponse getAllByItemId(UUID itemId) {
-        List<Booking> bookings = bookingsService.getAllByItemId(itemId);
-
-        return BookingsResponse.from(bookings);
-    }
+//    private final BookingsService bookingsService;
+//    BookingsResponse getAllByItemId(UUID itemId) {
+//        List<Booking> bookings = bookingsService.getAllByItemId(itemId);
+//
+//        return BookingsResponse.from(bookings);
+//    }
 }
