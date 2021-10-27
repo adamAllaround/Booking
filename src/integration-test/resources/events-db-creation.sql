@@ -12,14 +12,16 @@ CREATE TABLE IF NOT EXISTS Owners
 (
     id    uuid PRIMARY KEY,
     name  VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL
+    email VARCHAR(100) NOT NULL,
+    created timestamp NOT NULL
+
 );
 
-CREATE TABLE IF NOT EXISTS ItemsOwners
-(
-    id      uuid PRIMARY KEY,
-    created timestamp NOT NULL
-);
+-- CREATE TABLE IF NOT EXISTS ItemsOwners
+-- (
+--     id      uuid PRIMARY KEY,
+--     created timestamp NOT NULL
+-- );
 
 CREATE TABLE IF NOT EXISTS Items
 (
