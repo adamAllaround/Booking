@@ -16,10 +16,10 @@ class BookingsController {
     private final BookingsFacade bookingsFacade;
     private final OccupationFacade occupation;
 
-    @GetMapping("/{itemId}/bookings")
-    ResponseEntity<BookingsResponse> getBookings(@PathVariable UUID itemId) {
-        return ResponseEntity.ok(bookingsFacade.getAllByItemId(itemId));
-    }
+//    @GetMapping("/{itemId}/bookings")
+//    ResponseEntity<BookingsResponse> getBookings(@PathVariable UUID itemId) {
+//        return ResponseEntity.ok(bookingsFacade.getAllByItemId(itemId));
+//    }
 
     @PostMapping("/{itemId}/bookings")
     ResponseEntity<BookingResponse> addBooking(@RequestBody BookingRequest request, @PathVariable UUID itemId) {

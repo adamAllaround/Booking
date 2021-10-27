@@ -11,8 +11,9 @@ import java.util.UUID;
 @Component
 @AllArgsConstructor
 class AvailabilitiesFacade {
-    private final AvailabilitiesService availabilitiesService;
-    AvailabilitiesResponse getAllByItemId(UUID itemId) {
-        List<Availability> availabilities = availabilitiesService.getAllByItemId(itemId);
-        return AvailabilitiesResponse.from(availabilities);
-    }}
+//    private final AvailabilitiesService availabilitiesService;
+//    AvailabilitiesResponse getAllByItemId(UUID itemId) {
+//        List<Availability> availabilities = availabilitiesService.getAllByItemId(itemId);
+//        return AvailabilitiesResponse.from(availabilities);
+//    }
+}

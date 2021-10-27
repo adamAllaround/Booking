@@ -13,13 +13,13 @@ import java.util.UUID;
 @RequestMapping("/items")
 @AllArgsConstructor
 class AvailabilitiesController {
-    private final AvailabilitiesFacade availabilities;
+//    private final AvailabilitiesFacade availabilities;
     private final OccupationFacade occupation;
 
-    @GetMapping("/{itemId}/availabilities")
-    ResponseEntity<AvailabilitiesResponse> getAvailabilities(@PathVariable UUID itemId) {
-        return ResponseEntity.ok(availabilities.getAllByItemId(itemId));
-    }
+//    @GetMapping("/{itemId}/availabilities")
+//    ResponseEntity<AvailabilitiesResponse> getAvailabilities(@PathVariable UUID itemId) {
+//        return ResponseEntity.ok(availabilities.getAllByItemId(itemId));
+//    }
 
     @PostMapping("/{itemId}/availabilities")
     ResponseEntity<AvailabilitiesResponse> addAvailability(@PathVariable UUID itemId, @RequestBody AvailabilityRequest request) {

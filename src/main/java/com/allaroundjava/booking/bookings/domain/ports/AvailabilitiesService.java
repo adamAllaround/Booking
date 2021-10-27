@@ -8,9 +8,9 @@ import java.util.UUID;
 
 @AllArgsConstructor
 public class AvailabilitiesService { //TODO remove -this is a read model
-    private final AvailabilitiesRepository repository;
-    public List<Availability> getAllByItemId(UUID itemId) {
-        return repository.getAllByItemId(itemId);
-
-    }
+//    private final AvailabilitiesRepository repository;
+//    public List<Availability> getAllByItemId(UUID itemId) {
+//        return repository.getAllByItemId(itemId);
+//
+//    }
 }
