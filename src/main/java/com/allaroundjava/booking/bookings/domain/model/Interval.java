@@ -1,5 +1,6 @@
 package com.allaroundjava.booking.bookings.domain.model;
 
+import com.allaroundjava.booking.common.ValueObject;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Getter
 @ToString
-public class Interval {
+public class Interval extends ValueObject {
     private final Instant start;
     private final Instant end;
 

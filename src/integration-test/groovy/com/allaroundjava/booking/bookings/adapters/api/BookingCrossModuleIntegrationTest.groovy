@@ -6,7 +6,7 @@ import com.allaroundjava.booking.bookings.domain.model.Availability
 import com.allaroundjava.booking.bookings.domain.model.Dates2020
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent
 import com.allaroundjava.booking.bookings.domain.ports.ItemsRepository
-import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository
+import com.allaroundjava.booking.bookings.domain.ports.RoomRepository
 import com.allaroundjava.booking.common.LoggingConfig
 import com.allaroundjava.booking.common.events.EventsConfig
 import com.allaroundjava.booking.common.events.HotelRoomCreatedEvent
@@ -49,7 +49,7 @@ class BookingCrossModuleIntegrationTest extends Specification {
     @Autowired com.allaroundjava.booking.notifications.items.ItemsRepository notificationItemsRepository
 
     @Autowired
-    private OccupationRepository occupationRepository
+    private RoomRepository occupationRepository
 
     @Autowired
     private TestRestTemplate restTemplate

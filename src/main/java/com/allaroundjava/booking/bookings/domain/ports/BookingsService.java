@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
-public class BookingsService {
+public class BookingsService { //TODO remove - this is a read model
     private final BookingsRepository bookingsRepository;
     public List<Booking> getAllByItemId(UUID itemId) {
         return bookingsRepository.getAllByItemId(itemId);

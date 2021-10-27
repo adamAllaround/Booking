@@ -5,10 +5,9 @@ import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.AddAvaila
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.BookingSuccess;
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.RemoveAvailabilitySuccess;
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.RemoveBookingSuccess;
-import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository;
+import com.allaroundjava.booking.bookings.domain.ports.RoomRepository;
 import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -22,18 +21,17 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class OccupationDatabaseRepository implements OccupationRepository {
+public class RoomOccupationDatabaseRepository implements RoomRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final Clock clock;
 
     @Override
-    public Occupation findById(UUID id) {
+    public RoomOccupation findById(UUID id) {
         ImmutableMap<String, Object> params = ImmutableMap.of("id", id,
                 "now", Timestamp.from(Instant.now(clock)));
-        Item item = jdbcTemplate.queryForObject("SELECT * from OccupationItems where id=:id",
+        RoomDetailsDatabaseEntity roomDetails = jdbcTemplate.queryForObject("SELECT * from OccupationItems where id=:id",
                 params,
-                new ItemDatabaseEntity.RowMapper())
-                .toModel();
+                new RoomDetailsDatabaseEntity.RowMapper());
 
         List<Availability> availabilities = jdbcTemplate.query("select * from Availabilities where itemId=:id and endTime >:now",
                 params,
@@ -48,9 +46,9 @@ public class OccupationDatabaseRepository implements OccupationRepository {
                 .map(BookingDatabaseEntity::toModel)
                 .collect(Collectors.toList());
 
-        return new Occupation(id,
-                bookings,
-                Availabilities.from(item, availabilities),
+        return new RoomOccupation(roomDetails.getId(),
+                Availabilities.from(roomDetails.getId(), roomDetails.hotelHourStart, roomDetails.hotelHourEnd, availabilities),
+                new Bookings(bookings),
                 BookingPolicies.allHotelRoomPolicies(clock));
     }
 

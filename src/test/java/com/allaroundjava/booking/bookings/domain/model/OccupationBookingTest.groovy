@@ -4,34 +4,30 @@ import spock.lang.Specification
 
 import java.util.stream.Collectors
 
+import static RoomFixture.withClock
 import static com.allaroundjava.booking.bookings.domain.model.AvailabilityFixture.*
 import static com.allaroundjava.booking.bookings.domain.model.CommandResult.failure
 import static com.allaroundjava.booking.bookings.domain.model.CommandResult.success
 import static com.allaroundjava.booking.bookings.domain.model.Dates2020.JAN_CLOCK
-import static com.allaroundjava.booking.bookings.domain.model.Dates2020.JUN_CLOCK
-import static com.allaroundjava.booking.bookings.domain.model.HotelAvailabilitiesFixture.withConcreteAvailabilityList
-import static com.allaroundjava.booking.bookings.domain.model.OccupationFixture.withClock
 
 class OccupationBookingTest extends Specification {
     private static final UUID ITEM_ID = UUID.randomUUID()
 
     def "Can add booking to cover existing availability"() {
-        Availabilities may10Availabilities = withConcreteAvailabilityList([MAY10])
-        Occupation occupation = withClock(JAN_CLOCK).andConcreteAvailabilities(may10Availabilities)
+        RoomOccupation room = withClock(JAN_CLOCK).andAvailabilitiesInIntervals([MAY10.interval])
 
         when:
-        def result = occupation.addBooking(aBookingFor(MAY10))
+        def result = room.addBooking(aBookingFor(MAY10))
 
         then:
         success(result)
     }
 
     def "Can add booking to cover several availabilities"() {
-        Availabilities availabilities = withConcreteAvailabilityList([MAY10, MAY11, MAY12])
-        Occupation occupation = withClock(JAN_CLOCK).andConcreteAvailabilities(availabilities)
+        RoomOccupation room = withClock(JAN_CLOCK).andAvailabilitiesInIntervals([MAY10.interval, MAY11.interval, MAY12.interval])
 
         when:
-        def result = occupation.addBooking(aBookingFor([MAY10, MAY11].toSet()))
+        def result = room.addBooking(aBookingFor([MAY10, MAY11].toSet()))
 
         then:
         success(result)
@@ -39,17 +35,16 @@ class OccupationBookingTest extends Specification {
 
     def "Can add booking side by side"() {
         given:
-        Availabilities availabilities = withConcreteAvailabilityList([MAY10, MAY11, MAY12])
-        Occupation occupation = withClock(JAN_CLOCK).andConcreteAvailabilities(availabilities)
+        RoomOccupation room = withClock(JAN_CLOCK).andAvailabilitiesInIntervals([MAY10.interval, MAY11.interval, MAY12.interval])
 
         when:
-        def result = occupation.addBooking(aBookingFor(MAY11))
+        def result = room.addBooking(aBookingFor(MAY11))
 
         then:
         success(result)
 
         when:
-        result = occupation.addBooking(aBookingFor(MAY12))
+        result = room.addBooking(aBookingFor(MAY12))
 
         then:
         success(result)
@@ -57,17 +52,16 @@ class OccupationBookingTest extends Specification {
 
     def "Cannot add booking that is not continuous availability"() {
         given:
-        Availabilities availabilities = withConcreteAvailabilityList([MAY10, MAY11, MAY12])
-        Occupation occupation = withClock(JAN_CLOCK).andConcreteAvailabilities(availabilities)
+        RoomOccupation room = withClock(JAN_CLOCK).andAvailabilitiesInIntervals([MAY10.interval, MAY11.interval, MAY12.interval])
 
         when:
-        def result = occupation.addBooking(aBookingFor(MAY11))
+        def result = room.addBooking(aBookingFor(MAY11))
 
         then:
         success(result)
 
         when:
-        result = occupation.addBooking(aBookingFor([MAY10, MAY12].toSet()))
+        result = room.addBooking(aBookingFor([MAY10, MAY12].toSet()))
 
         then:
         failure(result)
@@ -76,11 +70,10 @@ class OccupationBookingTest extends Specification {
 
     def "Cannot add booking in the past"() {
         given:
-        Availabilities availabilities = withConcreteAvailabilityList([MAY10, MAY11, MAY12])
-        Occupation occupation = withClock(JUN_CLOCK).andConcreteAvailabilities(availabilities)
+        RoomOccupation room = withClock(JAN_CLOCK).andAvailabilitiesInIntervals([MAY10.interval, MAY11.interval, MAY12.interval])
 
         when:
-        def result = occupation.addBooking(aBookingFor(MAY11))
+        def result = room.addBooking(aBookingFor(MAY11))
 
         then:
         failure(result)
@@ -88,17 +81,16 @@ class OccupationBookingTest extends Specification {
 
     def "Cannot add booking when availability in the middle is taken"() {
         given:
-        Availabilities availabilities = withConcreteAvailabilityList([MAY10, MAY11, MAY12])
-        Occupation occupation = withClock(JAN_CLOCK).andConcreteAvailabilities(availabilities)
+        RoomOccupation room = withClock(JAN_CLOCK).andAvailabilitiesInIntervals([MAY10.interval, MAY11.interval, MAY12.interval])
 
         when:
-        def result = occupation.addBooking(aBookingFor(MAY11))
+        def result = room.addBooking(aBookingFor(MAY11))
 
         then:
         success(result)
 
         when:
-        result = occupation.addBooking(aBookingFor([MAY10, MAY11, MAY12].toSet()))
+        result = room.addBooking(aBookingFor([MAY10, MAY11, MAY12].toSet()))
 
         then:
         failure(result)
@@ -106,17 +98,16 @@ class OccupationBookingTest extends Specification {
 
     def "Cannot add booking twice"() {
         given:
-        Availabilities availabilities = withConcreteAvailabilityList([MAY10, MAY11, MAY12])
-        Occupation occupation = withClock(JAN_CLOCK).andConcreteAvailabilities(availabilities)
+        RoomOccupation room = withClock(JAN_CLOCK).andAvailabilitiesInIntervals([MAY10.interval, MAY11.interval, MAY12.interval])
 
         when:
-        def result = occupation.addBooking(aBookingFor(MAY11))
+        def result = room.addBooking(aBookingFor(MAY11))
 
         then:
         success(result)
 
         when:
-        result = occupation.addBooking(aBookingFor(MAY11))
+        result = room.addBooking(aBookingFor(MAY11))
 
         then:
         failure(result)
