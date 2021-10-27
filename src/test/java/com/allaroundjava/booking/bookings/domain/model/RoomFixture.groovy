@@ -9,17 +9,17 @@ import java.time.OffsetTime
 import java.time.ZoneOffset
 import java.util.stream.Collectors
 
-import static com.allaroundjava.booking.bookings.domain.model.HotelAvailabilitiesFixture.standardEmpty
-import static com.allaroundjava.booking.bookings.domain.model.HotelAvailabilitiesFixture.withExistingInterval
+import static AvailabilitiesFixture.standardEmpty
+import static AvailabilitiesFixture.withExistingInterval
 
 class RoomFixture {
     private Clock clock
+    static final UUID ROOM_ID = UUID.randomUUID()
     static final OffsetTime STANDARD_HOTEL_START = OffsetTime.of(15, 0, 0, 0, ZoneOffset.UTC)
     static final OffsetTime STANDARD_HOTEL_END = OffsetTime.of(10, 0, 0, 0, ZoneOffset.UTC)
-    static final RoomDetails ROOM_DETAILS = new RoomDetails(UUID.randomUUID(), STANDARD_HOTEL_START, STANDARD_HOTEL_END)
 
     static RoomOccupation empty() {
-        new RoomOccupation(ROOM_DETAILS.id,
+        new RoomOccupation(ROOM_ID,
                 standardEmpty(),
                 BookingsFixture.empty(),
                 BookingPolicies.allHotelRoomPolicies(Dates2020.JAN_CLOCK))
@@ -40,7 +40,7 @@ class RoomFixture {
     }
 
     private RoomOccupation create(Availabilities availabilities) {
-        return new RoomOccupation(ROOM_DETAILS.id,
+        return new RoomOccupation(ROOM_ID,
                 availabilities,
                 BookingsFixture.empty(), BookingPolicies.allHotelRoomPolicies(clock))
     }
@@ -50,7 +50,7 @@ class RoomFixture {
                 .map { it -> availabilityFromInterval(it) }
                 .collect(Collectors.toList())
         return this
-                .andConcreteAvailabilities(Availabilities.from(ROOM_DETAILS, availabilities))
+                .andConcreteAvailabilities(Availabilities.from(ROOM_ID, STANDARD_HOTEL_START, STANDARD_HOTEL_END, availabilities))
     }
 
     private static Availability availabilityFromInterval(Interval interval) {

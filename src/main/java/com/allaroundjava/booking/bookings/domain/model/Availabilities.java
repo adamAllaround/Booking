@@ -17,10 +17,6 @@ public class Availabilities {
     private final OffsetTime hotelHourStart;
     private final OffsetTime hotelHourEnd;
 
-    public static Availabilities from(RoomDetails roomDetails, List<Availability> availabilities) {
-        return new Availabilities(roomDetails.getId(), new TreeSet<>(availabilities), roomDetails.getHotelHourStart(), roomDetails.getHotelHourEnd());
-    }
-
     public static Availabilities from(UUID id, OffsetTime hotelHourStart, OffsetTime hotelHourEnd, List<Availability> availabilities) {
         return new Availabilities(id, new TreeSet<>(availabilities), hotelHourStart, hotelHourEnd);
     }

@@ -3,7 +3,7 @@ package com.allaroundjava.booking.bookings.domain.model
 import spock.lang.Specification
 
 import static com.allaroundjava.booking.bookings.domain.model.Dates2020.may
-import static com.allaroundjava.booking.bookings.domain.model.HotelAvailabilitiesFixture.*
+import static AvailabilitiesFixture.*
 
 class AvailabilitiesTest extends Specification {
 
