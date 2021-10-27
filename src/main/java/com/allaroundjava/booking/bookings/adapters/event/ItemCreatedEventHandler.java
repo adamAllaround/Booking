@@ -1,6 +1,5 @@
 package com.allaroundjava.booking.bookings.adapters.event;
 
-import com.allaroundjava.booking.bookings.domain.model.ItemType;
 import com.allaroundjava.booking.bookings.domain.ports.ItemsRepository;
 import com.allaroundjava.booking.common.events.HotelRoomCreatedEvent;
 import lombok.AllArgsConstructor;
@@ -17,7 +16,7 @@ class ItemCreatedEventHandler {
     @EventListener
     public void handle(HotelRoomCreatedEvent event) {
         log.info("Received new HotelRoomCreatedEvent {}", event);
-        itemsRepository.saveNew(event.getSubjectId(), event.getCreated(), ItemType.HotelRoom, event.getHotelHourStart(), event.getHotelHourEnd());
+        itemsRepository.saveNew(event.getSubjectId(), event.getCreated(), event.getHotelHourStart(), event.getHotelHourEnd());
         log.info("Persisted HotelRoomCreatedEvent {}", event.getEventId());
     }
 }

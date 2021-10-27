@@ -1,6 +1,5 @@
 package com.allaroundjava.booking.bookings.adapters.db;
 
-import com.allaroundjava.booking.bookings.domain.model.ItemType;
 import com.allaroundjava.booking.bookings.domain.ports.ItemsRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -21,14 +20,14 @@ public class ItemsDatabaseRepository implements ItemsRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
-    public void saveNew(UUID itemId, Instant created, ItemType itemType, OffsetTime hotelHourStart, OffsetTime hotelHourEnd) {
+    public void saveNew(UUID itemId, Instant created, OffsetTime hotelHourStart, OffsetTime hotelHourEnd) {
         Map<String, Object> params = new HashMap<>();
         params.put("id", itemId);
         params.put("created", Timestamp.from(created));
         params.put("hotelHourStart", Time.valueOf(hotelHourStart.withOffsetSameInstant(ZoneOffset.UTC).toLocalTime()));
         params.put("hotelHourEnd", Time.valueOf(hotelHourEnd.withOffsetSameInstant(ZoneOffset.UTC).toLocalTime()));
 
-        jdbcTemplate.update("INSERT INTO OccupationItems (id, created, type, hotelHourStart, hotelHourEnd) values (:itemId, :created, :type, :hotelHourStart, :hotelHourEnd)", params);
+        jdbcTemplate.update("INSERT INTO OccupationItems (id, created, hotelHourStart, hotelHourEnd) values (:itemId, :created, :hotelHourStart, :hotelHourEnd)", params);
     }
 
 //    @Override

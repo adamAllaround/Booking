@@ -28,7 +28,6 @@ CREATE TABLE IF NOT EXISTS Items
     name           VARCHAR(100) NOT NULL,
     capacity       INT          NOT NULL,
     location       VARCHAR(100) NOT NULL,
-    type           VARCHAR(100) NOT NULL,
     hotelHourStart TIME         NULL,
     hotelHourEnd   TIME         NULL
 );
@@ -37,7 +36,6 @@ CREATE TABLE IF NOT EXISTS OccupationItems
 (
     id             uuid PRIMARY KEY,
     created        timestamp    NOT NULL,
-    type           VARCHAR(100) NOT NULL,
     hotelHourStart TIME         NULL,
     hotelHourEnd   TIME         NULL
 );

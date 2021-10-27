@@ -5,7 +5,6 @@ import com.allaroundjava.booking.IntegrationTestConfig
 import com.allaroundjava.booking.bookings.config.BookingsConfig
 import com.allaroundjava.booking.bookings.domain.model.Availability
 import com.allaroundjava.booking.bookings.domain.model.Dates2020
-import com.allaroundjava.booking.bookings.domain.model.ItemType
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent
 import com.allaroundjava.booking.bookings.domain.ports.AvailabilitiesRepository
 import com.allaroundjava.booking.bookings.domain.ports.BookingsRepository
@@ -138,7 +137,6 @@ class BookingIntegrationTest extends Specification {
     private void existsItem() {
         itemsRepository.saveNew(ITEM_ID,
                 Dates2020.may(20).hour(12),
-                ItemType.HotelRoom,
                 OffsetTime.of(15, 0, 0, 0, ZoneOffset.UTC),
                 OffsetTime.of(10, 0, 0, 0, ZoneOffset.UTC))
     }
