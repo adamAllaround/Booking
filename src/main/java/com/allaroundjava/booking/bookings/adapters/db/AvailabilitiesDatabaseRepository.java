@@ -20,17 +20,17 @@ import java.util.stream.Collectors;
 class AvailabilitiesDatabaseRepository implements AvailabilitiesRepository { //TODO - rethink - this is a read model
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    @Override
-    public List<Availability> getAllByItemId(UUID itemId) {
-        ImmutableMap<String, UUID> params = ImmutableMap.of("itemId", itemId);
-
-        return jdbcTemplate.query("select a.* from Availabilities a where a.itemId=:itemId",
-                params,
-                new AvailabilityDatabaseEntity.RowMapper())
-                .stream()
-                .map(AvailabilityDatabaseEntity::toModel)
-                .collect(Collectors.toList());
-    }
+//    @Override
+//    public List<Availability> getAllByItemId(UUID itemId) {
+//        ImmutableMap<String, UUID> params = ImmutableMap.of("itemId", itemId);
+//
+//        return jdbcTemplate.query("select a.* from Availabilities a where a.itemId=:itemId",
+//                params,
+//                new AvailabilityDatabaseEntity.RowMapper())
+//                .stream()
+//                .map(AvailabilityDatabaseEntity::toModel)
+//                .collect(Collectors.toList());
+//    }
 
     @Override
     public Optional<Availability> getSingle(UUID uuid) {

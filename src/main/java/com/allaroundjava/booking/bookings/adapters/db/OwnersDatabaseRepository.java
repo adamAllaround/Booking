@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Value;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -16,7 +17,7 @@ public class OwnersDatabaseRepository {
         ImmutableMap<String, Object> params = ImmutableMap.of("id", owner.getId(),
                 "name", owner.getName(),
                 "email", owner.getEmail(),
-                "created", owner.getCreated());
+                "created", Timestamp.from(owner.getCreated()));
         jdbcTemplate.update("INSERT INTO Owners (id, name, email, created) values (:id, :name, :email, :created)", params);
         return owner;
     }

@@ -17,13 +17,7 @@ CREATE TABLE IF NOT EXISTS Owners
 
 );
 
--- CREATE TABLE IF NOT EXISTS ItemsOwners
--- (
---     id      uuid PRIMARY KEY,
---     created timestamp NOT NULL
--- );
-
-CREATE TABLE IF NOT EXISTS Items
+CREATE TABLE IF NOT EXISTS Rooms
 (
     id             uuid PRIMARY KEY,
     ownerId        uuid         NOT NULL,
@@ -31,7 +25,8 @@ CREATE TABLE IF NOT EXISTS Items
     capacity       INT          NOT NULL,
     location       VARCHAR(100) NOT NULL,
     hotelHourStart TIME         NULL,
-    hotelHourEnd   TIME         NULL
+    hotelHourEnd   TIME         NULL,
+    created        timestamp    NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS OccupationItems
