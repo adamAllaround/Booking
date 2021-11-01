@@ -112,4 +112,16 @@ public class Availabilities {
     void addAll(Availabilities candidates) {
         this.availabilities.addAll(candidates.availabilities);
     }
+
+    boolean isEmpty() {
+        return availabilities.isEmpty();
+    }
+
+    boolean isAnyBooked() {
+        return availabilities.stream().anyMatch(Availability::isBooked);
+    }
+
+    boolean anyEndsBefore(Instant now) {
+        return availabilities.stream().anyMatch(availability -> availability.getEnd().isBefore(now));
+    }
 }

@@ -1,8 +1,9 @@
 package com.allaroundjava.booking.items
 
-
+import com.allaroundjava.booking.bookings.adapters.api.AddRoomController
+import com.allaroundjava.booking.bookings.adapters.db.OwnersDatabaseRepository
+import com.allaroundjava.booking.bookings.config.BookingsConfig
 import com.allaroundjava.booking.common.events.EventsConfig
-import com.allaroundjava.booking.owners.OwnersConfig
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -22,55 +23,32 @@ import java.time.ZoneOffset
 import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = [EventsConfig, OwnersConfig, ItemsConfig])
+        classes = [EventsConfig, BookingsConfig])
 @EnableAutoConfiguration
 @AutoConfigureEmbeddedDatabase(provider = ZONKY, beanName = "dataSource")
 @Sql("/events-db-creation.sql")
 class ItemsIntegrationTest extends Specification {
+
+    @Autowired
+    private OwnersDatabaseRepository ownersDatabaseRepository
     @Autowired
     private TestRestTemplate testRestTemplate
 
-    @Autowired
-    private ItemsRepository itemsRepository
-
-    @Autowired
-    private OwnersRepository ownersRepository
-
-    def "Should return all owners items"() {
-        def owner = new Owner(UUID.randomUUID(), LocalDateTime.of(2021, 5, 10, 10, 0).toInstant(ZoneOffset.UTC))
-        given:
-        ownersRepository.save(owner)
-        itemsRepository.save(new Item(ownerId: owner.id, name: "Some item", capacity: 10, location: "Warsaw", type: "test"))
-        itemsRepository.save(new Item(ownerId: owner.id, name: "NY Apt", capacity: 3, location: "New York", type: "test"))
-        when:
-
-        def entity = testRestTemplate.getForEntity(URI.create("/owners/${owner.id}/items"), ItemsController.ItemsResponse)
-
-        then:
-        entity.statusCode == HttpStatus.OK
-
-        and:
-        entity.getBody().items.size() == 2
-    }
-
     def "Should add item for existing user"() {
-        def owner = new Owner(UUID.randomUUID(), LocalDateTime.of(2021, 5, 10, 10, 0).toInstant(ZoneOffset.UTC))
+        def owner = new OwnersDatabaseRepository.OwnerDatabaseEntity(UUID.randomUUID(), "test name", "test email", LocalDateTime.of(2021, 5, 10, 10, 0).toInstant(ZoneOffset.UTC))
         given:
-        ownersRepository.save(owner)
-        ItemsController.ItemRequest item = new ItemsController.ItemRequest(name: "Some Item",
-                details:
-                        new ItemsController.HotelRoomDetails(capacity: 1,
-                                location: "Test",
-                                "hotelHourStart": OffsetTime.of(15,0,0,0,ZoneOffset.UTC),
-                                "hotelHourEnd": OffsetTime.of(10,0,0,0,ZoneOffset.UTC)))
-        def request = new HttpEntity<ItemsController.ItemRequest>(item, new HttpHeaders(contentType: MediaType.APPLICATION_JSON))
+        ownersDatabaseRepository.save(owner)
+        AddRoomController.AddRoomRequest item = new AddRoomController.AddRoomRequest(ownerId: owner.id, name: "Super room", capacity: 3, location: "Warsaw",
+        hotelHourStart: OffsetTime.of(15,0,0,0,ZoneOffset.UTC) , hotelHourEnd: OffsetTime.of(12,0,0,0,ZoneOffset.UTC))
+
+        def request = new HttpEntity<AddRoomController.AddRoomRequest>(item, new HttpHeaders(contentType: MediaType.APPLICATION_JSON))
 
         when:
-        def entity = testRestTemplate.postForEntity(URI.create("/owners/${owner.id}/items"), request, ItemsController.ItemResponse)
+        def entity = testRestTemplate.postForEntity(URI.create("/owners/${owner.id}/items"), request, AddRoomController.AddRoomResponse)
 
         then:
         entity.statusCode == HttpStatus.CREATED
         and:
-        entity.body.capacity == 1
+        entity.body.capacity == 3
     }
 }
