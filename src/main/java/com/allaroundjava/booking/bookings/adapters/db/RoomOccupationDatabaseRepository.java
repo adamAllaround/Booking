@@ -29,7 +29,7 @@ public class RoomOccupationDatabaseRepository implements RoomRepository {
     public RoomOccupation findById(UUID id) {
         ImmutableMap<String, Object> params = ImmutableMap.of("id", id,
                 "now", Timestamp.from(Instant.now(clock)));
-        RoomDetailsDatabaseEntity roomDetails = jdbcTemplate.queryForObject("SELECT * from OccupationItems where id=:id",
+        RoomDetailsDatabaseEntity roomDetails = jdbcTemplate.queryForObject("SELECT * from Rooms where id=:id",
                 params,
                 new RoomDetailsDatabaseEntity.RowMapper());
 

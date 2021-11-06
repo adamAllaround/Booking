@@ -2,6 +2,7 @@ package com.allaroundjava.booking.bookings.adapters.api
 
 import com.allaroundjava.booking.DbCleaner
 import com.allaroundjava.booking.IntegrationTestConfig
+import com.allaroundjava.booking.bookings.adapters.db.RoomsDatabaseRepository
 import com.allaroundjava.booking.bookings.config.BookingsConfig
 import com.allaroundjava.booking.bookings.domain.model.Availability
 import com.allaroundjava.booking.bookings.domain.model.Dates2020
@@ -27,7 +28,6 @@ import java.time.OffsetTime
 import java.time.ZoneOffset
 
 import static com.allaroundjava.booking.bookings.domain.model.AvailabilityFixture.*
-import static com.allaroundjava.booking.bookings.domain.model.BookingFixture.fromSingleAvailability
 import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -53,26 +53,15 @@ class BookingIntegrationTest extends Specification {
     private AvailabilitiesRepository availabilitiesRepository
 
     @Autowired
+    private RoomsDatabaseRepository roomsDatabaseRepository
+
+    @Autowired
     private DbCleaner dbCleaner
 
     void cleanup() {
         dbCleaner.cleanAvailabilities()
         dbCleaner.cleanItems()
         dbCleaner.cleanBookings()
-    }
-
-    def "Should return all bookings"() {
-        given:
-        existBookings([MAY10])
-
-        when:
-        def response = restTemplate.getForEntity(URI.create("/items/${ITEM_ID}/bookings"), BookingsResponse)
-
-        then:
-        response.statusCode == HttpStatus.OK
-
-        and:
-        response.getBody().getBookings().size() == 1
     }
 
     def "Should add booking"() {
@@ -114,16 +103,8 @@ class BookingIntegrationTest extends Specification {
 
     }
 
-    private void existBookings(Collection<Availability> availabilities) {
-        availabilities.forEach({ availability ->
-            existsAvailability(availability)
-            def booking = fromSingleAvailability(availability)
-            occupationRepository.handle(OccupationEvent.BookingSuccess.now(booking.id, ITEM_ID, booking.interval, booking.availabilityIds, booking.email))
-        })
-    }
-
     private void existAvailabilities(Collection<Availability> availabilities) {
-        existsItem()
+        existsRoom()
         availabilities.forEach({
             availability ->
                 existsAvailability(availability)
@@ -134,11 +115,16 @@ class BookingIntegrationTest extends Specification {
         occupationRepository.handle(new OccupationEvent.AddAvailabilitySuccess(ITEM_ID, [availability]))
     }
 
-    private void existsItem() {
-        itemsRepository.saveNew(ITEM_ID,
-                Dates2020.may(20).hour(12),
+    private void existsRoom() {
+        def room = new RoomsDatabaseRepository.RoomDatabaseEntity(ITEM_ID,
+                UUID.randomUUID(),
+                "test name",
+                3,
+                "test location",
                 OffsetTime.of(15, 0, 0, 0, ZoneOffset.UTC),
-                OffsetTime.of(10, 0, 0, 0, ZoneOffset.UTC))
+                OffsetTime.of(10, 0, 0, 0, ZoneOffset.UTC),
+                Dates2020.may(20).hour(12))
+        roomsDatabaseRepository.save(room)
     }
 
     private static HttpEntity<BookingRequest> bookingRequestFor(Collection<Availability> availabilities) {

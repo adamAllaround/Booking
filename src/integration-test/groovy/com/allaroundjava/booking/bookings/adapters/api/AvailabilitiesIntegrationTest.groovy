@@ -2,6 +2,7 @@ package com.allaroundjava.booking.bookings.adapters.api
 
 import com.allaroundjava.booking.DbCleaner
 import com.allaroundjava.booking.IntegrationTestConfig
+import com.allaroundjava.booking.bookings.adapters.db.RoomsDatabaseRepository
 import com.allaroundjava.booking.bookings.config.BookingsConfig
 import com.allaroundjava.booking.bookings.domain.model.Availability
 import com.allaroundjava.booking.bookings.domain.model.Dates2020
@@ -48,29 +49,18 @@ class AvailabilitiesIntegrationTest extends Specification {
     private AvailabilitiesRepository availabilitiesRepository
 
     @Autowired
+    private RoomsDatabaseRepository roomsDatabaseRepository
+
+    @Autowired
     private DbCleaner dbCleaner
 
     void setup() {
-        addItem()
+        existsRoom()
     }
 
     void cleanup() {
         dbCleaner.cleanAvailabilities()
         dbCleaner.cleanItems()
-    }
-
-    def "Should return all item availabilities"() {
-        given:
-        existsAvailability(MAY10)
-
-        when:
-        def entity = testRestTemplate.getForEntity(URI.create("/items/${ITEM_ID}/availabilities"), AvailabilitiesResponse)
-
-        then:
-        entity.statusCode == HttpStatus.OK
-
-        and:
-        entity.getBody().availabilities.size() == 1
     }
 
     def "Should add availability"() {
@@ -104,11 +94,17 @@ class AvailabilitiesIntegrationTest extends Specification {
         availabilitiesExistInDb(entity.body.availabilities*.id)
     }
 
-    private addItem() {
-        itemsRepository.saveNew(ITEM_ID,
-                Dates2020.may(20).hour(12),
+    private existsRoom() {
+
+        def room = new RoomsDatabaseRepository.RoomDatabaseEntity(ITEM_ID,
+                UUID.randomUUID(),
+                "test name",
+                3,
+                "test location",
                 OffsetTime.of(15, 0, 0, 0, ZoneOffset.UTC),
-                OffsetTime.of(10, 0, 0, 0, ZoneOffset.UTC))
+                OffsetTime.of(10, 0, 0, 0, ZoneOffset.UTC),
+                Dates2020.may(20).hour(12))
+        roomsDatabaseRepository.save(room)
     }
 
     private existsAvailability(Availability availability) {

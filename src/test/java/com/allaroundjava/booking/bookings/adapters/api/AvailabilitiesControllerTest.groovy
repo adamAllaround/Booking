@@ -17,31 +17,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class AvailabilitiesControllerTest extends Specification {
-    private AvailabilitiesFacade availabilitiesFacade = Mock()
     private OccupationFacade occupationFacade = Mock()
     private AvailabilitiesController controller
     private MockMvc mockMvc
 
     void setup() {
-        controller = new AvailabilitiesController(availabilitiesFacade, occupationFacade)
+        controller = new AvailabilitiesController(occupationFacade)
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build()
     }
 
-    def "Get all availabilities for item"() {
-        def itemId = UUID.randomUUID()
-        def availabilityId = UUID.randomUUID()
-        List<AvailabilityResponse> availabilityResponseList = [new AvailabilityResponse(availabilityId, itemId,
-                OffsetDateTime.of(LocalDateTime.of(2020, 5, 21, 10, 0, 0), ZoneOffset.UTC), OffsetDateTime.of(LocalDateTime.of(2020, 5, 21, 11, 0, 0), ZoneOffset.UTC))]
-        AvailabilitiesResponse response = new AvailabilitiesResponse(availabilityResponseList)
-
-        when:
-        availabilitiesFacade.getAllByItemId(itemId) >> response
-
-        then:
-        mockMvc.perform(get("/items/${itemId}/availabilities").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(HttpStatus.OK.value()))
-                .andExpect(content().string(containsString(availabilityId.toString())))
-    }
 
     def "Successful availability add"() {
         def itemId = UUID.randomUUID()

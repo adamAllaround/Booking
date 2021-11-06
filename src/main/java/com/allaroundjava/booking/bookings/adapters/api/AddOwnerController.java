@@ -30,25 +30,29 @@ public class AddOwnerController {
         return ResponseEntity.created(uri)
                 .body(OwnerResponse.from(entity));
     }
-}
 
-@Data
-class OwnerRequest {
-    String name;
-    String email;
+    @Data
+    public static class OwnerRequest {
+        String name;
+        String email;
 
-    OwnersDatabaseRepository.OwnerDatabaseEntity toEntity() {
-        return OwnersDatabaseRepository.OwnerDatabaseEntity.now(name, email);
+        OwnersDatabaseRepository.OwnerDatabaseEntity toEntity() {
+            return OwnersDatabaseRepository.OwnerDatabaseEntity.now(name, email);
+        }
     }
-}
 
-@Value
-class OwnerResponse {
-    UUID id;
-    String name;
-    String contact;
+    @Value
+    public static class OwnerResponse {
+        UUID id;
+        String name;
+        String contact;
 
-    static OwnerResponse from(OwnersDatabaseRepository.OwnerDatabaseEntity owner) {
-        return new OwnerResponse(owner.getId(), owner.getName(), owner.getEmail());
+        static OwnerResponse from(OwnersDatabaseRepository.OwnerDatabaseEntity owner) {
+            return new OwnerResponse(owner.getId(), owner.getName(), owner.getEmail());
+        }
     }
+
 }
+
+
+
