@@ -13,13 +13,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class BookingsControllerTest extends Specification {
     private static final ITEM_ID = UUID.randomUUID()
-    private BookingsFacade bookingsFacade = Mock()
     private OccupationFacade occupationFacade = Mock()
     private BookingsController controller
     private MockMvc mockMvc
 
     void setup() {
-        controller = new BookingsController(bookingsFacade, occupationFacade)
+        controller = new BookingsController(occupationFacade)
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build()
     }
 
