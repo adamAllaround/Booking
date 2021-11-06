@@ -23,18 +23,6 @@ class BookingsControllerTest extends Specification {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build()
     }
 
-    def "Get all items bookings"() {
-        def bookingId = UUID.randomUUID()
-
-        when:
-        bookingsFacade.getAllByItemId(ITEM_ID) >> mockBookingsResponse(bookingId)
-
-        then:
-        mockMvc.perform(get("/items/${ITEM_ID}/bookings").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(HttpStatus.OK.value()))
-                .andExpect(content().string(containsString(bookingId.toString())))
-    }
-
     def "Successful booking add"() {
         def bookingId = UUID.randomUUID()
 
@@ -56,10 +44,6 @@ class BookingsControllerTest extends Specification {
         mockMvc.perform(post("/items/${ITEM_ID}/bookings").contentType(MediaType.APPLICATION_JSON)
                 .content(newBookingJson()))
                 .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
-    }
-
-    private static BookingsResponse mockBookingsResponse(UUID bookingId) {
-        return new BookingsResponse([mockBookingResponse(bookingId)])
     }
 
     private static BookingResponse mockBookingResponse(UUID bookingId) {

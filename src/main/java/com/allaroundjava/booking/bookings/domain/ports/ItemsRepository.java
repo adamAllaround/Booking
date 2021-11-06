@@ -5,7 +5,5 @@ import java.time.OffsetTime;
 import java.util.UUID;
 
 public interface ItemsRepository {
-//    Optional<RoomDetails> findById(UUID itemId);
-
     void saveNew(UUID itemId, Instant created, OffsetTime hotelHourStart, OffsetTime hotelHourEnd);
 }

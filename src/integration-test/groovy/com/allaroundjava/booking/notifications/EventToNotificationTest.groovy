@@ -5,7 +5,6 @@ import com.allaroundjava.booking.bookings.config.BookingsConfig
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent
 import com.allaroundjava.booking.common.LoggingConfig
 import com.allaroundjava.booking.common.events.EventsConfig
-import com.allaroundjava.booking.items.ItemsConfig
 import com.allaroundjava.booking.notifications.items.HotelRoom
 import com.allaroundjava.booking.notifications.items.ItemsRepository
 import com.allaroundjava.booking.notifications.owners.Owner
@@ -28,7 +27,7 @@ import java.time.ZoneOffset
 import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = [IntegrationTestConfig, EventsConfig, ItemsConfig, BookingsConfig, LoggingConfig, NotificationsConfig])
+        classes = [IntegrationTestConfig, EventsConfig, BookingsConfig, LoggingConfig, NotificationsConfig])
 @EnableAutoConfiguration
 @AutoConfigureEmbeddedDatabase(provider = ZONKY, beanName = "dataSource")
 @Sql("/events-db-creation.sql")

@@ -27,18 +27,18 @@ import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZO
 @EnableAutoConfiguration
 @AutoConfigureEmbeddedDatabase(provider = ZONKY, beanName = "dataSource")
 @Sql("/events-db-creation.sql")
-class ItemsIntegrationTest extends Specification {
+class RoomsIntegrationTest extends Specification {
 
     @Autowired
     private OwnersDatabaseRepository ownersDatabaseRepository
     @Autowired
     private TestRestTemplate testRestTemplate
 
-    def "Should add item for existing user"() {
+    def "Should add room for existing user"() {
         def owner = new OwnersDatabaseRepository.OwnerDatabaseEntity(UUID.randomUUID(), "test name", "test email", LocalDateTime.of(2021, 5, 10, 10, 0).toInstant(ZoneOffset.UTC))
         given:
         ownersDatabaseRepository.save(owner)
-        AddRoomController.AddRoomRequest item = new AddRoomController.AddRoomRequest(ownerId: owner.id, name: "Super room", capacity: 3, location: "Warsaw",
+        AddRoomController.AddRoomRequest item = new AddRoomController.AddRoomRequest(name: "Super room", capacity: 3, location: "Warsaw",
         hotelHourStart: OffsetTime.of(15,0,0,0,ZoneOffset.UTC) , hotelHourEnd: OffsetTime.of(12,0,0,0,ZoneOffset.UTC))
 
         def request = new HttpEntity<AddRoomController.AddRoomRequest>(item, new HttpHeaders(contentType: MediaType.APPLICATION_JSON))

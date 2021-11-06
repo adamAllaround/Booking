@@ -39,6 +39,10 @@ class RoomFixture {
         return create(availabilities)
     }
 
+    RoomOccupation andConcreteAvailabilities(List<Availability> availabilities) {
+        return create(Availabilities.from(ROOM_ID, STANDARD_HOTEL_START, STANDARD_HOTEL_END, availabilities))
+    }
+
     private RoomOccupation create(Availabilities availabilities) {
         return new RoomOccupation(ROOM_ID,
                 availabilities,
