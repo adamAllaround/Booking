@@ -38,9 +38,6 @@ import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZO
 class BookingIntegrationTest extends Specification {
 
     @Autowired
-    private ItemsRepository itemsRepository
-
-    @Autowired
     private TestRestTemplate restTemplate
 
     @Autowired

@@ -43,9 +43,6 @@ class AvailabilitiesIntegrationTest extends Specification {
     private RoomRepository occupationRepository
 
     @Autowired
-    private ItemsRepository itemsRepository
-
-    @Autowired
     private TestRestTemplate testRestTemplate
 
     @Autowired
