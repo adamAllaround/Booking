@@ -33,14 +33,14 @@ public class RoomOccupationDatabaseRepository implements RoomRepository {
                 params,
                 new RoomDetailsDatabaseEntity.RowMapper());
 
-        List<Availability> availabilities = jdbcTemplate.query("select * from Availabilities where itemId=:id and endTime >:now",
+        List<Availability> availabilities = jdbcTemplate.query("select * from availabilities where itemId=:id and endTime >:now",
                 params,
                 new AvailabilityDatabaseEntity.RowMapper())
                 .stream()
                 .map(AvailabilityDatabaseEntity::toModel)
                 .collect(Collectors.toList());
 
-        List<Booking> bookings = jdbcTemplate.query("select * from Bookings where itemId=:id and endTime >:now", params,
+        List<Booking> bookings = jdbcTemplate.query("select * from bookings where itemId=:id and endTime >:now", params,
                 new BookingDatabaseEntity.RowMapper())
                 .stream()
                 .map(BookingDatabaseEntity::toModel)

@@ -1,9 +1,12 @@
 package com.allaroundjava.booking.bookings.adapters.api
 
+import com.allaroundjava.booking.AvailabilityFixtures
 import com.allaroundjava.booking.DbCleaner
 import com.allaroundjava.booking.IntegrationTestConfig
+import com.allaroundjava.booking.RoomFixtures
 import com.allaroundjava.booking.bookings.adapters.db.RoomsDatabaseRepository
 import com.allaroundjava.booking.bookings.config.BookingsConfig
+import com.allaroundjava.booking.bookings.domain.model.AvailabilitiesFixture
 import com.allaroundjava.booking.bookings.domain.model.Availability
 import com.allaroundjava.booking.bookings.domain.model.Dates2020
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent
@@ -49,7 +52,10 @@ class AvailabilitiesIntegrationTest extends Specification {
     private AvailabilitiesRepository availabilitiesRepository
 
     @Autowired
-    private RoomsDatabaseRepository roomsDatabaseRepository
+    private RoomFixtures roomFixtures
+
+    @Autowired
+    private AvailabilityFixtures availabilityFixtures
 
     @Autowired
     private DbCleaner dbCleaner
@@ -95,20 +101,11 @@ class AvailabilitiesIntegrationTest extends Specification {
     }
 
     private existsRoom() {
-
-        def room = new RoomsDatabaseRepository.RoomDatabaseEntity(ITEM_ID,
-                UUID.randomUUID(),
-                "test name",
-                3,
-                "test location",
-                OffsetTime.of(15, 0, 0, 0, ZoneOffset.UTC),
-                OffsetTime.of(10, 0, 0, 0, ZoneOffset.UTC),
-                Dates2020.may(20).hour(12))
-        roomsDatabaseRepository.save(room)
+        roomFixtures.existsRoom(ITEM_ID, UUID.randomUUID())
     }
 
     private existsAvailability(Availability availability) {
-        occupationRepository.handle(new OccupationEvent.AddAvailabilitySuccess(ITEM_ID, [availability]))
+        availabilityFixtures.existsAvailability(ITEM_ID, availability.getInterval().start, availability.getInterval().end)
     }
 
     HttpEntity<AvailabilityRequest> may11AvailabilityRequest() {
