@@ -89,4 +89,19 @@ public interface OccupationEvent extends DomainEvent {
         @NonNull Booking booking;
         @NonNull Availability availability;
     }
+
+    @Value
+    class BasketAddSuccess implements OccupationEvent {
+        UUID eventId = UUID.randomUUID();
+        Instant created = Instant.now();
+        @NonNull UUID itemId;
+        @NonNull UUID basketId;
+    }
+
+    @Value
+    class BasketAddFailure implements OccupationEvent {
+        UUID eventId = UUID.randomUUID();
+        Instant created = Instant.now();
+        @NonNull UUID itemId;
+    }
 }

@@ -24,4 +24,10 @@ class OccupationFacade {
                 .map(Optional::of)
                 .getOrElse(Optional::empty);
     }
+
+    Optional<UUID> save(BasketController.CreateBasketRequest createBasketRequest) {
+        return occupationService.addBasket(createBasketRequest.getItemId(), createBasketRequest.getDateStart(), createBasketRequest.getDateEnd())
+                .map(success -> Optional.of(success.getBasketId()))
+                .getOrElse(Optional::empty);
+    }
 }

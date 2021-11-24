@@ -6,6 +6,8 @@ import io.vavr.control.Either;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -28,4 +30,10 @@ public class OccupationService {
                 .peek(eventPublisher::publish);
     }
 
+    @Transactional
+    public Either<OccupationEvent.BasketAddFailure, OccupationEvent.BasketAddSuccess> addBasket(UUID itemId, OffsetDateTime dateStart, OffsetDateTime dateEnd) {
+        RoomOccupation room = roomRepository.findById(itemId);
+        return room.addBasket(dateStart, dateEnd)
+                .peek(roomRepository::handle);
+    }
 }

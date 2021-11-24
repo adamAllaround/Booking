@@ -4,7 +4,9 @@ import com.allaroundjava.booking.common.Entity;
 import io.vavr.control.Either;
 import lombok.extern.log4j.Log4j2;
 
+import java.time.OffsetDateTime;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.UUID;
 
 import static com.allaroundjava.booking.common.CommandResult.announceFailure;
@@ -71,5 +73,9 @@ public class RoomOccupation extends Entity {
         Availability availability = Availability.from(booking);
 //        availabilities.tryAdd(availability);
         return announceSuccess(new OccupationEvent.RemoveBookingSuccess(getId(), booking, availability));
+    }
+
+    public Either<OccupationEvent.BasketAddFailure, OccupationEvent.BasketAddSuccess> addBasket(OffsetDateTime dateStart, OffsetDateTime dateEnd) {
+        return announceSuccess(new OccupationEvent.BasketAddSuccess(getId(), UUID.randomUUID()));
     }
 }
