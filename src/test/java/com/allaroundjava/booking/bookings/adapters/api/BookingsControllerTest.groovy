@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import static org.hamcrest.CoreMatchers.containsString
@@ -11,6 +12,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
+@Ignore
 class BookingsControllerTest extends Specification {
     private static final ITEM_ID = UUID.randomUUID()
     private OccupationFacade occupationFacade = Mock()

@@ -1,5 +1,6 @@
 package com.allaroundjava.booking.bookings.adapters.api
 
+import com.allaroundjava.booking.bookings.domain.command.AddAvailabilityCommand
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
@@ -10,10 +11,7 @@ import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
-import static org.hamcrest.CoreMatchers.containsString
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class AvailabilitiesControllerTest extends Specification {
@@ -32,7 +30,7 @@ class AvailabilitiesControllerTest extends Specification {
         def availabilityResponse = new AvailabilityResponse(UUID.randomUUID(), itemId,
                 OffsetDateTime.of(LocalDateTime.of(2020, 5, 21, 10, 0, 0), ZoneOffset.UTC), OffsetDateTime.of(LocalDateTime.of(2020, 5, 21, 11, 0, 0), ZoneOffset.UTC))
         when:
-        occupationFacade.save(itemId, _ as AvailabilityRequest) >> Optional.of(new AvailabilitiesResponse([availabilityResponse]))
+        occupationFacade.save(_ as AddAvailabilityCommand) >> Optional.of(new AvailabilitiesResponse([availabilityResponse]))
 
         then:
         mockMvc.perform(post("/items/${itemId}/availabilities").contentType(MediaType.APPLICATION_JSON)
@@ -44,7 +42,7 @@ class AvailabilitiesControllerTest extends Specification {
         def itemId = UUID.randomUUID()
 
         when:
-        occupationFacade.save(itemId, _ as AvailabilityRequest) >> Optional.empty()
+        occupationFacade.save(_ as AddAvailabilityCommand) >> Optional.empty()
 
         then:
         mockMvc.perform(post("/items/${itemId}/availabilities").contentType(MediaType.APPLICATION_JSON)

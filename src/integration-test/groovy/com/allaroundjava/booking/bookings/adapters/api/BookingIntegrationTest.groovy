@@ -20,6 +20,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.jdbc.Sql
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import java.time.OffsetDateTime
@@ -34,6 +35,7 @@ import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZO
 @EnableAutoConfiguration
 @AutoConfigureEmbeddedDatabase(provider = ZONKY, beanName = "dataSource")
 @Sql("/events-db-creation.sql")
+@Ignore
 class BookingIntegrationTest extends Specification {
 
     @Autowired
