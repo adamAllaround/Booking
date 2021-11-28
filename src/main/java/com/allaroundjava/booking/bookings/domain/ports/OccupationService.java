@@ -1,39 +1,30 @@
 package com.allaroundjava.booking.bookings.domain.ports;
 
+import com.allaroundjava.booking.bookings.domain.command.AddAvailabilityCommand;
 import com.allaroundjava.booking.bookings.domain.model.*;
 import com.allaroundjava.booking.common.events.EventPublisher;
 import io.vavr.control.Either;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.OffsetDateTime;
-import java.util.Optional;
-import java.util.UUID;
-
 @AllArgsConstructor
 public class OccupationService {
-    private final RoomRepository roomRepository;
+    private final OccupationRepository occupationRepository;
     private final EventPublisher eventPublisher;
+    private final BasketRepository basketRepository;
 
     @Transactional
-    public Either<OccupationEvent.AddAvailabilityFailure, OccupationEvent.AddAvailabilitySuccess> addAvailabilities(UUID itemId, Availability availability) {
-        RoomOccupation room = roomRepository.findById(itemId);
-        return room.addAvailability(availability.getInterval())
-                .peek(roomRepository::handle);
+    public Either<OccupationEvent.AddAvailabilityFailure, OccupationEvent.AddAvailabilitySuccess> addAvailabilities(AddAvailabilityCommand addAvailabilityCommand) {
+        RoomOccupation room = occupationRepository.find(addAvailabilityCommand.getRoomId(), addAvailabilityCommand.getInterval());
+        return room.addAvailability(addAvailabilityCommand.getInterval())
+                .peek(occupationRepository::handle);
     }
 
     @Transactional
-    public Either<OccupationEvent.BookingFailure, OccupationEvent.BookingSuccess> addBooking(Booking booking) {
-        RoomOccupation room = roomRepository.findById(booking.getItemId());
-        return room.addBooking(booking)
-                .peek(roomRepository::handle)
-                .peek(eventPublisher::publish);
-    }
+    public Either<OccupationEvent.BasketAddFailure, OccupationEvent.BasketAddSuccess> addBasket(Basket basket) {
+        RoomOccupation room = occupationRepository.find(basket.getRoomId(), basket.getInterval());
 
-    @Transactional
-    public Either<OccupationEvent.BasketAddFailure, OccupationEvent.BasketAddSuccess> addBasket(UUID itemId, OffsetDateTime dateStart, OffsetDateTime dateEnd) {
-        RoomOccupation room = roomRepository.findById(itemId);
-        return room.addBasket(dateStart, dateEnd)
-                .peek(roomRepository::handle);
+        return room.canBook(basket)
+                .peek(basketRepository::handle);
     }
 }

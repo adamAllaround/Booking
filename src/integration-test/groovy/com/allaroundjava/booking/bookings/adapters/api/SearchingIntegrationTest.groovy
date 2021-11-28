@@ -51,7 +51,7 @@ class SearchingIntegrationTest extends Specification {
 
     void cleanup() {
         dbCleaner.cleanAvailabilities()
-        dbCleaner.cleanItems()
+        dbCleaner.cleanRooms()
     }
 
     def "when room is available then should be searchable"() {

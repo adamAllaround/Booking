@@ -11,7 +11,7 @@ public class DbCleaner {
         jdbcTemplate.update("DELETE FROM Availabilities");
     }
 
-    public void cleanItems() {
+    public void cleanRooms() {
         jdbcTemplate.update("DELETE FROM Rooms");
     }
 

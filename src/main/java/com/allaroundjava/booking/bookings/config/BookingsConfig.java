@@ -1,5 +1,6 @@
 package com.allaroundjava.booking.bookings.config;
 
+import com.allaroundjava.booking.bookings.adapters.db.BasketDatabaseEntity;
 import com.allaroundjava.booking.bookings.adapters.db.OwnersDatabaseRepository;
 import com.allaroundjava.booking.bookings.adapters.db.RoomsDatabaseRepository;
 import com.allaroundjava.booking.bookings.domain.model.BookingPolicies;
@@ -18,20 +19,10 @@ import java.time.Clock;
 @ComponentScan(basePackages = "com.allaroundjava.booking.bookings.adapters")
 public class BookingsConfig {
 
-//    @Bean
-//    AvailabilitiesService availabilitiesService(AvailabilitiesRepository repository){
-//        return new AvailabilitiesService(repository);
-//    }
-
     @Bean
-    OccupationService occupationService(RoomRepository roomRepository, EventPublisher eventPublisher) {
-        return new OccupationService(roomRepository, eventPublisher);
+    OccupationService occupationService(OccupationRepository occupationRepository, EventPublisher eventPublisher, BasketRepository basketRepository) {
+        return new OccupationService(occupationRepository, eventPublisher, basketRepository);
     }
-
-//    @Bean
-//    BookingsService bookingsService(BookingsRepository bookingsRepository) {
-//        return new BookingsService(bookingsRepository);
-//    }
 
     @Bean
     Clock clock() {

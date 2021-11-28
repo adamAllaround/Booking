@@ -41,6 +41,16 @@ public class RoomOccupation extends Entity {
         return announceFailure(new OccupationEvent.RemoveAvailabilityFailure(getId(), availability.getId(), "Availability does not exist"));
     }
 
+    public Either<OccupationEvent.BasketAddFailure, OccupationEvent.BasketAddSuccess> canBook(Basket basket) {
+        Optional<Rejection> result = bookingPolicies.canBook(availabilities);
+        if(result.isPresent()) {
+            log.warn("Cannot allow to book basket {}. Reason {}",basket.getId(), result.get().getReason());
+            return announceFailure(new OccupationEvent.BasketAddFailure(basket.getRoomId(), result.get().getReason()));
+        }
+
+        return announceSuccess(new OccupationEvent.BasketAddSuccess(basket.getRoomId(), basket.getId(), basket.getInterval()));
+    }
+
     public Either<OccupationEvent.BookingFailure, OccupationEvent.BookingSuccess> addBooking(Booking booking) {
 
         Availabilities coveringAvailabilities = availabilities.matchingIds(booking.getAvailabilityIds());
@@ -73,9 +83,5 @@ public class RoomOccupation extends Entity {
         Availability availability = Availability.from(booking);
 //        availabilities.tryAdd(availability);
         return announceSuccess(new OccupationEvent.RemoveBookingSuccess(getId(), booking, availability));
-    }
-
-    public Either<OccupationEvent.BasketAddFailure, OccupationEvent.BasketAddSuccess> addBasket(OffsetDateTime dateStart, OffsetDateTime dateEnd) {
-        return announceSuccess(new OccupationEvent.BasketAddSuccess(getId(), UUID.randomUUID()));
     }
 }

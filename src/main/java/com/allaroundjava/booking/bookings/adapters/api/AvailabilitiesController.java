@@ -17,7 +17,7 @@ class AvailabilitiesController {
 
     @PostMapping("/{itemId}/availabilities")
     ResponseEntity<AvailabilitiesResponse> addAvailability(@PathVariable UUID itemId, @RequestBody AvailabilityRequest request) {
-        Optional<AvailabilitiesResponse> response = occupation.save(itemId, request);
+        Optional<AvailabilitiesResponse> response = occupation.save(request.toCommand(itemId));
         return response.map(resp -> ResponseEntity.created(getUri()).body(resp))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }

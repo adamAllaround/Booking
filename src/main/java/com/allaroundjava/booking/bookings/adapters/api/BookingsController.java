@@ -15,19 +15,19 @@ import java.util.UUID;
 class BookingsController {
     private final OccupationFacade occupation;
 
-    @PostMapping("/{itemId}/bookings")
-    ResponseEntity<BookingResponse> addBooking(@RequestBody BookingRequest request, @PathVariable UUID itemId) {
-        request.setItemId(itemId);
-        Optional<BookingResponse> result = occupation.saveBooking(request);
-        return result.map(resp -> ResponseEntity.created(getUri(resp)).body(resp))
-                .orElseGet(() -> ResponseEntity.badRequest().build());
-    }
-
-    private URI getUri(BookingResponse resp) {
-        return ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(resp.getId())
-                .toUri();
-    }
+//    @PostMapping("/{itemId}/bookings")
+//    ResponseEntity<BookingResponse> addBooking(@RequestBody BookingRequest request, @PathVariable UUID itemId) {
+//        request.setItemId(itemId);
+//        Optional<BookingResponse> result = occupation.saveBooking(request);
+//        return result.map(resp -> ResponseEntity.created(getUri(resp)).body(resp))
+//                .orElseGet(() -> ResponseEntity.badRequest().build());
+//    }
+//
+//    private URI getUri(BookingResponse resp) {
+//        return ServletUriComponentsBuilder
+//                .fromCurrentRequest()
+//                .path("/{id}")
+//                .buildAndExpand(resp.getId())
+//                .toUri();
+//    }
 }

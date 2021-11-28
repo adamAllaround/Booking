@@ -5,7 +5,7 @@ import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.AddAvaila
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.BookingSuccess;
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.RemoveAvailabilitySuccess;
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.RemoveBookingSuccess;
-import com.allaroundjava.booking.bookings.domain.ports.RoomRepository;
+import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository;
 import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -13,34 +13,39 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
-import java.time.*;
+import java.time.Clock;
+import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class RoomOccupationDatabaseRepository implements RoomRepository {
+public class RoomOccupationDatabaseRepository implements OccupationRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final Clock clock;
 
     @Override
-    public RoomOccupation findById(UUID id) {
-        ImmutableMap<String, Object> params = ImmutableMap.of("id", id,
-                "now", Timestamp.from(Instant.now(clock)));
+    public RoomOccupation find(UUID roomId, Interval interval) {
         RoomDetailsDatabaseEntity roomDetails = jdbcTemplate.queryForObject("SELECT * from Rooms where id=:id",
-                params,
+                ImmutableMap.of("id", roomId),
                 new RoomDetailsDatabaseEntity.RowMapper());
 
-        List<Availability> availabilities = jdbcTemplate.query("select * from availabilities where itemId=:id and endTime >:now",
-                params,
+        Map<String,Object> availParams = ImmutableMap.of("roomId", roomId,
+                "startTime", Timestamp.from(interval.getStart()),
+                "endTime", Timestamp.from(interval.getEnd()));
+
+        List<Availability> availabilities = jdbcTemplate.query("select * from availabilities where itemId=:roomId and endTime >:startTime and startTime <:endTime",
+                availParams,
                 new AvailabilityDatabaseEntity.RowMapper())
                 .stream()
                 .map(AvailabilityDatabaseEntity::toModel)
                 .collect(Collectors.toList());
 
-        List<Booking> bookings = jdbcTemplate.query("select * from bookings where itemId=:id and endTime >:now", params,
+        List<Booking> bookings = jdbcTemplate.query("select * from bookings where itemId=:roomId and endTime >:startTime and startTime <:endTime",
+                availParams,
                 new BookingDatabaseEntity.RowMapper())
                 .stream()
                 .map(BookingDatabaseEntity::toModel)
@@ -61,7 +66,7 @@ public class RoomOccupationDatabaseRepository implements RoomRepository {
             removeAvailability((RemoveAvailabilitySuccess) event);
         }
         if (event instanceof BookingSuccess) {
-            saveNewBooking((BookingSuccess)event);
+            saveNewBooking((BookingSuccess) event);
         }
 
         if (event instanceof RemoveBookingSuccess) {

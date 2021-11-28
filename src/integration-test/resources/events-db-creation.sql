@@ -29,14 +29,6 @@ CREATE TABLE IF NOT EXISTS Rooms
     created        timestamp    NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS OccupationItems
-(
-    id             uuid PRIMARY KEY,
-    created        timestamp    NOT NULL,
-    hotelHourStart TIME         NULL,
-    hotelHourEnd   TIME         NULL
-);
-
 CREATE TABLE IF NOT EXISTS Availabilities
 (
     id        uuid PRIMARY KEY,
@@ -50,6 +42,14 @@ CREATE TABLE IF NOT EXISTS Bookings
 (
     id        uuid PRIMARY KEY,
     itemId    uuid      NOT NULL,
+    startTime timestamp NOT NULL,
+    endTime   timestamp NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Baskets
+(
+    id        uuid PRIMARY KEY,
+    roomId    uuid      NOT NULL,
     startTime timestamp NOT NULL,
     endTime   timestamp NOT NULL
 );

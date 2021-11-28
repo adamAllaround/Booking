@@ -96,6 +96,7 @@ public interface OccupationEvent extends DomainEvent {
         Instant created = Instant.now();
         @NonNull UUID itemId;
         @NonNull UUID basketId;
+        @NonNull Interval interval;
     }
 
     @Value
@@ -103,5 +104,6 @@ public interface OccupationEvent extends DomainEvent {
         UUID eventId = UUID.randomUUID();
         Instant created = Instant.now();
         @NonNull UUID itemId;
+        @NonNull String reason;
     }
 }

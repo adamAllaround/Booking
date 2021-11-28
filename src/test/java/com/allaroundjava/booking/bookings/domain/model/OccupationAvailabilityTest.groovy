@@ -12,7 +12,7 @@ import static com.allaroundjava.booking.bookings.domain.model.Dates2020.march
 import static RoomFixture.withClock
 import static com.allaroundjava.booking.bookings.domain.model.Dates2020.may
 
-class RoomAvailabilityTest extends Specification {
+class OccupationAvailabilityTest extends Specification {
     private static UUID ITEM_ID = UUID.randomUUID()
 
     def "Can add all availabilities when empty"() {

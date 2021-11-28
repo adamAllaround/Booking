@@ -25,7 +25,7 @@ class BasketControllerTest extends Specification {
         UUID basketUuid = UUID.randomUUID()
 
         when:
-        occupationFacade.save(_ as BasketController.CreateBasketRequest) >> Optional.of(basketUuid)
+        occupationFacade.save(_ as BasketController.AddBasketRequest) >> Optional.of(basketUuid)
 
         then:
         mockMvc.perform(post("/baskets").contentType(MediaType.APPLICATION_JSON)

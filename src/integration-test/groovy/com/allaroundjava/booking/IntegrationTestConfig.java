@@ -1,7 +1,7 @@
 package com.allaroundjava.booking;
 
 import com.allaroundjava.booking.bookings.adapters.db.RoomsDatabaseRepository;
-import com.allaroundjava.booking.bookings.domain.ports.RoomRepository;
+import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -45,7 +45,7 @@ public class IntegrationTestConfig {
     }
 
     @Bean
-    AvailabilityFixtures availabilityFixtures(RoomRepository roomRepository) {
-        return new AvailabilityFixtures(roomRepository);
+    AvailabilityFixtures availabilityFixtures(OccupationRepository occupationRepository) {
+        return new AvailabilityFixtures(occupationRepository);
     }
 }
