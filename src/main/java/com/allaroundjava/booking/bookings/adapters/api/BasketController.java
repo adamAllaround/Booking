@@ -1,15 +1,14 @@
 package com.allaroundjava.booking.bookings.adapters.api;
 
 import com.allaroundjava.booking.bookings.domain.command.AddBasketCommand;
+import com.allaroundjava.booking.bookings.domain.model.Basket;
 import com.allaroundjava.booking.bookings.domain.model.Interval;
+import com.allaroundjava.booking.bookings.domain.ports.BasketRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -22,11 +21,20 @@ import java.util.UUID;
 @AllArgsConstructor
 class BasketController {
     private final OccupationFacade occupation;
+    private final BasketRepository basketRepository;
 
     @PostMapping
     ResponseEntity<AddBasketResponse> createBasket(@RequestBody AddBasketRequest addBasketRequest) {
         return occupation.save(addBasketRequest.toCommand())
                 .map(resp -> ResponseEntity.created(getUri(resp)).body(resp))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @GetMapping("{basketId}")
+    ResponseEntity<GetBasketResponse> getBasket(@PathVariable UUID basketId) {
+        return basketRepository.getSingle(basketId)
+                .map(GetBasketResponse::from)
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
@@ -59,6 +67,21 @@ class BasketController {
             return new AddBasketResponse(basketId,
                     OffsetDateTime.ofInstant(interval.getStart(), ZoneOffset.UTC),
                     OffsetDateTime.ofInstant(interval.getEnd(), ZoneOffset.UTC));
+        }
+    }
+
+    @Value
+    static class GetBasketResponse {
+        UUID basketId;
+        UUID roomId;
+        OffsetDateTime dateStart;
+        OffsetDateTime dateEnd;
+
+        static GetBasketResponse from(Basket basket) {
+            return new GetBasketResponse(basket.getId(),
+                    basket.getRoomId(),
+                    OffsetDateTime.ofInstant(basket.getInterval().getStart(), ZoneOffset.UTC),
+                    OffsetDateTime.ofInstant(basket.getInterval().getEnd(), ZoneOffset.UTC));
         }
     }
 }
