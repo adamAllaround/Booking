@@ -21,8 +21,7 @@ import spock.lang.Specification
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
-import static com.allaroundjava.booking.bookings.domain.model.AvailabilityFixture.ITEM_ID
-import static com.allaroundjava.booking.bookings.domain.model.AvailabilityFixture.MAY10
+import static com.allaroundjava.booking.bookings.domain.model.AvailabilityFixture.*
 import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -77,11 +76,51 @@ class BasketsIntegrationTest extends Specification {
     }
 
     def "Should add basket for multiple availabilities"() {
+        given:
+        existsAvailability(MAY10)
+        existsAvailability(MAY11)
+        existsAvailability(MAY12)
 
+        def request = may10to11BasketRequest()
+
+        when:
+        def entity = testRestTemplate.postForEntity(URI.create("/baskets"),request, BasketController.AddBasketResponse)
+
+        then:
+        entity.statusCode == HttpStatus.CREATED
+
+        and:
+        !entity.headers.get("Location").isEmpty()
+
+        and:
+        basketExistsInDb(entity.body.basketId)
     }
 
-    def "Should not add basket"() {
+    def "Should add basket side by side"() {
+        given:
+        existsAvailability(MAY10)
+        existsAvailability(MAY11)
+        existsAvailability(MAY12)
 
+        def request = may10to11BasketRequest()
+
+        when:
+        def firstBooking = testRestTemplate.postForEntity(URI.create("/baskets"),request, BasketController.AddBasketResponse)
+
+        then:
+        firstBooking.statusCode == HttpStatus.CREATED
+
+        when:
+        def nextRequest = may11ToMay12BasketRequest()
+
+        and:
+        def secondBooking = testRestTemplate.postForEntity(URI.create("/baskets"),nextRequest, BasketController.AddBasketResponse)
+
+        then:
+        secondBooking.statusCode == HttpStatus.CREATED
+
+        and:
+        basketExistsInDb(secondBooking.body.basketId)
     }
 
     private existsRoom() {
@@ -94,6 +133,14 @@ class BasketsIntegrationTest extends Specification {
 
     BasketController.AddBasketRequest may10BasketRequest() {
         new BasketController.AddBasketRequest(roomId: ITEM_ID, dateStart: OffsetDateTime.ofInstant(MAY10.start, ZoneOffset.UTC), dateEnd: OffsetDateTime.ofInstant(MAY10.end, ZoneOffset.UTC))
+    }
+
+    BasketController.AddBasketRequest may10to11BasketRequest() {
+        new BasketController.AddBasketRequest(roomId: ITEM_ID, dateStart: OffsetDateTime.ofInstant(MAY10.start, ZoneOffset.UTC), dateEnd: OffsetDateTime.ofInstant(MAY11.end, ZoneOffset.UTC))
+    }
+
+    BasketController.AddBasketRequest may11ToMay12BasketRequest() {
+        new BasketController.AddBasketRequest(roomId: ITEM_ID, dateStart: OffsetDateTime.ofInstant(MAY11.start, ZoneOffset.UTC), dateEnd: OffsetDateTime.ofInstant(MAY12.end, ZoneOffset.UTC))
     }
 
     void basketExistsInDb(UUID basketId) {
