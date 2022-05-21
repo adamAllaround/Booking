@@ -7,6 +7,11 @@ import io.vavr.control.Either;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+import java.util.UUID;
+
+import static com.allaroundjava.booking.common.CommandResult.announceFailure;
+
 @AllArgsConstructor
 public class OccupationService {
     private final OccupationRepository occupationRepository;
@@ -26,5 +31,17 @@ public class OccupationService {
 
         return room.canBook(basket)
                 .peek(basketRepository::handle);
+    }
+
+    @Transactional
+    public Either<OccupationEvent.BookingFailure, OccupationEvent.BasketAddSuccess> book(UUID basketId, Customer customer) {
+        Optional<Basket> basket = basketRepository.getSingle(basketId);
+
+        if (basket.isEmpty()) {
+            return announceFailure(new OccupationEvent.BookingFailure());
+        }
+
+        RoomOccupation roomOccupation = occupationRepository.find(basket.get().getRoomId(), basket.get().getInterval());
+        return roomOccupation.book(basket, customer);
     }
 }

@@ -84,4 +84,13 @@ public class RoomOccupation extends Entity {
 //        availabilities.tryAdd(availability);
         return announceSuccess(new OccupationEvent.RemoveBookingSuccess(getId(), booking, availability));
     }
+
+    Either<OccupationEvent.BookingFailure, OccupationEvent.BasketAddSuccess> book(Basket basket, Customer customer) {
+        Either<OccupationEvent.BasketAddFailure, OccupationEvent.BasketAddSuccess> successOrFailure = canBook(basket);
+        if(successOrFailure.isLeft()) {
+            announceFailure(new OccupationEvent.BookingFailure(basket.getRoomId(), basket.getInterval(), successOrFailure.getLeft().getReason()));
+        }
+
+        Availabilities availabilities = this.availabilities.bookAll();
+    }
 }

@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.UUID;
 
 @RestController
@@ -22,10 +21,11 @@ import java.util.UUID;
 class BasketController {
     private final OccupationFacade occupation;
     private final BasketRepository basketRepository;
+    private final Clock clock;
 
     @PostMapping
     ResponseEntity<AddBasketResponse> createBasket(@RequestBody AddBasketRequest addBasketRequest) {
-        return occupation.save(addBasketRequest.toCommand())
+        return occupation.save(addBasketRequest.toCommand(clock))
                 .map(resp -> ResponseEntity.created(getUri(resp)).body(resp))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
@@ -49,11 +49,11 @@ class BasketController {
     @Data
     static class AddBasketRequest {
         UUID roomId;
-        OffsetDateTime dateStart;
-        OffsetDateTime dateEnd;
+        LocalDate dateStart;
+        LocalDate dateEnd;
 
-        AddBasketCommand toCommand() {
-            return new AddBasketCommand(roomId, new Interval(dateStart.toInstant(), dateEnd.toInstant()));
+        AddBasketCommand toCommand(Clock clock) {
+            return new AddBasketCommand(roomId, new Interval(dateStart.atStartOfDay(clock.getZone()).toInstant(), dateEnd.atStartOfDay(clock.getZone()).toInstant()));
         }
     }
 

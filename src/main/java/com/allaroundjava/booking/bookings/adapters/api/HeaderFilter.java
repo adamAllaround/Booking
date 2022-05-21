@@ -5,10 +5,10 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebFilter("/owners/*")
+@WebFilter(urlPatterns = {"/owners/*", "/baskets/*"})
 class HeaderFilter implements Filter {
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
 
     }
 
@@ -17,6 +17,7 @@ class HeaderFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
         httpServletResponse.setHeader(
                 "Access-Control-Allow-Origin", "*");
+        httpServletResponse.setHeader("Access-Control-Allow-Headers", "Content-Type");
         filterChain.doFilter(servletRequest, servletResponse);
     }
 

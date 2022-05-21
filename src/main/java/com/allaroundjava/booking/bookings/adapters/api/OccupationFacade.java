@@ -2,6 +2,7 @@ package com.allaroundjava.booking.bookings.adapters.api;
 
 import com.allaroundjava.booking.bookings.domain.command.AddAvailabilityCommand;
 import com.allaroundjava.booking.bookings.domain.command.AddBasketCommand;
+import com.allaroundjava.booking.bookings.domain.command.BookCommand;
 import com.allaroundjava.booking.bookings.domain.model.Basket;
 import com.allaroundjava.booking.bookings.domain.ports.OccupationService;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,13 @@ class OccupationFacade {
     Optional<BasketController.AddBasketResponse> save(AddBasketCommand addBasketCommand) {
         Basket basket = Basket.createNew(addBasketCommand.getRoomId(), addBasketCommand.getInterval());
         return occupationService.addBasket(basket)
+                .map(success -> BasketController.AddBasketResponse.from(success.getBasketId(), success.getInterval()))
+                .map(Optional::of)
+                .getOrElse(Optional::empty);
+    }
+
+    Optional<BookingsResponse> save(BookCommand bookCommand) {
+        return occupationService.book(bookCommand.getBasketId(), bookCommand.getCustomer())
                 .map(success -> BasketController.AddBasketResponse.from(success.getBasketId(), success.getInterval()))
                 .map(Optional::of)
                 .getOrElse(Optional::empty);
