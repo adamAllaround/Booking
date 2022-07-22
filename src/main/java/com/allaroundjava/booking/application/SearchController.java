@@ -1,4 +1,4 @@
-package com.allaroundjava.booking.bookings.adapters.api;
+package com.allaroundjava.booking.application;
 
 import com.allaroundjava.booking.bookings.adapters.db.FindAvailabilitiesRepository;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/owners")
 @AllArgsConstructor
-public class SearchController {
+class SearchController {
     FindAvailabilitiesRepository findAvailabilitiesRepository;
 
     @GetMapping("{ownerId}/availabilities")
