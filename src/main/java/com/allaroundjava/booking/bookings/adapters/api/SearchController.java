@@ -1,4 +1,4 @@
-package com.allaroundjava.booking.application;
+package com.allaroundjava.booking.bookings.adapters.api;
 
 import com.allaroundjava.booking.bookings.adapters.db.FindAvailabilitiesRepository;
 import lombok.AllArgsConstructor;

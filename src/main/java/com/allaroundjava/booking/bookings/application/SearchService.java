@@ -1,4 +1,4 @@
-package com.allaroundjava.booking.application;
+package com.allaroundjava.booking.bookings.application;
 
 import com.allaroundjava.booking.bookings.domain.model.Interval;
 import com.allaroundjava.booking.common.SearchItem;
