@@ -1,7 +1,7 @@
 package com.allaroundjava.booking.bookings.adapters.db;
 
 import com.allaroundjava.booking.bookings.domain.model.Basket;
-import com.allaroundjava.booking.bookings.domain.model.Interval;
+import com.allaroundjava.booking.bookings.shared.Interval;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

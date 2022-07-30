@@ -1,6 +1,6 @@
 package com.allaroundjava.booking.common.events;
 
-import com.allaroundjava.booking.bookings.domain.model.Interval;
+import com.allaroundjava.booking.bookings.shared.Interval;
 import lombok.Data;
 
 import java.time.OffsetTime;

@@ -1,18 +1,14 @@
 package com.allaroundjava.booking.bookings.adapters.api;
 
 import com.allaroundjava.booking.bookings.domain.command.BookCommand;
-import com.allaroundjava.booking.bookings.domain.model.Booking;
 import com.allaroundjava.booking.bookings.domain.model.Customer;
-import com.allaroundjava.booking.bookings.domain.model.Interval;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
 

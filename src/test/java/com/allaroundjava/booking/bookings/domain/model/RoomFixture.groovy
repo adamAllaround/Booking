@@ -1,5 +1,6 @@
 package com.allaroundjava.booking.bookings.domain.model
 
+import com.allaroundjava.booking.bookings.shared.Interval
 
 import java.time.Clock
 import java.time.Instant

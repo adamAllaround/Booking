@@ -6,6 +6,7 @@ import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.BookingSu
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.RemoveAvailabilitySuccess;
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent.RemoveBookingSuccess;
 import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository;
+import com.allaroundjava.booking.bookings.shared.Interval;
 import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

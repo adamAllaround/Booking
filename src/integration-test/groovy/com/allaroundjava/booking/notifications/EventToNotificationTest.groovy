@@ -84,7 +84,7 @@ class EventToNotificationTest extends Specification {
     OccupationEvent.BookingSuccess bookingSuccessEvent(HotelRoom hotelRoom) {
         Instant start = LocalDateTime.of(2021, 8, 21, 10,0).toInstant(ZoneOffset.UTC)
         Instant end = LocalDateTime.of(2021, 8, 23, 10,0).toInstant(ZoneOffset.UTC)
-        com.allaroundjava.booking.bookings.domain.model.Interval interval = new com.allaroundjava.booking.bookings.domain.model.Interval(start, end)
+        com.allaroundjava.booking.bookings.shared.Interval interval = new com.allaroundjava.booking.bookings.shared.Interval(start, end)
         return new OccupationEvent.BookingSuccess(UUID.randomUUID(), Instant.now(),
                 UUID.randomUUID(), hotelRoom.getId(), interval, [UUID.randomUUID(), UUID.randomUUID()].toSet(), "booker@email.com")
     }

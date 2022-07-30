@@ -2,7 +2,7 @@ package com.allaroundjava.booking.bookings.adapters.api;
 
 import com.allaroundjava.booking.bookings.domain.command.AddBasketCommand;
 import com.allaroundjava.booking.bookings.domain.model.Basket;
-import com.allaroundjava.booking.bookings.domain.model.Interval;
+import com.allaroundjava.booking.bookings.shared.Interval;
 import com.allaroundjava.booking.bookings.domain.ports.BasketRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;

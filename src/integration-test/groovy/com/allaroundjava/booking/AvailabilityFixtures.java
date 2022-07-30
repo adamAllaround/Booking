@@ -1,7 +1,7 @@
 package com.allaroundjava.booking;
 
 import com.allaroundjava.booking.bookings.domain.model.Availability;
-import com.allaroundjava.booking.bookings.domain.model.Interval;
+import com.allaroundjava.booking.bookings.shared.Interval;
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent;
 import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository;
 import lombok.RequiredArgsConstructor;

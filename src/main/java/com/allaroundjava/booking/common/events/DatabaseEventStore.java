@@ -1,6 +1,6 @@
 package com.allaroundjava.booking.common.events;
 
-import com.allaroundjava.booking.bookings.domain.model.Interval;
+import com.allaroundjava.booking.bookings.shared.Interval;
 import com.allaroundjava.booking.bookings.domain.model.OccupationEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

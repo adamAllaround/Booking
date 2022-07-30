@@ -1,6 +1,9 @@
 package com.allaroundjava.booking.bookings.adapters.api;
 
 import com.allaroundjava.booking.bookings.adapters.db.FindAvailabilitiesRepository;
+import com.allaroundjava.booking.bookings.application.SearchService;
+import com.allaroundjava.booking.bookings.readmodel.RoomDetail;
+import com.allaroundjava.booking.bookings.shared.Money;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -8,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.OffsetTime;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -20,23 +22,25 @@ import java.util.UUID;
 @AllArgsConstructor
 class SearchController {
     FindAvailabilitiesRepository findAvailabilitiesRepository;
+    private final SearchService searchService;
 
     @GetMapping("{ownerId}/availabilities")
     ResponseEntity<FindAvailabilityResponse> findAvailabilities(@PathVariable UUID ownerId,
+                                                                @RequestParam Integer capacity,
                                                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
                                                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo) {
-        List<FindAvailabilitiesRepository.Avail> avails = findAvailabilitiesRepository.find(ownerId, dateFrom, dateTo);
-        return ResponseEntity.ok(FindAvailabilityResponse.from(avails));
+        Collection<RoomDetail> availableRooms = searchService.findAvailableRooms(ownerId, dateFrom, dateTo, capacity);
+        return ResponseEntity.ok(FindAvailabilityResponse.from(availableRooms));
     }
 
     @Value
     static class FindAvailabilityResponse {
-        Collection<ToBook> roomsAvailable;
+        Collection<AvailableRoom> roomsAvailable;
 
-        static FindAvailabilityResponse from(List<FindAvailabilitiesRepository.Avail> avails) {
-            Collection<ToBook> result = new LinkedList<>();
-            for (FindAvailabilitiesRepository.Avail avail : avails) {
-                result.add(ToBook.from(avail));
+        static FindAvailabilityResponse from(Collection<RoomDetail> avails) {
+            Collection<AvailableRoom> result = new LinkedList<>();
+            for (RoomDetail avail : avails) {
+                result.add(AvailableRoom.from(avail));
             }
 
             return new FindAvailabilityResponse(result);
@@ -44,19 +48,21 @@ class SearchController {
     }
 
     @Value
-    static class ToBook {
+    static class AvailableRoom {
         UUID roomId;
         int capacity;
         String name;
+        Money price;
         OffsetTime hotelHourStart;
         OffsetTime hotelHourEnd;
 
-        static ToBook from(FindAvailabilitiesRepository.Avail avail) {
-            return new ToBook(avail.getRoomId(),
-                    avail.getCapacity(),
-                    avail.getName(),
-                    avail.getHotelHourStart(),
-                    avail.getHotelHourEnd());
+        static AvailableRoom from(RoomDetail room) {
+            return new AvailableRoom(room.getRoomId(),
+                    room.getCapacity(),
+                    room.getName(),
+                    room.getPrice(),
+                    room.getArrivalHour(),
+                    room.getDepartureHour());
         }
     }
 }

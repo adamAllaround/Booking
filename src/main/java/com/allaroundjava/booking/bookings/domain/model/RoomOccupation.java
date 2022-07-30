@@ -1,12 +1,11 @@
 package com.allaroundjava.booking.bookings.domain.model;
 
+import com.allaroundjava.booking.bookings.shared.Interval;
 import com.allaroundjava.booking.common.Entity;
 import io.vavr.control.Either;
 import lombok.extern.log4j.Log4j2;
 
-import java.time.OffsetDateTime;
 import java.util.Optional;
-import java.util.Queue;
 import java.util.UUID;
 
 import static com.allaroundjava.booking.common.CommandResult.announceFailure;

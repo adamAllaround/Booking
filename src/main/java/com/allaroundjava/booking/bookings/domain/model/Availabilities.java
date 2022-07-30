@@ -1,5 +1,6 @@
 package com.allaroundjava.booking.bookings.domain.model;
 
+import com.allaroundjava.booking.bookings.shared.Interval;
 import lombok.AllArgsConstructor;
 
 import java.time.Duration;

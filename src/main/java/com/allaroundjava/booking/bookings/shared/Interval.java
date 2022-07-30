@@ -1,4 +1,4 @@
-package com.allaroundjava.booking.bookings.domain.model;
+package com.allaroundjava.booking.bookings.shared;
 
 import com.allaroundjava.booking.common.ValueObject;
 import lombok.Getter;
@@ -24,17 +24,17 @@ public class Interval extends ValueObject {
         this.end = end;
     }
 
-    boolean overlaps(Interval interval) {
+    public boolean overlaps(Interval interval) {
         return !(end.isBefore(interval.start) || start.isAfter(interval.end));
     }
 
-    Interval plusDays(int days) {
+    public Interval plusDays(int days) {
         Instant newStart = start.plus(days, ChronoUnit.DAYS);
         Instant newEnd = end.plus(days, ChronoUnit.DAYS);
         return new Interval(newStart, newEnd);
     }
 
-    Interval expand(Interval interval) {
+    public Interval expand(Interval interval) {
         if (start.isBefore(interval.start)) {
             return new Interval(start, interval.end);
         } else {
@@ -42,7 +42,7 @@ public class Interval extends ValueObject {
         }
     }
 
-    List<Interval> multiplyTill(Instant end) {
+    public List<Interval> multiplyTill(Instant end) {
         List<Interval> result = new ArrayList<>();
         Interval seek = this;
 

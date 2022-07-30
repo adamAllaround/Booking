@@ -1,5 +1,7 @@
 package com.allaroundjava.booking.bookings.domain.model
 
+import com.allaroundjava.booking.bookings.shared.Interval
+
 import static com.allaroundjava.booking.bookings.domain.model.Dates2020.*
 
 class AvailabilityFixture {

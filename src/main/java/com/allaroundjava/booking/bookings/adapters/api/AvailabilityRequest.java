@@ -1,7 +1,7 @@
 package com.allaroundjava.booking.bookings.adapters.api;
 
 import com.allaroundjava.booking.bookings.domain.command.AddAvailabilityCommand;
-import com.allaroundjava.booking.bookings.domain.model.Interval;
+import com.allaroundjava.booking.bookings.shared.Interval;
 import lombok.Data;
 
 import java.time.OffsetDateTime;

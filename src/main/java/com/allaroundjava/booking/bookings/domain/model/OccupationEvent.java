@@ -1,5 +1,6 @@
 package com.allaroundjava.booking.bookings.domain.model;
 
+import com.allaroundjava.booking.bookings.shared.Interval;
 import com.allaroundjava.booking.common.events.DomainEvent;
 import lombok.NonNull;
 import lombok.Value;
