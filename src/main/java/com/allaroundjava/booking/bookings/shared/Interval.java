@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -51,5 +52,9 @@ public class Interval extends ValueObject {
             seek = seek.plusDays(1);
         }
         return result;
+    }
+
+    public long getDays() {
+        return Duration.between(start, end).toDays();
     }
 }

@@ -63,4 +63,20 @@ class IntervalTest extends Specification {
         then:
         result.isEmpty()
     }
+
+    def "Interval days calculation"() {
+        when:
+        Interval source = new Interval(
+                LocalDateTime.of(2020, 10, 1, hourStart, 0, 0).toInstant(ZoneOffset.UTC),
+                LocalDateTime.of(2020, 10, dayEnd, hourEnd, 0, 0).toInstant(ZoneOffset.UTC))
+
+        then:
+        source.getDays() == resultDays
+
+        where:
+        hourStart | dayEnd | hourEnd || resultDays
+        0         | 1      | 10      || 0
+        0         | 2      | 10      || 1
+        0         | 10     | 23     || 9
+    }
 }

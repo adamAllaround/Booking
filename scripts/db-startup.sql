@@ -1,69 +1,34 @@
-CREATE TABLE IF NOT EXISTS Events
-(
-    id        uuid PRIMARY KEY,
-    type      varchar(100) NOT NULL,
-    created   timestamp    NOT NULL,
-    published boolean      NOT NULL,
-    subjectId      uuid NOT NULL,
-    payload   json        not null
-);
-
-CREATE TABLE IF NOT EXISTS Owners
+CREATE TABLE IF NOT EXISTS owners
 (
     id      uuid PRIMARY KEY,
     name    VARCHAR(100) NOT NULL,
-    contact VARCHAR(100) NOT NULL
+    email   VARCHAR(100) NOT NULL,
+    created timestamp    NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS ItemsOwners
+CREATE TABLE IF NOT EXISTS roommeta
 (
-    id      uuid PRIMARY KEY,
-    created timestamp NOT NULL
+    id            uuid PRIMARY KEY,
+    ownerId       uuid         NOT NULL,
+    name          VARCHAR(100) NOT NULL,
+    description   TEXT         NOT NULL,
+    capacity      INT          NOT NULL,
+    location      VARCHAR(100) NOT NULL,
+    arrivalHour   TIME         NULL,
+    departureHour TIME         NULL
 );
 
-CREATE TABLE IF NOT EXISTS Items
+CREATE TABLE IF NOT EXISTS pricingpolicies
 (
-    id             uuid PRIMARY KEY,
-    ownerId        uuid         NOT NULL,
-    name           VARCHAR(100) NOT NULL,
-    capacity       INT          NOT NULL,
-    location       VARCHAR(100) NOT NULL,
-    type           VARCHAR(100) NOT NULL,
-    hotelHourStart TIME         NULL,
-    hotelHourEnd   TIME         NULL
+    roomId  UUID NOT NULL,
+    startTime TIMESTAMP NOT NULL UNIQUE,
+    policy varchar(100) NOT NULL,
+    parameters varchar(20) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS OccupationItems
-(
-    id             uuid PRIMARY KEY,
-    created        timestamp    NOT NULL,
-    type           VARCHAR(100) NOT NULL,
-    hotelHourStart TIME         NULL,
-    hotelHourEnd   TIME         NULL
-);
+insert into pricingpolicies (roomId, startTime, policy, parameters) values (gen_random_uuid(), '2022-08-03'::timestamp, 'FIXED', '213')
 
-CREATE TABLE IF NOT EXISTS Availabilities
-(
-    id        uuid PRIMARY KEY,
-    itemId    uuid      NOT NULL,
-    startTime     timestamp NOT NULL,
-    endTime       timestamp NOT NULL,
-    bookingId uuid      NULL
-);
 
-CREATE TABLE IF NOT EXISTS Bookings
-(
-    id     uuid PRIMARY KEY,
-    itemId uuid      NOT NULL,
-    startTime  timestamp NOT NULL,
-    endTime    timestamp NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS Notifications
-(
-    id      uuid PRIMARY KEY,
-    created timestamp    NOT NULL,
-    sent    boolean      NOT NULL,
-    type    VARCHAR(100) NOT NULL,
-    payload json         not null
-);
+select * from pricingpolicies where startTime =
+                                    (select max(startTime) from pricingpolicies where startTime <='2022-07-31'::TIMESTAMP)
+UNION SELECT * FROM PRICINGPOLICIES WHERE STARTTIME = (SELECT MAX(STARTTIME) FROM PRICINGPOLICIES WHERE STARTTIME < '2022-08-01');
