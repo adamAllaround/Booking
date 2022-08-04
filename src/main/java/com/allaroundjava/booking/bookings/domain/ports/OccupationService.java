@@ -33,15 +33,15 @@ public class OccupationService {
                 .peek(basketRepository::handle);
     }
 
-    @Transactional
-    public Either<OccupationEvent.BookingFailure, OccupationEvent.BasketAddSuccess> book(UUID basketId, Customer customer) {
-        Optional<Basket> basket = basketRepository.getSingle(basketId);
-
-        if (basket.isEmpty()) {
-            return announceFailure(new OccupationEvent.BookingFailure());
-        }
-
-        RoomOccupation roomOccupation = occupationRepository.find(basket.get().getRoomId(), basket.get().getInterval());
-        return roomOccupation.book(basket, customer);
-    }
+//    @Transactional
+//    public Either<OccupationEvent.BookingFailure, OccupationEvent.BasketAddSuccess> book(UUID basketId, Customer customer) {
+//        Optional<Basket> basket = basketRepository.getSingle(basketId);
+//
+//        if (basket.isEmpty()) {
+//            return announceFailure(new OccupationEvent.BookingFailure());
+//        }
+//
+//        RoomOccupation roomOccupation = occupationRepository.find(basket.get().getRoomId(), basket.get().getInterval());
+//        return roomOccupation.book(basket, customer);
+//    }
 }

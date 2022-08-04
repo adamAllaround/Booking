@@ -4,7 +4,6 @@ import com.allaroundjava.booking.AvailabilityFixtures
 import com.allaroundjava.booking.DbCleaner
 import com.allaroundjava.booking.IntegrationTestConfig
 import com.allaroundjava.booking.RoomFixtures
-import com.allaroundjava.booking.application.SearchController
 import com.allaroundjava.booking.bookings.config.BookingsConfig
 import com.allaroundjava.booking.common.LoggingConfig
 import com.allaroundjava.booking.common.events.EventsConfig

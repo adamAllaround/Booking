@@ -18,12 +18,12 @@ import java.util.UUID;
 class BookingsController {
     private final OccupationFacade occupation;
 
-    @PostMapping()
-    ResponseEntity<BookingResponse> addBooking(@RequestBody BookingRequest request) {
-        Optional<BookingResponse> result = occupation.save(request.toCommand());
-        return result.map(resp -> ResponseEntity.created(getUri(resp)).body(resp))
-                .orElseGet(() -> ResponseEntity.badRequest().build());
-    }
+//    @PostMapping()
+//    ResponseEntity<BookingResponse> addBooking(@RequestBody BookingRequest request) {
+//        Optional<BookingResponse> result = occupation.save(request.toCommand());
+//        return result.map(resp -> ResponseEntity.created(getUri(resp)).body(resp))
+//                .orElseGet(() -> ResponseEntity.badRequest().build());
+//    }
 
     private URI getUri(BookingResponse resp) {
         return ServletUriComponentsBuilder

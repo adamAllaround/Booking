@@ -43,3 +43,4 @@ public class SearchService {
                 .collect(Collectors.toSet());
     }
 }
+//nastepny krok to metadane pokoju i select z bazy dostepnosci

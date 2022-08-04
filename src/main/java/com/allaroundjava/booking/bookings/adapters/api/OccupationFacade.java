@@ -30,10 +30,10 @@ class OccupationFacade {
                 .getOrElse(Optional::empty);
     }
 
-    Optional<BookingsResponse> save(BookCommand bookCommand) {
-        return occupationService.book(bookCommand.getBasketId(), bookCommand.getCustomer())
-                .map(success -> BasketController.AddBasketResponse.from(success.getBasketId(), success.getInterval()))
-                .map(Optional::of)
-                .getOrElse(Optional::empty);
-    }
+//    Optional<BookingsResponse> save(BookCommand bookCommand) {
+//        return occupationService.book(bookCommand.getBasketId(), bookCommand.getCustomer())
+//                .map(success -> BasketController.AddBasketResponse.from(success.getBasketId(), success.getInterval()))
+//                .map(Optional::of)
+//                .getOrElse(Optional::empty);
+//    }
 }
