@@ -4,18 +4,28 @@ import com.allaroundjava.booking.bookings.domain.model.pricing.PricingPolicies;
 import com.allaroundjava.booking.bookings.domain.model.pricing.PricingPolicyRepository;
 import com.allaroundjava.booking.bookings.shared.Interval;
 import com.allaroundjava.booking.bookings.shared.Money;
+import lombok.RequiredArgsConstructor;
 
-import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 public class PricingService {
-    PricingPolicyRepository policyRepository;
-    RoomPrices priceFor(Collection<UUID> roomIds, Interval searchInterval) {
-        return null;
+    private final PricingPolicyRepository policyRepository;
+    RoomPrices priceFor(Set<UUID> roomIds, Interval searchInterval) {
+        Map<UUID, PricingPolicies> policiesInRoom = policyRepository.findPoliciesFor(roomIds, searchInterval);
+        Map<UUID, Money> roomTotals = policiesInRoom.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getTotal()));
+        return new RoomPrices(roomTotals);
     }
 
     Money priceFor(UUID roomId, Interval searchInterval) {
-        PricingPolicies policies = policyRepository.findPoliciesFor(roomId, searchInterval);
-        return policies.getTotal();
+        return priceFor(Collections.singleton(roomId), searchInterval)
+                .of(roomId)
+                .orElseThrow(() -> new IllegalStateException("Could not find price for asked roomId"));
     }
 }

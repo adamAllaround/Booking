@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class Money implements Serializable {
 
-    public static final Currency DEFAULT_CURRENCY = Currency.getInstance("EUR");
+    public static final Currency DEFAULT_CURRENCY = Currency.getInstance("PLN");
 
     public static final Money ZERO = new Money(BigDecimal.ZERO);
 
@@ -110,6 +110,10 @@ public class Money implements Serializable {
     @Override
     public String toString() {
         return String.format("%0$.2f %s", denomination, getCurrency().getSymbol());
+    }
+
+    public String toCurrencyLessString() {
+        return denomination.toString();
     }
 
     @Override

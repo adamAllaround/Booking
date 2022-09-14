@@ -1,11 +1,11 @@
 package com.allaroundjava.booking;
 
 import com.allaroundjava.booking.bookings.adapters.db.RoomsDatabaseRepository;
-import com.allaroundjava.booking.bookings.domain.ports.OccupationRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -40,12 +40,12 @@ public class IntegrationTestConfig {
     }
 
     @Bean
-    RoomFixtures roomFixtures(RoomsDatabaseRepository roomsDatabaseRepository) {
-        return new RoomFixtures(roomsDatabaseRepository);
+    RoomFixtures roomFixtures(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        return new RoomFixtures(namedParameterJdbcTemplate);
     }
 
     @Bean
-    AvailabilityFixtures availabilityFixtures(OccupationRepository occupationRepository) {
-        return new AvailabilityFixtures(occupationRepository);
+    PricingFixtures pricingFixtures(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        return new PricingFixtures(namedParameterJdbcTemplate);
     }
 }

@@ -17,6 +17,10 @@ public class Dates2020 {
         return LocalDateTime.of(this.date, LocalTime.of(hour, 0)).toInstant(ZoneOffset.UTC);
     }
 
+    public LocalDate get() {
+        return date;
+    }
+
     public static Dates2020 january(int day) {
         return new Dates2020(LocalDate.of(2020, 1, day), LocalTime.of(0, 0));
     }

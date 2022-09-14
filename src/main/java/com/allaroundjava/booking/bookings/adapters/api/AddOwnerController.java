@@ -14,8 +14,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.UUID;
 
-@RestController
-@RequestMapping("/owners")
+//@RestController
+//@RequestMapping("/owners")
 @AllArgsConstructor
 public class AddOwnerController {
     private final OwnersDatabaseRepository ownersRepository;

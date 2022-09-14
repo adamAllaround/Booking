@@ -16,78 +16,83 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Currency;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
 class JdbcPricingPolicyRepository implements PricingPolicyRepository {
-    private static final String SELECT_POLICIES = "select * from pricingpolicies where startTime = " +
-                    "(select max(startTime) from pricingpolicies where startTime <=:start) " +
-                    "union select * from pricingpolicies where starttime = " +
-                    "(select max(starttime) from pricingpolicies where starttime < :end)" +
-                    "order by starttime asc";
+    private static final String CURRENT_POLICIES = "select * from pricingpolicies where roomId in (:roomIds) and startTime <= cast(:intervalEnd as timestamp) and startTime >= cast(:intervalStart as timestamp)";
+    private static final String UNION = "UNION";
+    private static final String PREVIOUS_POLICY = "select * from (select * from pricingpolicies where roomId in (:roomIds) and startTime < cast(:intervalStart as timestamp) order by startTime fetch first 1 row only) previousPolicy";
+
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
-    public PricingPolicies findPoliciesFor(UUID roomId, Interval searchInterval) {
+    public Map<UUID, PricingPolicies> findPoliciesFor(Set<UUID> roomIds, Interval searchInterval) {
         ImmutableMap<String, Object> params = ImmutableMap.of(
-                "start", Timestamp.from(searchInterval.getStart()),
-                "end", Timestamp.from(searchInterval.getEnd()));
+                "roomIds", roomIds,
+                "intervalStart", Timestamp.from(searchInterval.getStart()),
+                "intervalEnd", Timestamp.from(searchInterval.getEnd()));
 
-        List<PolicyEntity> policyEntities = jdbcTemplate.query(SELECT_POLICIES,
+        List<PolicyEntity> policyEntities = jdbcTemplate.query(String.format("%s %s %s", CURRENT_POLICIES, UNION, PREVIOUS_POLICY),
                 params,
-                new BeanPropertyRowMapper<PolicyEntity>());
+                new BeanPropertyRowMapper<>(PolicyEntity.class));
 
-        return toPricingPolicies(policyEntities, searchInterval);
+        Map<UUID, List<PolicyEntity>> entitiesById = policyEntities.stream()
+                .collect(Collectors.groupingBy(PolicyEntity::getRoomId));
+
+        return entitiesById.entrySet()
+                .stream()
+                .map(entry -> toRoomsPolicies(entry, searchInterval))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private PricingPolicies toPricingPolicies(List<PolicyEntity> policyEntities, Interval searchInterval) {
-        if(policyEntities.isEmpty())
-        {
+    private Map.Entry<UUID, PricingPolicies> toRoomsPolicies(Map.Entry<UUID, List<PolicyEntity>> policyEntities, Interval searchInterval) {
+        UUID roomId = policyEntities.getKey();
+        List<PolicyEntity> policies = policyEntities.getValue();
+
+        if (policies.isEmpty()) {
             throw new IllegalStateException("Could not find pricing policy entities");
         }
 
-        if (policyEntities.size() == 1) {
-            return PricingPolicies.singleton(toPolicy(policyEntities.get(0), searchInterval));
+        if (policies.size() == 1) {
+            return Map.entry(roomId, PricingPolicies.singleton(toPolicy(policies.get(0), searchInterval)));
         }
-
 
         Instant start = searchInterval.getStart();
         PricingPolicies pricingPolicies = PricingPolicies.empty();
-        for (int i = 1; i < policyEntities.size(); i++) {
-            PolicyEntity currentPolicy = policyEntities.get(i - 1);
+        for (int i = 0; i < policies.size(); i++) {
+            PolicyEntity currentPolicy = policies.get(i);
 
-            if(i >= policyEntities.size() -1) {
+            if (i >= policies.size() - 1) {
                 pricingPolicies = pricingPolicies.add(toPolicy(currentPolicy, new Interval(start, searchInterval.getEnd())));
             } else {
-                PolicyEntity nextPolicy = policyEntities.get(i);
+                PolicyEntity nextPolicy = policies.get(i + 1);
                 Instant nextPolicyEnd = nextPolicy.getStartTime().toInstant();
                 pricingPolicies = pricingPolicies.add(toPolicy(currentPolicy, new Interval(start, nextPolicyEnd)));
                 start = nextPolicyEnd;
             }
-
         }
-        return pricingPolicies;
+        return Map.entry(roomId, pricingPolicies);
     }
 
     private PricingPolicy toPolicy(PolicyEntity policyEntity, Interval interval) {
         if ("FLAT".equals(policyEntity.getPolicy())) {
             return new FlatPrice(
-                    new Money(new BigDecimal(policyEntity.getParameters()), Currency.getInstance("PLN")),
+                    new Money(new BigDecimal(policyEntity.getParameters())),
                     interval);
         }
 
         throw new IllegalStateException(String.format("Could not find matching policy for %s", policyEntity.getPolicy()));
     }
+}
 
-    @Data
-    class PolicyEntity {
-        UUID roomId;
-        Timestamp startTime;
-        String policy;
-        String parameters;
-    }
+@Data
+class PolicyEntity {
+    UUID roomId;
+    Timestamp startTime;
+    String policy;
+    String parameters;
 }

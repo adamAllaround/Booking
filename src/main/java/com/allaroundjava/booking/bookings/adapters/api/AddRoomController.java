@@ -12,8 +12,8 @@ import java.net.URI;
 import java.time.OffsetTime;
 import java.util.UUID;
 
-@RestController
-@RequestMapping("/owners")
+//@RestController
+//@RequestMapping("/owners")
 @AllArgsConstructor
 public class AddRoomController {
     private final RoomsDatabaseRepository roomsRepository;

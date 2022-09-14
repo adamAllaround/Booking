@@ -9,8 +9,8 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
-@RestController
-@RequestMapping("/items")
+//@RestController
+//@RequestMapping("/items")
 @AllArgsConstructor
 class AvailabilitiesController {
     private final OccupationFacade occupation;

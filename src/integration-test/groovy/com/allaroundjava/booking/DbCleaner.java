@@ -12,7 +12,7 @@ public class DbCleaner {
     }
 
     public void cleanRooms() {
-        jdbcTemplate.update("DELETE FROM Rooms");
+        jdbcTemplate.update("DELETE FROM roommeta");
     }
 
     public void cleanBookings() {

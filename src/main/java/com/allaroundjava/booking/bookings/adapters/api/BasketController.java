@@ -15,8 +15,8 @@ import java.net.URI;
 import java.time.*;
 import java.util.UUID;
 
-@RestController
-@RequestMapping("/baskets")
+//@RestController
+//@RequestMapping("/baskets")
 @AllArgsConstructor
 class BasketController {
     private final OccupationFacade occupation;

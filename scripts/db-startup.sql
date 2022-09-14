@@ -21,14 +21,8 @@ CREATE TABLE IF NOT EXISTS roommeta
 CREATE TABLE IF NOT EXISTS pricingpolicies
 (
     roomId  UUID NOT NULL,
-    startTime TIMESTAMP NOT NULL UNIQUE,
+    startTime TIMESTAMP NOT NULL,
     policy varchar(100) NOT NULL,
-    parameters varchar(20) NOT NULL
+    parameters varchar(20) NOT NULL,
+    UNIQUE(roomId, startTime)
 );
-
-insert into pricingpolicies (roomId, startTime, policy, parameters) values (gen_random_uuid(), '2022-08-03'::timestamp, 'FIXED', '213')
-
-
-select * from pricingpolicies where startTime =
-                                    (select max(startTime) from pricingpolicies where startTime <='2022-07-31'::TIMESTAMP)
-UNION SELECT * FROM PRICINGPOLICIES WHERE STARTTIME = (SELECT MAX(STARTTIME) FROM PRICINGPOLICIES WHERE STARTTIME < '2022-08-01');

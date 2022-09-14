@@ -12,8 +12,8 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
-@RestController
-@RequestMapping("/bookings")
+//@RestController
+//@RequestMapping("/bookings")
 @AllArgsConstructor
 class BookingsController {
     private final OccupationFacade occupation;

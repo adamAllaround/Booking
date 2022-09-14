@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS pricingpolicies
     roomId  UUID NOT NULL,
     startTime TIMESTAMP NOT NULL UNIQUE,
     policy varchar(100) NOT NULL,
-    parameters varchar(20) NOT NULL
+    parameters varchar(20) NOT NULL,
+    UNIQUE(roomId, startTime)
 );
 
 -- CREATE TABLE IF NOT EXISTS Events
