@@ -5,7 +5,7 @@ import com.allaroundjava.booking.bookings.application.SearchService
 import com.allaroundjava.booking.bookings.config.BookingsConfig
 import com.allaroundjava.booking.bookings.shared.Money
 import com.allaroundjava.booking.common.LoggingConfig
-import com.allaroundjava.booking.common.events.EventsConfig
+
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -20,7 +20,7 @@ import static com.allaroundjava.booking.bookings.domain.model.Dates2020.march
 import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = [BookingsConfig, IntegrationTestConfig, LoggingConfig, EventsConfig])
+        classes = [BookingsConfig, IntegrationTestConfig, LoggingConfig])
 @EnableAutoConfiguration
 @AutoConfigureEmbeddedDatabase(provider = ZONKY, beanName = "dataSource")
 @Sql("/events-db-creation.sql")
@@ -108,7 +108,7 @@ class SearchingIntegrationTest extends Specification {
     }
 
     void existsRoom2() {
-        roomFixtures.existsRoom2(ROOM_ID, OWNER_ID)
+        roomFixtures.existsRoom(ROOM_ID, OWNER_ID)
     }
 
     void roomHasPrice() {
