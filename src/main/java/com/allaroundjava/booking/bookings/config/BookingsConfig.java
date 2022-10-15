@@ -2,7 +2,7 @@ package com.allaroundjava.booking.bookings.config;
 
 import com.allaroundjava.booking.bookings.application.PricingService;
 import com.allaroundjava.booking.bookings.application.SearchService;
-import com.allaroundjava.booking.bookings.domain.model.pricing.PricingPolicyRepository;
+import com.allaroundjava.booking.bookings.domain.ports.PricingPolicyRepository;
 import com.allaroundjava.booking.bookings.readmodel.AvailabilitySearch;
 import com.allaroundjava.booking.bookings.readmodel.RoomMeta;
 import org.springframework.context.annotation.Bean;

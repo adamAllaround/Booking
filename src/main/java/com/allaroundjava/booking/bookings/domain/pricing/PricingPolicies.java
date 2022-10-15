@@ -1,4 +1,4 @@
-package com.allaroundjava.booking.bookings.domain.model.pricing;
+package com.allaroundjava.booking.bookings.domain.pricing;
 
 import com.allaroundjava.booking.bookings.shared.Money;
 import lombok.RequiredArgsConstructor;

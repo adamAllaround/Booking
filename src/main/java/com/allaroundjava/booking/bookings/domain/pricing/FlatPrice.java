@@ -1,4 +1,4 @@
-package com.allaroundjava.booking.bookings.domain.model.pricing;
+package com.allaroundjava.booking.bookings.domain.pricing;
 
 import com.allaroundjava.booking.bookings.shared.Interval;
 import com.allaroundjava.booking.bookings.shared.Money;
@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import java.math.BigDecimal;
 
 @RequiredArgsConstructor
-public class FlatPrice implements PricingPolicy {
+class FlatPrice implements PricingPolicy {
     private final Money rate;
     private final Interval interval;
 

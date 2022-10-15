@@ -1,5 +1,6 @@
-package com.allaroundjava.booking.bookings.domain.model.pricing;
+package com.allaroundjava.booking.bookings.domain.ports;
 
+import com.allaroundjava.booking.bookings.domain.pricing.PricingPolicies;
 import com.allaroundjava.booking.bookings.shared.Interval;
 
 import java.util.Map;

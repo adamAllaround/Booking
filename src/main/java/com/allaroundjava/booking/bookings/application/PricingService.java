@@ -1,7 +1,7 @@
 package com.allaroundjava.booking.bookings.application;
 
-import com.allaroundjava.booking.bookings.domain.model.pricing.PricingPolicies;
-import com.allaroundjava.booking.bookings.domain.model.pricing.PricingPolicyRepository;
+import com.allaroundjava.booking.bookings.domain.ports.PricingPolicyRepository;
+import com.allaroundjava.booking.bookings.domain.pricing.PricingPolicies;
 import com.allaroundjava.booking.bookings.shared.Interval;
 import com.allaroundjava.booking.bookings.shared.Money;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PricingService {
     private final PricingPolicyRepository policyRepository;
-    RoomPrices priceFor(Set<UUID> roomIds, Interval searchInterval) {
+    public RoomPrices priceFor(Set<UUID> roomIds, Interval searchInterval) {
         Map<UUID, PricingPolicies> policiesInRoom = policyRepository.findPoliciesFor(roomIds, searchInterval);
         Map<UUID, Money> roomTotals = policiesInRoom.entrySet()
                 .stream()

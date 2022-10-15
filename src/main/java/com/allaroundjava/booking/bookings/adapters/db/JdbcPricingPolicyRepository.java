@@ -1,9 +1,8 @@
 package com.allaroundjava.booking.bookings.adapters.db;
 
-import com.allaroundjava.booking.bookings.domain.model.pricing.FlatPrice;
-import com.allaroundjava.booking.bookings.domain.model.pricing.PricingPolicies;
-import com.allaroundjava.booking.bookings.domain.model.pricing.PricingPolicy;
-import com.allaroundjava.booking.bookings.domain.model.pricing.PricingPolicyRepository;
+import com.allaroundjava.booking.bookings.domain.pricing.PricingPolicies;
+import com.allaroundjava.booking.bookings.domain.pricing.PricingPolicy;
+import com.allaroundjava.booking.bookings.domain.ports.PricingPolicyRepository;
 import com.allaroundjava.booking.bookings.shared.Interval;
 import com.allaroundjava.booking.bookings.shared.Money;
 import com.google.common.collect.ImmutableMap;
@@ -83,7 +82,7 @@ class JdbcPricingPolicyRepository implements PricingPolicyRepository {
 
     private PricingPolicy toPolicy(PolicyEntity policyEntity, Interval interval) {
         if ("FLAT".equals(policyEntity.getPolicy())) {
-            return new FlatPrice(
+            return PricingPolicy.flat(
                     new Money(new BigDecimal(policyEntity.getParameters())),
                     interval);
         }
