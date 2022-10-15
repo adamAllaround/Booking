@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Repository
 @RequiredArgsConstructor
 public class RoomMetaReadModel implements RoomMeta {
-    private static final String SELECT_ROOMMETA_QUERY = "select * from roommeta where ownerid=:ownerId and capacity >=:capacity";
+    private static final String SELECT_ROOMMETA_QUERY = "select * from roommeta where capacity >=:capacity and id in (:availableRoomIds)";
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override

@@ -1,5 +1,6 @@
 package com.allaroundjava.booking.bookings.application;
 
+import com.allaroundjava.booking.bookings.readmodel.AvailabilitySearch;
 import com.allaroundjava.booking.bookings.readmodel.RoomMeta;
 import com.allaroundjava.booking.bookings.readmodel.RoomDetail;
 import com.allaroundjava.booking.bookings.shared.Interval;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
 //this maybe should go to adapters api layer. not much of an application service this is
 @RequiredArgsConstructor
 public class SearchService {
-    private final AvailabilityService availability;
+    private final AvailabilitySearch availabilitySearch;
     private final RoomMeta roomMeta;
     private final PricingService pricing;
 
@@ -25,9 +27,18 @@ public class SearchService {
         Interval searchInterval = new Interval(dateFrom.atStartOfDay().toInstant(ZoneOffset.UTC),
                 dateTo.atTime(23, 59).toInstant(ZoneOffset.UTC));
 
-        Set<UUID> availableRoomIds = availability.findAvailableRoomsIn(ownerId, searchInterval);
+        Set<UUID> availableRoomIds = availabilitySearch.findAvailableRoomsIn(ownerId, searchInterval);
+
+        if(availableRoomIds.isEmpty()) {
+            return Collections.emptySet();
+        }
 
         Set<RoomDetail> roomDetails = roomMeta.find(availableRoomIds, capacity);
+
+        if (roomDetails.isEmpty()) {
+            return Collections.emptySet();
+        }
+
         RoomPrices roomPrices = pricing.priceFor(roomIds(roomDetails), searchInterval);
         return withPrices(roomDetails, roomPrices);
     }
@@ -48,4 +59,3 @@ public class SearchService {
                 .collect(Collectors.toSet());
     }
 }
-//nastepny krok to metadane pokoju i select z bazy dostepnosci

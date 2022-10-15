@@ -7,6 +7,8 @@ import lombok.ToString;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,5 +58,13 @@ public class Interval extends ValueObject {
 
     public long getDays() {
         return Duration.between(start, end).toDays();
+    }
+
+    public LocalDate getStartDate() {
+        return LocalDate.ofInstant(start, ZoneOffset.UTC);
+    }
+
+    public LocalDate getEndDate() {
+        return LocalDate.ofInstant(end, ZoneOffset.UTC);
     }
 }

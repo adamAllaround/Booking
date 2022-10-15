@@ -26,3 +26,12 @@ CREATE TABLE IF NOT EXISTS pricingpolicies
     parameters varchar(20) NOT NULL,
     UNIQUE(roomId, startTime)
 );
+
+CREATE TABLE IF NOT EXISTS reservations
+(
+    reservationId UUID NOT NULL,
+    roomId UUID NOT NULL,
+    dateFrom DATE NOT NULL,
+    dateTo DATE NOT NULL,
+    UNIQUE(roomId, reservationId)
+);

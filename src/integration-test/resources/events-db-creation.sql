@@ -27,6 +27,15 @@ CREATE TABLE IF NOT EXISTS pricingpolicies
     UNIQUE(roomId, startTime)
 );
 
+CREATE TABLE IF NOT EXISTS reservations
+(
+    reservationId UUID NOT NULL,
+    roomId UUID NOT NULL,
+    dateFrom DATE NOT NULL,
+    dateTo DATE NOT NULL
+);
+
+
 -- CREATE TABLE IF NOT EXISTS Events
 -- (
 --     id        uuid PRIMARY KEY,

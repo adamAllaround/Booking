@@ -1,10 +1,6 @@
 package com.allaroundjava.booking.bookings.adapters.api
 
-import com.allaroundjava.booking.AvailabilityFixtures
-import com.allaroundjava.booking.DbCleaner
-import com.allaroundjava.booking.IntegrationTestConfig
-import com.allaroundjava.booking.PricingFixtures
-import com.allaroundjava.booking.RoomFixtures
+import com.allaroundjava.booking.*
 import com.allaroundjava.booking.bookings.application.SearchService
 import com.allaroundjava.booking.bookings.config.BookingsConfig
 import com.allaroundjava.booking.bookings.shared.Money
@@ -15,14 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.http.HttpStatus
 import org.springframework.test.context.jdbc.Sql
-import spock.lang.Ignore
 import spock.lang.Specification
 
-import java.time.Instant
 import java.time.LocalDate
-import java.time.Month
 
 import static com.allaroundjava.booking.bookings.domain.model.Dates2020.march
 import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
@@ -44,6 +36,9 @@ class SearchingIntegrationTest extends Specification {
     private PricingFixtures pricingFixtures
 
     @Autowired
+    private ReservationFixtures reservationFixtures
+
+    @Autowired
     private SearchService searchService
 
     @Autowired
@@ -59,6 +54,8 @@ class SearchingIntegrationTest extends Specification {
 
     void cleanup() {
         dbCleaner.cleanRooms()
+        dbCleaner.cleanPrices()
+        dbCleaner.cleanBookings()
     }
 
     def "when room is present then should be searchable"() {
@@ -76,50 +73,49 @@ class SearchingIntegrationTest extends Specification {
         rooms[0].price == new Money(BigDecimal.valueOf(640L), Currency.getInstance("PLN"))
     }
 
-    @Ignore
     def "when room is available then should be searchable"() {
         given:
-        existsAvailability(ROOM_ID, march(10).hour(15), march(11).hour(10))
+        existsReservation(ROOM_ID, march(10).get(), march(12).get())
+        existsReservation(ROOM_ID, march(15).get(), march(17).get())
 
         when:
-        def response = testRestTemplate.getForEntity("/owners/${OWNER_ID}/availabilities?dateFrom=${LocalDate.of(2020, Month.MARCH, 10)}&dateTo=${LocalDate.of(2020, Month.MARCH, 11)}",
-                SearchController.FindAvailabilityResponse)
+        def rooms = searchService.findAvailableRooms(OWNER_ID,
+                march(12).get(),
+                march(15).get(),
+                2)
 
         then:
-        response.statusCode == HttpStatus.OK
-        response.body.roomsAvailable.size() == 1
+        rooms.size() == 1
+        rooms[0].name == "Szarotka"
+        rooms[0].capacity == 3
+        rooms[0].price == new Money(BigDecimal.valueOf(960), Currency.getInstance("PLN"))
 
     }
 
-    @Ignore
-    def "when room unavailable in whole period then its not searchable"() {
+    def "when room unavailable in part of the period then its not searchable"() {
         given:
-        existsAvailability(ROOM_ID, march(10).hour(15), march(11).hour(10))
-        existsAvailability(ROOM_ID, march(12).hour(15), march(13).hour(10))
+        existsReservation(ROOM_ID, march(10).get(), march(12).get())
+        existsReservation(ROOM_ID, march(15).get(), march(17).get())
 
         when:
-        def response = testRestTemplate.getForEntity("/owners/${OWNER_ID}/availabilities?dateFrom=${LocalDate.of(2020, Month.MARCH, 10)}&dateTo=${LocalDate.of(2020, Month.MARCH, 13)}",
-                SearchController.FindAvailabilityResponse)
+        def rooms = searchService.findAvailableRooms(OWNER_ID,
+                march(11).get(),
+                march(14).get(),
+                3)
 
         then:
-        response.statusCode == HttpStatus.OK
-        response.body.roomsAvailable.size() == 0
-
-    }
-
-    void existsRoom() {
-        roomFixtures.existsRoom(ROOM_ID, OWNER_ID)
+        rooms.isEmpty()
     }
 
     void existsRoom2() {
         roomFixtures.existsRoom2(ROOM_ID, OWNER_ID)
     }
 
-    void existsAvailability(UUID roomId, Instant from, Instant to) {
-        availabilityFixtures.existsAvailability(roomId, from, to)
-    }
-
     void roomHasPrice() {
         pricingFixtures.hasFlatPrice(ROOM_ID, new Money(BigDecimal.valueOf(320L), Currency.getInstance("PLN")))
+    }
+
+    void existsReservation(UUID roomId, LocalDate reservationStart, LocalDate reservationEnd) {
+        reservationFixtures.roomIsBooked(roomId, reservationStart, reservationEnd)
     }
 }

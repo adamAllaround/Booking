@@ -1,10 +1,10 @@
 package com.allaroundjava.booking.bookings.config;
 
-import com.allaroundjava.booking.bookings.application.AvailabilityService;
 import com.allaroundjava.booking.bookings.application.PricingService;
 import com.allaroundjava.booking.bookings.application.SearchService;
-import com.allaroundjava.booking.bookings.adapters.db.RoomMetaReadModel;
 import com.allaroundjava.booking.bookings.domain.model.pricing.PricingPolicyRepository;
+import com.allaroundjava.booking.bookings.readmodel.AvailabilitySearch;
+import com.allaroundjava.booking.bookings.readmodel.RoomMeta;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -18,18 +18,13 @@ import java.time.Clock;
 public class BookingsConfig {
 
     @Bean
-    SearchService searchService(RoomMetaReadModel roomMetaReadModel, PricingService pricingService, AvailabilityService availabilityService) {
-        return new SearchService(availabilityService, roomMetaReadModel, pricingService);
+    SearchService searchService(RoomMeta roomMetaReadModel, PricingService pricingService, AvailabilitySearch availabilityReadModel) {
+        return new SearchService(availabilityReadModel, roomMetaReadModel, pricingService);
     }
 
     @Bean
     PricingService pricingService(PricingPolicyRepository pricingPolicyRepository) {
         return new PricingService(pricingPolicyRepository);
-    }
-
-    @Bean
-    AvailabilityService availabilityService() {
-        return new AvailabilityService();
     }
 
     @Bean

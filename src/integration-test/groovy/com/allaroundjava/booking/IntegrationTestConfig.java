@@ -48,4 +48,9 @@ public class IntegrationTestConfig {
     PricingFixtures pricingFixtures(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         return new PricingFixtures(namedParameterJdbcTemplate);
     }
+
+    @Bean
+    ReservationFixtures reservationFixtures(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        return new ReservationFixtures(namedParameterJdbcTemplate);
+    }
 }
