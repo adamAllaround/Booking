@@ -1,7 +1,9 @@
 package com.allaroundjava.booking.bookings.config;
 
 import com.allaroundjava.booking.bookings.application.PricingService;
+import com.allaroundjava.booking.bookings.application.RoomAvailability;
 import com.allaroundjava.booking.bookings.application.SearchService;
+import com.allaroundjava.booking.bookings.domain.ports.SlotRepository;
 import com.allaroundjava.booking.bookings.domain.ports.PricingPolicyRepository;
 import com.allaroundjava.booking.bookings.readmodel.AvailabilitySearch;
 import com.allaroundjava.booking.bookings.readmodel.RoomMeta;
@@ -25,6 +27,11 @@ public class BookingsConfig {
     @Bean
     PricingService pricingService(PricingPolicyRepository pricingPolicyRepository) {
         return new PricingService(pricingPolicyRepository);
+    }
+
+    @Bean
+    RoomAvailability roomAvailability(SlotRepository slotRepository) {
+        return new RoomAvailability(slotRepository);
     }
 
     @Bean
