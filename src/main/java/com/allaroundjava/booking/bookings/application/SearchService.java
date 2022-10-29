@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class SearchService {
     private final AvailabilitySearch availabilitySearch;
     private final RoomMeta roomMeta;
-    private final PricingService pricing;
+    private final QueryForPrice pricing;
 
 
     public Collection<RoomDetail> findAvailableRooms(UUID ownerId, LocalDate dateFrom, LocalDate dateTo, Integer capacity) {

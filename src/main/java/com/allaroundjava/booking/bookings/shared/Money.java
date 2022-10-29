@@ -107,6 +107,10 @@ public class Money implements Serializable {
         return denomination.compareTo(other.denomination) <= 0;
     }
 
+    public BigDecimal getDenomination() {
+        return denomination;
+    }
+
     @Override
     public String toString() {
         return String.format("%0$.2f %s", denomination, getCurrency().getSymbol());

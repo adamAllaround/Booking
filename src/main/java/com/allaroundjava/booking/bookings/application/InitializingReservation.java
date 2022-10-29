@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public class InitializingReservation {
     private final RoomAvailability roomAvailability;
-    private final PricingService roomPricing;
+    private final PricingService pricingService;
     private final ReservationDetails reservationDetails;
     public Optional<UUID> initialize(InitializeReservationCommand command) {
         if (!roomAvailability.isAvailable(command.getRoomId(), command.getDateFrom(), command.getDateTo())) {
@@ -13,7 +13,7 @@ public class InitializingReservation {
         }
 
         UUID reservationId = UUID.randomUUID();
-        roomPricing.setPrice(reservationId, command.getRoomId(), command.getDateFrom(), command.getDateTo(), command.getGuests());
+        pricingService.setPrice(reservationId, command.getRoomId(), command.getDateFrom(), command.getDateTo(), command.getGuests());
         reservationDetails.preBook(reservationId, command.getRoomId(), command.getDateFrom(), command.getDateTo(), command.getGuests());
         return Optional.of(reservationId);
     }
