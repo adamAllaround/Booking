@@ -1,6 +1,10 @@
 package com.allaroundjava.booking.bookings.config;
 
+import com.allaroundjava.booking.bookings.application.InitializingReservation;
 import com.allaroundjava.booking.bookings.application.SearchService;
+import com.allaroundjava.booking.bookings.availability.RoomAvailability;
+import com.allaroundjava.booking.bookings.details.ReservationDetails;
+import com.allaroundjava.booking.bookings.pricing.PricingService;
 import com.allaroundjava.booking.bookings.pricing.QueryForPrice;
 import com.allaroundjava.booking.bookings.readmodel.AvailabilitySearch;
 import com.allaroundjava.booking.bookings.readmodel.RoomMeta;
@@ -13,12 +17,17 @@ import java.time.Clock;
 
 @Configuration
 @EnableAspectJAutoProxy
-@ComponentScan(basePackages = "com.allaroundjava.booking.bookings.adapters")
+@ComponentScan(basePackages = "com.allaroundjava.booking.bookings.adapters") //tutaj by trzeba przekonfigurowac deczko
 public class BookingsConfig {
 
     @Bean
     SearchService searchService(RoomMeta roomMetaReadModel, QueryForPrice queryForPrice, AvailabilitySearch availabilityReadModel) {
         return new SearchService(availabilityReadModel, roomMetaReadModel, queryForPrice);
+    }
+
+    @Bean
+    InitializingReservation initializingReservation(RoomAvailability roomAvailability, PricingService pricingService, ReservationDetails reservationDetails) {
+        return new InitializingReservation(roomAvailability, pricingService, reservationDetails);
     }
 
     @Bean

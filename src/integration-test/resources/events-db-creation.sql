@@ -41,6 +41,15 @@ CREATE TABLE IF NOT EXISTS reservationprices
     amount NUMERIC(9,4) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS reservationdetails
+(
+    reservationId UUID NOT NULL UNIQUE,
+    roomId UUID NOT NULL,
+    dateFrom DATE NOT NULL,
+    dateTo DATE NOT NULL,
+    guests INT NOT NULL
+);
+
 
 -- CREATE TABLE IF NOT EXISTS Events
 -- (
