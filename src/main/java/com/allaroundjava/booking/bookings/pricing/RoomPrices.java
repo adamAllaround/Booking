@@ -1,4 +1,4 @@
-package com.allaroundjava.booking.bookings.application;
+package com.allaroundjava.booking.bookings.pricing;
 
 import com.allaroundjava.booking.bookings.shared.Money;
 import lombok.Value;

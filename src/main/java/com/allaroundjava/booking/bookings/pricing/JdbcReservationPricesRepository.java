@@ -1,6 +1,5 @@
-package com.allaroundjava.booking.bookings.adapters.db;
+package com.allaroundjava.booking.bookings.pricing;
 
-import com.allaroundjava.booking.bookings.domain.ports.ReservationPricesRepository;
 import com.allaroundjava.booking.bookings.shared.Money;
 import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;

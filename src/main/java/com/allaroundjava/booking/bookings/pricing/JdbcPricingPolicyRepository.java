@@ -1,8 +1,5 @@
-package com.allaroundjava.booking.bookings.adapters.db;
+package com.allaroundjava.booking.bookings.pricing;
 
-import com.allaroundjava.booking.bookings.domain.pricing.PricingPolicies;
-import com.allaroundjava.booking.bookings.domain.pricing.PricingPolicy;
-import com.allaroundjava.booking.bookings.domain.ports.PricingPolicyRepository;
 import com.allaroundjava.booking.bookings.shared.Interval;
 import com.allaroundjava.booking.bookings.shared.Money;
 import com.google.common.collect.ImmutableMap;

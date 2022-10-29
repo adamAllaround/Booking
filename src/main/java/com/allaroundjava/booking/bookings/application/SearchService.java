@@ -1,5 +1,7 @@
 package com.allaroundjava.booking.bookings.application;
 
+import com.allaroundjava.booking.bookings.pricing.QueryForPrice;
+import com.allaroundjava.booking.bookings.pricing.RoomPrices;
 import com.allaroundjava.booking.bookings.readmodel.AvailabilitySearch;
 import com.allaroundjava.booking.bookings.readmodel.RoomMeta;
 import com.allaroundjava.booking.bookings.readmodel.RoomDetail;

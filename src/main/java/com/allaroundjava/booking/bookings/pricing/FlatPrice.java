@@ -1,4 +1,4 @@
-package com.allaroundjava.booking.bookings.domain.pricing;
+package com.allaroundjava.booking.bookings.pricing;
 
 import com.allaroundjava.booking.bookings.shared.Interval;
 import com.allaroundjava.booking.bookings.shared.Money;

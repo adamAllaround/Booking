@@ -1,6 +1,5 @@
-package com.allaroundjava.booking.bookings.application;
+package com.allaroundjava.booking.bookings.pricing;
 
-import com.allaroundjava.booking.bookings.domain.ports.ReservationPricesRepository;
 import com.allaroundjava.booking.bookings.shared.Interval;
 import com.allaroundjava.booking.bookings.shared.Money;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,7 @@ public class PricingService {
     private final QueryForPrice query;
     private final ReservationPricesRepository reservationPricesRepository;
 
-    void setPrice(UUID reservationId, UUID roomId, LocalDate dateFrom, LocalDate dateTo, int guests) {
+    public void setPrice(UUID reservationId, UUID roomId, LocalDate dateFrom, LocalDate dateTo, int guests) {
         Interval interval = new Interval(dateFrom.atStartOfDay().toInstant(ZoneOffset.UTC),
                 dateTo.atTime(23, 59).toInstant(ZoneOffset.UTC));
 

@@ -1,10 +1,9 @@
-package com.allaroundjava.booking.bookings.application;
+package com.allaroundjava.booking.bookings.pricing;
 
-import com.allaroundjava.booking.bookings.domain.ports.PricingPolicyRepository;
-import com.allaroundjava.booking.bookings.domain.pricing.PricingPolicies;
 import com.allaroundjava.booking.bookings.shared.Interval;
 import com.allaroundjava.booking.bookings.shared.Money;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.Map;
@@ -12,6 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Service
 @RequiredArgsConstructor
 public class QueryForPrice {
     private final PricingPolicyRepository policyRepository;
@@ -23,7 +23,7 @@ public class QueryForPrice {
         return new RoomPrices(roomTotals);
     }
 
-    Money priceFor(UUID roomId, Interval searchInterval) {
+    public Money priceFor(UUID roomId, Interval searchInterval) {
         return priceFor(Collections.singleton(roomId), searchInterval)
                 .of(roomId)
                 .orElseThrow(() -> new IllegalStateException("Could not find price for asked roomId"));
