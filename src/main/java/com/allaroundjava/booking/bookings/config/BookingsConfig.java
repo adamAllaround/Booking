@@ -2,11 +2,9 @@ package com.allaroundjava.booking.bookings.config;
 
 import com.allaroundjava.booking.bookings.application.PricingService;
 import com.allaroundjava.booking.bookings.application.QueryForPrice;
-import com.allaroundjava.booking.bookings.application.RoomAvailability;
 import com.allaroundjava.booking.bookings.application.SearchService;
-import com.allaroundjava.booking.bookings.domain.ports.ReservationPricesRepository;
-import com.allaroundjava.booking.bookings.domain.ports.SlotRepository;
 import com.allaroundjava.booking.bookings.domain.ports.PricingPolicyRepository;
+import com.allaroundjava.booking.bookings.domain.ports.ReservationPricesRepository;
 import com.allaroundjava.booking.bookings.readmodel.AvailabilitySearch;
 import com.allaroundjava.booking.bookings.readmodel.RoomMeta;
 import org.springframework.context.annotation.Bean;
@@ -29,11 +27,6 @@ public class BookingsConfig {
     @Bean
     QueryForPrice queryForPrice(PricingPolicyRepository pricingPolicyRepository) {
         return new QueryForPrice(pricingPolicyRepository);
-    }
-
-    @Bean
-    RoomAvailability roomAvailability(SlotRepository slotRepository) {
-        return new RoomAvailability(slotRepository);
     }
 
     @Bean

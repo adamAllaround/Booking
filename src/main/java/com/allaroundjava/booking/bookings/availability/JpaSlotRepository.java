@@ -1,8 +1,5 @@
-package com.allaroundjava.booking.bookings.adapters.db;
+package com.allaroundjava.booking.bookings.availability;
 
-import com.allaroundjava.booking.bookings.domain.availability.ItemTimeSlot;
-import com.allaroundjava.booking.bookings.domain.ports.SlotRepository;
-import com.allaroundjava.booking.bookings.shared.Interval;
 import com.google.common.collect.ImmutableMap;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

@@ -1,11 +1,11 @@
-package com.allaroundjava.booking.bookings.domain.availability;
+package com.allaroundjava.booking.bookings.availability;
 
 import com.allaroundjava.booking.common.Entity;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class Reservation extends Entity {
+class Reservation extends Entity {
     private final LocalDate from;
     private final LocalDate to;
 

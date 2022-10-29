@@ -1,12 +1,12 @@
-package com.allaroundjava.booking.bookings.application;
+package com.allaroundjava.booking.bookings.availability;
 
-import com.allaroundjava.booking.bookings.domain.availability.ItemTimeSlot;
-import com.allaroundjava.booking.bookings.domain.ports.SlotRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
+@Service
 @RequiredArgsConstructor
 public class RoomAvailability {
     private final SlotRepository slotRepository;

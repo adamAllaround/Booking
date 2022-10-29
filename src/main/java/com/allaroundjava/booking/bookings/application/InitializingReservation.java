@@ -1,5 +1,7 @@
 package com.allaroundjava.booking.bookings.application;
 
+import com.allaroundjava.booking.bookings.availability.RoomAvailability;
+
 import java.util.Optional;
 import java.util.UUID;
 
