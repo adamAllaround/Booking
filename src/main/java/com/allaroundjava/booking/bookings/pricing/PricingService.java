@@ -3,11 +3,13 @@ package com.allaroundjava.booking.bookings.pricing;
 import com.allaroundjava.booking.bookings.shared.Interval;
 import com.allaroundjava.booking.bookings.shared.Money;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.UUID;
 
+@Service
 @RequiredArgsConstructor
 public class PricingService {
     private final QueryForPrice query;

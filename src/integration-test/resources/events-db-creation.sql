@@ -47,7 +47,8 @@ CREATE TABLE IF NOT EXISTS reservationdetails
     roomId UUID NOT NULL,
     dateFrom DATE NOT NULL,
     dateTo DATE NOT NULL,
-    guests INT NOT NULL
+    guests INT NOT NULL,
+    status VARCHAR(20) NOT NULL
 );
 
 
