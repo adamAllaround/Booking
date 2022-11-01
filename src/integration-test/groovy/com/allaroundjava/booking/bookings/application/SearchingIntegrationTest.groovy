@@ -1,11 +1,10 @@
-package com.allaroundjava.booking.bookings.adapters.api
+package com.allaroundjava.booking.bookings.application
 
 import com.allaroundjava.booking.*
 import com.allaroundjava.booking.bookings.application.SearchService
 import com.allaroundjava.booking.bookings.config.BookingsConfig
 import com.allaroundjava.booking.bookings.shared.Money
 import com.allaroundjava.booking.common.LoggingConfig
-
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
