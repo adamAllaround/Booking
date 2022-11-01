@@ -51,6 +51,13 @@ CREATE TABLE IF NOT EXISTS reservationdetails
     status VARCHAR(20) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS reservationcustomers (
+     reservationId UUID NOT NULL UNIQUE,
+     firstName VARCHAR(255) NOT NULL,
+     lastName VARCHAR(255) NOT NULL,
+     email VARCHAR(255) NOT NULL,
+     phoneNumber VARCHAR(255) NOT NULL
+)
 
 -- CREATE TABLE IF NOT EXISTS Events
 -- (

@@ -1,5 +1,7 @@
 package com.allaroundjava.booking;
 
+import com.allaroundjava.booking.assertion.CustomerDetailsAssert;
+import com.allaroundjava.booking.bookings.details.ReservationDetails;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -52,4 +54,16 @@ public class IntegrationTestConfig {
     ReservationFixtures reservationFixtures(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         return new ReservationFixtures(namedParameterJdbcTemplate);
     }
+
+    @Bean
+    ReservationDetailsFixtures reservationDetailsFixtures(ReservationDetails reservationDetails) {
+        return new ReservationDetailsFixtures(reservationDetails);
+    }
+
+    @Bean
+    CustomerDetailsAssert customerDetailsAssert(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        return new CustomerDetailsAssert(namedParameterJdbcTemplate);
+    }
+
+
 }

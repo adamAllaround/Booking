@@ -1,5 +1,6 @@
 package com.allaroundjava.booking.bookings.config;
 
+import com.allaroundjava.booking.bookings.application.AddingCustomerDetails;
 import com.allaroundjava.booking.bookings.application.InitializingReservation;
 import com.allaroundjava.booking.bookings.application.SearchService;
 import com.allaroundjava.booking.bookings.availability.RoomAvailability;
@@ -31,6 +32,11 @@ public class BookingsConfig {
     @Bean
     InitializingReservation initializingReservation(RoomAvailability roomAvailability, PricingService pricingService, ReservationDetails reservationDetails) {
         return new InitializingReservation(roomAvailability, pricingService, reservationDetails);
+    }
+
+    @Bean
+    AddingCustomerDetails addingCustomerDetails(ReservationDetails reservationDetails) {
+        return new AddingCustomerDetails(reservationDetails);
     }
 
     @Bean

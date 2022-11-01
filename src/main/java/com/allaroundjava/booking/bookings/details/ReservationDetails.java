@@ -26,5 +26,23 @@ public class ReservationDetails {
 
         jdbcTemplate.update("INSERT INTO reservationdetails (reservationId, roomId, dateFrom, dateTo, guests, status) values (:reservationId, :roomId, :dateFrom, :dateTo, :guests, :status)", params);
     }
+
+    public void addCustomerDetails(UUID reservationId, CustomerDetails customerDetails) {
+        Map<String, Object> params = ImmutableMap.<String, Object>builder()
+                .put("reservationId", reservationId)
+                .put("firstName", customerDetails.getFirstName())
+                .put("lastName", customerDetails.getLastName())
+                .put("email", customerDetails.getEmail())
+                .put("phoneNumber", customerDetails.getPhoneNumber())
+                .build();
+
+        jdbcTemplate.update("INSERT INTO reservationcustomers (reservationId, firstName, lastName, email, phoneNumber) values(:reservationId, :firstName,:lastName,:email,:phoneNumber)", params);
+
+        params = ImmutableMap.<String, Object>builder()
+                .put("reservationId", reservationId)
+                .put("status", "CUSTOMER_SPECIFIED")
+                .build();
+        jdbcTemplate.update("UPDATE reservationdetails SET status=:status WHERE reservationId=:reservationId", params);
+    }
 }
 //this is only a crud module
