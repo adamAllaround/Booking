@@ -17,7 +17,10 @@ import java.time.Clock;
 
 @Configuration
 @EnableAspectJAutoProxy
-@ComponentScan(basePackages = "com.allaroundjava.booking.bookings.adapters") //tutaj by trzeba przekonfigurowac deczko
+@ComponentScan(basePackages = {"com.allaroundjava.booking.bookings.adapters",
+        "com.allaroundjava.booking.bookings.availability",
+        "com.allaroundjava.booking.bookings.details",
+        "com.allaroundjava.booking.bookings.pricing"})
 public class BookingsConfig {
 
     @Bean
