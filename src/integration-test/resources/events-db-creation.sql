@@ -57,7 +57,13 @@ CREATE TABLE IF NOT EXISTS reservationcustomers (
      lastName VARCHAR(255) NOT NULL,
      email VARCHAR(255) NOT NULL,
      phoneNumber VARCHAR(255) NOT NULL
-)
+);
+
+CREATE TABLE IF NOT EXISTS payments
+(
+    reservationId UUID NOT NULL UNIQUE,
+    type varchar(20) NOT NULL
+);
 
 -- CREATE TABLE IF NOT EXISTS Events
 -- (

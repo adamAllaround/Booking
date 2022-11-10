@@ -1,6 +1,7 @@
 package com.allaroundjava.booking;
 
 import com.allaroundjava.booking.assertion.CustomerDetailsAssert;
+import com.allaroundjava.booking.assertion.PaymentDetailsAssert;
 import com.allaroundjava.booking.bookings.details.ReservationDetails;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -64,6 +65,13 @@ public class IntegrationTestConfig {
     CustomerDetailsAssert customerDetailsAssert(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         return new CustomerDetailsAssert(namedParameterJdbcTemplate);
     }
+
+    @Bean
+    PaymentDetailsAssert paymentDetailsAssert(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        return new PaymentDetailsAssert(namedParameterJdbcTemplate);
+    }
+
+
 
 
 }

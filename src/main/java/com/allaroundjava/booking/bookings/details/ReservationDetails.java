@@ -44,5 +44,13 @@ public class ReservationDetails {
                 .build();
         jdbcTemplate.update("UPDATE reservationdetails SET status=:status WHERE reservationId=:reservationId", params);
     }
+
+    public void addPaymentDetails(UUID reservationId) {
+        Map<String, Object> params = ImmutableMap.<String, Object>builder()
+                .put("reservationId", reservationId)
+                .put("status", "PAYMENT_SPECIFIED")
+                .build();
+        jdbcTemplate.update("UPDATE reservationdetails SET status=:status WHERE reservationId=:reservationId", params);
+    }
 }
 //this is only a crud module

@@ -1,10 +1,12 @@
 package com.allaroundjava.booking.bookings.config;
 
 import com.allaroundjava.booking.bookings.application.AddingCustomerDetails;
+import com.allaroundjava.booking.bookings.application.AddingPaymentDetails;
 import com.allaroundjava.booking.bookings.application.InitializingReservation;
 import com.allaroundjava.booking.bookings.application.SearchService;
 import com.allaroundjava.booking.bookings.availability.RoomAvailability;
 import com.allaroundjava.booking.bookings.details.ReservationDetails;
+import com.allaroundjava.booking.bookings.pricing.PaymentService;
 import com.allaroundjava.booking.bookings.pricing.PricingService;
 import com.allaroundjava.booking.bookings.pricing.QueryForPrice;
 import com.allaroundjava.booking.bookings.readmodel.AvailabilitySearch;
@@ -37,6 +39,11 @@ public class BookingsConfig {
     @Bean
     AddingCustomerDetails addingCustomerDetails(ReservationDetails reservationDetails) {
         return new AddingCustomerDetails(reservationDetails);
+    }
+
+    @Bean
+    AddingPaymentDetails addingPaymentDetails(PaymentService paymentService, ReservationDetails reservationDetails) {
+        return new AddingPaymentDetails(paymentService, reservationDetails);
     }
 
     @Bean

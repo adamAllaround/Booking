@@ -24,4 +24,9 @@ class CustomerDetailsAssert {
         String status = jdbcTemplate.queryForObject("SELECT status FROM reservationdetails WHERE reservationId=:reservationId", ["reservationId": reservationId], String.class)
         assert status=="CUSTOMER_SPECIFIED"
     }
+
+    void statusIsPaymentSpecified(UUID reservationId) {
+        String status = jdbcTemplate.queryForObject("SELECT status FROM reservationdetails WHERE reservationId=:reservationId", ["reservationId": reservationId], String.class)
+        assert status=="PAYMENT_SPECIFIED"
+    }
 }
