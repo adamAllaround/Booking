@@ -22,4 +22,8 @@ public class DbCleaner {
     public void cleanBookings() {
         jdbcTemplate.update("DELETE FROM reservations");
     }
+
+    public void cleanPreBookings() {
+        jdbcTemplate.update("DELETE FROM prebookings");
+    }
 }

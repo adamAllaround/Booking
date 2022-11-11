@@ -9,6 +9,7 @@ import java.util.UUID;
 //aggregate root
 @RequiredArgsConstructor
 class ItemTimeSlot {
+    private final UUID roomId;
     private final Set<UUID> reservationIds;
     private final LocalDate dateFrom;
     private final LocalDate dateTo;
@@ -21,6 +22,6 @@ class ItemTimeSlot {
         if(!isAvailable()) {
             throw new IllegalStateException("Trying to book already occupied slot");
         }
-        return new Reservation(reservationId, dateFrom, dateTo);
+        return new Reservation(reservationId, roomId, dateFrom, dateTo);
     }
 }

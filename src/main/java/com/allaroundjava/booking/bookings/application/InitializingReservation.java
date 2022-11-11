@@ -19,6 +19,7 @@ public class InitializingReservation {
         }
 
         UUID reservationId = UUID.randomUUID();
+        roomAvailability.preBook(reservationId, command.getRoomId(), command.getDateFrom(), command.getDateTo());
         pricingService.setPrice(reservationId, command.getRoomId(), command.getDateFrom(), command.getDateTo(), command.getGuests());
         reservationDetails.initialize(reservationId, command.getRoomId(), command.getDateFrom(), command.getDateTo(), command.getGuests());
         return Optional.of(reservationId);

@@ -36,7 +36,7 @@ class JpaSlotRepository implements SlotRepository {
                 .map(ReservationEntity::getId)
                 .collect(Collectors.toSet());
 
-        return new ItemTimeSlot(reservationIds, dateFrom, dateTo);
+        return new ItemTimeSlot(roomId, reservationIds, dateFrom, dateTo);
     }
 }
 

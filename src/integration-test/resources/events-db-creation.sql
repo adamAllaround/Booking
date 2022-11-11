@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS pricingpolicies
 
 CREATE TABLE IF NOT EXISTS reservations
 (
-    reservationId UUID NOT NULL,
+    reservationId UUID PRIMARY KEY,
     roomId UUID NOT NULL,
     dateFrom DATE NOT NULL,
     dateTo DATE NOT NULL
@@ -64,6 +64,15 @@ CREATE TABLE IF NOT EXISTS payments
     reservationId UUID NOT NULL UNIQUE,
     type varchar(20) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS prebookings
+(
+    reservationId UUID NOT NULL UNIQUE,
+    roomId UUID NOT NULL,
+    dateFrom DATE NOT NULL,
+    dateTo DATE NOT NULL
+);
+
 
 -- CREATE TABLE IF NOT EXISTS Events
 -- (
