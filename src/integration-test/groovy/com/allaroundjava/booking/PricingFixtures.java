@@ -1,6 +1,6 @@
 package com.allaroundjava.booking;
 
-import com.allaroundjava.booking.bookings.shared.Money;
+import com.allaroundjava.booking.common.Money;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 

@@ -1,6 +1,6 @@
 package com.allaroundjava.booking;
 
-import com.allaroundjava.booking.bookings.details.ReservationDetails;
+import com.allaroundjava.booking.domain.details.ReservationDetails;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;

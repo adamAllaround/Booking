@@ -3,7 +3,7 @@ package com.allaroundjava.booking;
 import com.allaroundjava.booking.assertion.CustomerDetailsAssert;
 import com.allaroundjava.booking.assertion.PaymentDetailsAssert;
 import com.allaroundjava.booking.assertion.ReservationAssert;
-import com.allaroundjava.booking.bookings.details.ReservationDetails;
+import com.allaroundjava.booking.domain.details.ReservationDetails;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;

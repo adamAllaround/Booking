@@ -1,12 +1,9 @@
 package com.allaroundjava.booking;
 
-import com.allaroundjava.booking.bookings.domain.model.Dates2020;
 import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import java.time.OffsetTime;
-import java.time.ZoneOffset;
 import java.util.Map;
 import java.util.UUID;
 
