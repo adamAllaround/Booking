@@ -1,4 +1,4 @@
-package com.allaroundjava.booking.bookings.application
+package com.allaroundjava.booking.bookings.integration
 
 import com.allaroundjava.booking.*
 import com.allaroundjava.booking.bookings.application.SearchService

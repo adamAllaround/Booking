@@ -1,10 +1,11 @@
-package com.allaroundjava.booking.bookings.application
+package com.allaroundjava.booking.bookings.integration
 
 import com.allaroundjava.booking.DbCleaner
 import com.allaroundjava.booking.IntegrationTestConfig
 import com.allaroundjava.booking.PreBookingFixtures
 import com.allaroundjava.booking.ReservationFixtures
 import com.allaroundjava.booking.assertion.ReservationAssert
+import com.allaroundjava.booking.bookings.application.ConfirmingReservation
 import com.allaroundjava.booking.bookings.config.BookingsConfig
 import com.allaroundjava.booking.common.LoggingConfig
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase

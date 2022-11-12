@@ -1,9 +1,11 @@
-package com.allaroundjava.booking.bookings.application
+package com.allaroundjava.booking.bookings.integration
 
 import com.allaroundjava.booking.DbCleaner
 import com.allaroundjava.booking.IntegrationTestConfig
 import com.allaroundjava.booking.PricingFixtures
 import com.allaroundjava.booking.ReservationFixtures
+import com.allaroundjava.booking.bookings.application.InitializeReservationCommand
+import com.allaroundjava.booking.bookings.application.InitializingReservation
 import com.allaroundjava.booking.bookings.config.BookingsConfig
 import com.allaroundjava.booking.bookings.shared.Money
 import com.allaroundjava.booking.common.LoggingConfig
