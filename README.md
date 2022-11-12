@@ -6,7 +6,7 @@ Project is organized as a modular monolith, allowing for further breakdown into 
 
 ## Contexts
 You can see following bounded contexts distilled
-* Owners - a simple CRUD solution for adding/updating owner data
-* Items - a CRUD solution for adding/removing hotel rooms we'd later want to book
-* Bookings - a solution with a slightly more complex domain allowing for booking hotel rooms, following a hexagonal architecture approach
-* Notifications - a solution for sending notifications, reacting on various events.
+* Availability - context defining whether an item is available
+* Details - a CRUD context for storing reservation details like customer name, number of guests etc
+* Pricing - context answering the question of "how much it costs?"
+
